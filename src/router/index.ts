@@ -49,24 +49,6 @@ const routes: RouteRecordRaw[] = [
                 component: () => import(/* webpackChunkName: "form" */ '../views/form.vue'),
             },
             {
-                path: '/tabs',
-                name: 'tabs',
-                meta: {
-                    title: 'tab标签',
-                    permiss: '3',
-                },
-                component: () => import(/* webpackChunkName: "tabs" */ '../views/tabs.vue'),
-            },
-            {
-                path: '/donate',
-                name: 'donate',
-                meta: {
-                    title: '鼓励作者',
-                    permiss: '14',
-                },
-                component: () => import(/* webpackChunkName: "donate" */ '../views/donate.vue'),
-            },
-            {
                 path: '/permission',
                 name: 'permission',
                 meta: {
@@ -137,6 +119,24 @@ const routes: RouteRecordRaw[] = [
                 },
                 component: () => import(/* webpackChunkName: "import" */ '../views/import.vue'),
             },
+            {
+                path: '/test',
+                name: 'test',
+                meta: {
+                    title: '导入Excel',
+                    permiss: '2',
+                },
+                component: () => import(/* webpackChunkName: "import" */ '../views/test.vue'),
+            },
+            {
+                path: '/information',
+                name: 'information',
+                meta: {
+                    title: '消息通知',
+                    permiss: '16',
+                },
+                component: () => import(/* webpackChunkName: "tabs" */ '../views/information.vue'),
+            }
         ],
     },
     {

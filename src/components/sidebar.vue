@@ -82,7 +82,11 @@ const items = [
                 index: '/export',
                 title: '导出Excel',
                 permiss: '2',
-            },
+            },{
+                index: "/test",
+                title: "eeee",
+                permiss: '2'
+            }
         ],
     },
     {
@@ -149,6 +153,12 @@ const items = [
         index: '/donate',
         title: '支持作者',
         permiss: '14',
+    },
+    {
+        icon: 'CoffeeCup',
+        index: '/information',
+        title: '消息通知',
+        permiss: '16',
     },
 ];
 
