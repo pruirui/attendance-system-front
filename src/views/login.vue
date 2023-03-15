@@ -45,7 +45,7 @@ import {Login} from '../api/index'
 interface LoginInfo {
 	phone : string;
 	password: string;
-}
+}//你好
 
 const router = useRouter();
 const param = reactive<LoginInfo>({
