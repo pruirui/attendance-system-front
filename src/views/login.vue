@@ -79,7 +79,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 			ElMessage.success('登录成功');
 			localStorage.setItem('ms_username', param.phone);
 
-			const keys = permiss.defaultList['admin'];
+			const keys = permiss.defaultList['test'];
 			permiss.handleSet(keys);
 			localStorage.setItem('ms_keys', JSON.stringify(keys));
 			router.push('/');
