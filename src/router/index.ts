@@ -12,21 +12,13 @@ const routes: RouteRecordRaw[] = [
         name: 'Home',
         component: Home,
         children: [
-            {
-                path: '/dashboard',
-                name: 'dashboard',
-                meta: {
-                    title: '111首页',
-                    permiss: '1',
-                },
-                component: () => import(/* webpackChunkName: "dashboard" */ '../views/dashboard.vue'),
-            },
+            
             {
                 path: '/table',
                 name: 'basetable',
                 meta: {
                     title: '表格',
-                    permiss: '2',
+                    permiss: '8',
                 },
                 component: () => import(/* webpackChunkName: "table" */ '../views/table.vue'),
             },
@@ -35,7 +27,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'basecharts',
                 meta: {
                     title: '图表',
-                    permiss: '11',
+                    permiss: '8',
                 },
                 component: () => import(/* webpackChunkName: "charts" */ '../views/charts.vue'),
             },
@@ -44,25 +36,25 @@ const routes: RouteRecordRaw[] = [
                 name: 'baseform',
                 meta: {
                     title: '表单',
-                    permiss: '5',
+                    permiss: '8',
                 },
                 component: () => import(/* webpackChunkName: "form" */ '../views/form.vue'),
             },
             {
-                path: '/permission',
-                name: 'permission',
+                path: '/permission1',
+                name: 'permission1',
                 meta: {
-                    title: '权限管理',
-                    permiss: '13',
+                    title: '权限管理1',
+                    permiss: '8',
                 },
-                component: () => import(/* webpackChunkName: "permission" */ '../views/permission.vue'),
+                component: () => import(/* webpackChunkName: "permission" */ '../views/permission1.vue'),
             },
             {
                 path: '/upload',
                 name: 'upload',
                 meta: {
                     title: '上传插件',
-                    permiss: '6',
+                    permiss: '8',
                 },
                 component: () => import(/* webpackChunkName: "upload" */ '../views/upload.vue'),
             },
@@ -71,18 +63,11 @@ const routes: RouteRecordRaw[] = [
                 name: 'icon',
                 meta: {
                     title: '自定义图标',
-                    permiss: '10',
+                    permiss: '8',
                 },
                 component: () => import(/* webpackChunkName: "icon" */ '../views/icon.vue'),
             },
-            {
-                path: '/user',
-                name: 'user',
-                meta: {
-                    title: '个人中心',
-                },
-                component: () => import(/* webpackChunkName: "user" */ '../views/user.vue'),
-            },
+            
             {
                 path: '/editor',
                 name: 'editor',
@@ -97,7 +82,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'markdown',
                 meta: {
                     title: 'markdown编辑器',
-                    permiss: '9',
+                    permiss: '8',
                 },
                 component: () => import(/* webpackChunkName: "markdown" */ '../views/markdown.vue'),
             },
@@ -106,7 +91,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'export',
                 meta: {
                     title: '导出Excel',
-                    permiss: '2',
+                    permiss: '8',
                 },
                 component: () => import(/* webpackChunkName: "export" */ '../views/export.vue'),
             },
@@ -115,7 +100,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'import',
                 meta: {
                     title: '导入Excel',
-                    permiss: '2',
+                    permiss: '8',
                 },
                 component: () => import(/* webpackChunkName: "import" */ '../views/import.vue'),
             },
@@ -124,18 +109,99 @@ const routes: RouteRecordRaw[] = [
                 name: 'test',
                 meta: {
                     title: '导入Excel',
-                    permiss: '2',
+                    permiss: '8',
                 },
                 component: () => import(/* webpackChunkName: "import" */ '../views/test.vue'),
+            },
+            {
+                path: '/dashboard',
+                name: 'dashboard',
+                meta: {
+                    title: '个人首页',
+                    permiss: '1',
+                },
+                component: () => import(/* webpackChunkName: "dashboard" */ '../views/dashboard.vue'),
             },
             {
                 path: '/information',
                 name: 'information',
                 meta: {
                     title: '消息通知',
-                    permiss: '16',
+                    permiss: '1',
                 },
                 component: () => import(/* webpackChunkName: "tabs" */ '../views/information.vue'),
+            },
+            {
+                path: '/mycompany',
+                name: 'mycompany',
+                meta: {
+                    title: '我的公司',
+                    permiss: '1',
+                },
+                component: () => import(/* webpackChunkName: "tabs" */ '../views/mycompany.vue'),
+            },
+            {
+                path: '/user',
+                name: 'user',
+                meta: {
+                    title: '个人中心',
+                    permiss: '1'
+                },
+                component: () => import(/* webpackChunkName: "user" */ '../views/user.vue'),
+            },
+            {
+                path: '/myclockin',
+                name: 'myclockin',
+                meta: {
+                    title: '我的打卡',
+                    permiss: '2'
+                },
+                component: () => import(/* webpackChunkName: "user" */ '../views/myclockin.vue'),
+            },
+            {
+                path: '/attendance',
+                name: 'attendance',
+                meta: {
+                    title: '考勤信息',
+                    permiss: '2'
+                },
+                component: () => import(/* webpackChunkName: "user" */ '../views/attendance.vue'),
+            },
+            {
+                path: '/leave',
+                name: 'leave',
+                meta: {
+                    title: '我的请假',
+                    permiss: '2'
+                },
+                component: () => import(/* webpackChunkName: "user" */ '../views/leave.vue'),
+            },
+            {
+                path: '/attendancemanagement',
+                name: 'attendancemanagement',
+                meta: {
+                    title: '考勤信息管理',
+                    permiss: '3'
+                },
+                component: () => import(/* webpackChunkName: "user" */ '../views/attendancemanagement.vue'),
+            },
+            {
+                path: '/permission',
+                name: 'permission',
+                meta: {
+                    title: '权限管理',
+                    permiss: '3'
+                },
+                component: () => import(/* webpackChunkName: "user" */ '../views/permission.vue'),
+            },
+            {
+                path: '/faceimport',
+                name: 'faceimport',
+                meta: {
+                    title: '人脸导入',
+                    permiss: '4'
+                },
+                component: () => import(/* webpackChunkName: "user" */ '../views/faceimport.vue'),
             }
         ],
     },

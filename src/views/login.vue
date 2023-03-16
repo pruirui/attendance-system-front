@@ -3,7 +3,7 @@
 		<div class="ms-login">
 			<div class="ms-title">后台管理系统</div>
 			<el-form :model="param" :rules="rules" ref="login" label-width="0px" class="ms-content">
-				<el-form-item prop="username">
+				<el-form-item prop="phone">
 					<el-input v-model="param.phone" placeholder="phone">
 						<template #prepend>
 							<el-button :icon="User"></el-button>
@@ -54,7 +54,7 @@ const param = reactive<LoginInfo>({
 });
 
 const rules: FormRules = {
-	username: [
+	phone: [
 		{
 			required: true,
 			message: '请输入用户名',
@@ -67,7 +67,7 @@ const permiss = usePermissStore();
 const login = ref<FormInstance>();
 
 const submitForm = (formEl: FormInstance | undefined) => {
-	Login(param).then(res => {console.log(res)})
+	//Login(param).then(res => {console.log(res)})
 	// request.post('http://192.168.43.163:5000/user/login', param).then((response) => {
 	// 	ElMessage.success('登录成功');
 	// 	console.log(response)
@@ -78,10 +78,11 @@ const submitForm = (formEl: FormInstance | undefined) => {
 		if (valid) {
 			ElMessage.success('登录成功');
 			localStorage.setItem('ms_username', param.phone);
-			const keys = permiss.defaultList[param.phone == 'admin' ? 'admin' : 'user'];
+
+			const keys = permiss.defaultList['admin'];
 			permiss.handleSet(keys);
 			localStorage.setItem('ms_keys', JSON.stringify(keys));
-			// router.push('/');
+			router.push('/');
 		} else {
 			ElMessage.error('登录失败');
 			return false;

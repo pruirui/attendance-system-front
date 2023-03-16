@@ -41,6 +41,7 @@
                     <el-menu-item :index="item.index" :key="item.index" v-permiss="item.permiss">
                         <el-icon>
                             <component :is="item.icon"></component>
+
                         </el-icon>
                         <template #title>{{ item.title }}</template>
                     </el-menu-item>
@@ -56,12 +57,7 @@ import { useSidebarStore } from '../store/sidebar';
 import { useRoute } from 'vue-router';
 
 const items = [
-    {
-        icon: 'Odometer',
-        index: '/dashboard',
-        title: '系统首页',
-        permiss: '1',
-    },
+    
     {
         icon: 'Calendar',
         index: '1',
@@ -149,16 +145,64 @@ const items = [
         permiss: '13',
     },
     {
-        icon: 'CoffeeCup',
-        index: '/donate',
-        title: '支持作者',
-        permiss: '14',
+        icon: 'Odometer',
+        index: '/dashboard',
+        title: '系统首页',
+        permiss: '1',
     },
     {
-        icon: 'CoffeeCup',
+        icon: 'Message',
         index: '/information',
         title: '消息通知',
-        permiss: '16',
+        permiss: '1',
+    },
+    {
+        icon: 'User',
+        index: '/user',
+        title: '个人中心',
+        permiss: '1',
+    },
+    {
+        icon: 'Notification',
+        index: '/mycompany',
+        title: '我的公司',
+        permiss: '1',
+    },
+    {
+        icon: 'Clock',
+        index: '/myclockin',
+        title: '我的打卡',
+        permiss: '2',
+    },
+    {
+        icon: 'PieChart',
+        index: '/attendance',
+        title: '考勤信息',
+        permiss: '2',
+    },
+    {
+        icon: 'CircleCheck',
+        index: '/leave',
+        title: '我的请假',
+        permiss: '2',
+    },
+    {
+        icon: 'Histogram',
+        index: '/attendancemanagement',
+        title: '考勤信息管理',
+        permiss: '3',
+    },
+    {
+        icon: 'Warning',
+        index: '/permission',
+        title: '权限管理',
+        permiss: '3',
+    },
+    {
+        icon: 'Camera',
+        index: '/faceimport',
+        title: '人脸导入',
+        permiss: '4',
     },
 ];
 
