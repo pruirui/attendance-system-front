@@ -67,7 +67,7 @@ const permiss = usePermissStore();
 const login = ref<FormInstance>();
 
 const submitForm = (formEl: FormInstance | undefined) => {
-	//Login(param).then(res => {console.log(res)})
+	Login(param).then(res => {console.log(res)})
 	// request.post('http://192.168.43.163:5000/user/login', param).then((response) => {
 	// 	ElMessage.success('登录成功');
 	// 	console.log(response)
@@ -79,7 +79,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 			ElMessage.success('登录成功');
 			localStorage.setItem('ms_username', param.phone);
 
-			const keys = permiss.defaultList['test'];
+			const keys = permiss.defaultList['newer'];
 			permiss.handleSet(keys);
 			localStorage.setItem('ms_keys', JSON.stringify(keys));
 			router.push('/');

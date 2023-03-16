@@ -11,3 +11,8 @@ export const fetchData = () => {
 export const Login = (data :Object) => {
     return request.post("http://10.6.12.158:5000/user/login", data);
 };
+
+
+export const GetCompany = (data :any) => {
+    return request.post("http://10.6.12.158:5000/user/userInDepartment", data);
+};
