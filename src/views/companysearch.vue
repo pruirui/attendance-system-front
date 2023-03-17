@@ -22,12 +22,12 @@
 				<el-table-column label="操作" width="220" align="left">
 					<template #default="scope">
                         <div>
-                            <el-button text :icon="CirclePlusFilled" @click="handleJoin(scope.$index, scope.row)" v-permiss="0">
+                            <el-button text :icon="CirclePlusFilled" @click="handleJoin()" v-permiss="0">
                                 申请加入
                             </el-button>
                         </div>
 						<div>
-                            <el-button text :icon="HelpFilled" @click="handleMore(scope.$index)" v-permiss="1">
+                            <el-button text :icon="HelpFilled" @click="handleMore()" v-permiss="1">
                                 查看详细信息
                             </el-button>
                         </div>
@@ -71,7 +71,7 @@
 import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Search, CirclePlusFilled,HelpFilled } from '@element-plus/icons-vue';
-import { fetchData } from '../api/index';
+import { getAllDepartmentData } from '../api/index';
 
 interface TableItem {
 	departmentid: number;
@@ -94,7 +94,7 @@ const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
 // 获取表格数据
 const getData = () => {
-	fetchData().then(res => {
+	getAllDepartmentData(query.address, query.departmentName).then(res => {
 		tableData.value = res.data.list;
 		pageTotal.value = res.data.pageTotal || 50;
 	});
@@ -135,16 +135,22 @@ let form = reactive({
 let idx: number = -1;
 const handleEdit = (index: number, row: any) => {
 	idx = index;
-	form.name = row.name;
-	form.address = row.address;
-	editVisible.value = true;
+	// form.name = row.name;
+	// form.address = row.address;
+	// editVisible.value = true;
 };
 const saveEdit = () => {
 	editVisible.value = false;
-	ElMessage.success(`修改第 ${idx + 1} 行成功`);
-	tableData.value[idx].name = form.name;
-	tableData.value[idx].address = form.address;
+	// ElMessage.success(`修改第 ${idx + 1} 行成功`);
+	// tableData.value[idx].de = form.name;
+	// tableData.value[idx].address = form.address;
 };
+
+const handleMore = ()=>{
+
+}
+
+const handleJoin = () =>{}
 
 
 const provinces =  ['河北', '山西', '辽宁', '吉林', '黑龙江', '江苏', '浙江', '安徽', ' 福建', ' 江西', '山东', '河南', '湖北', '湖南', '广东', '    海南', '四川', '贵州', '云南', '陕西', '甘肃', '青海', '台湾', '内蒙古', '广西壮族自治区', '西藏自治区', '宁夏回族自治区', '新疆维吾尔自治区', '北京', '天津', '上海', '重庆', '香港特别行政区', '澳门特别行政区']
