@@ -155,6 +155,23 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import(/* webpackChunkName: "403" */ '../views/403.vue'),
     },
+	{
+		path: '/register',
+		name: 'register',
+		meta: {
+			title: '注册',
+		},
+		component:() => import(/* webpackChunkName: "dashboard" */ '../views/register.vue'),
+	},
+	{
+		path: '/quicklogin',
+		name: 'quicklogin',
+		meta: {
+			title: '快速打卡登录',
+		},
+		component:() => import(/* webpackChunkName: "dashboard" */ '../views/quicklogindialog.vue'),
+	}
+	
 ];
 
 const router = createRouter({
@@ -167,8 +184,13 @@ router.beforeEach((to, from, next) => {
     const role = localStorage.getItem('ms_username');
     const permiss = usePermissStore();
     if (!role && to.path !== '/login') {
-        next('/login');
-    } else if (to.meta.permiss && !permiss.key.includes(to.meta.permiss)) {
+		if(to.path === '/register' || to.path === '/quicklogin'){
+			next();
+		}else{
+			next('/login');   
+		}
+    } 
+	else if (to.meta.permiss && !permiss.key.includes(to.meta.permiss)) {
         // 如果没有权限，则进入403
         next('/403');
     } else {

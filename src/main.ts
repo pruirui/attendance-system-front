@@ -11,6 +11,8 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 
+localStorage.setItem("ms_quickLogin", "false");
+
 // 注册elementplus图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component);
