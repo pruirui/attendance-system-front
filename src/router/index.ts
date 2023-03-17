@@ -202,6 +202,15 @@ const routes: RouteRecordRaw[] = [
                     permiss: '4'
                 },
                 component: () => import(/* webpackChunkName: "user" */ '../views/faceimport.vue'),
+            },
+            {
+                path: '/companysearch',
+                name: 'companysearch',
+                meta: {
+                    title: '公司搜索',
+                    permiss: '1'
+                },
+                component: () => import(/* webpackChunkName: "user" */ '../views/companysearch.vue'),
             }
         ],
     },
