@@ -62,26 +62,26 @@ const items = [
         icon: 'Calendar',
         index: '1',
         title: '表格相关',
-        permiss: '2',
+        permiss: '8',
         subs: [
             {
                 index: '/table',
                 title: '常用表格',
-                permiss: '2',
+                permiss: '8',
             },
             {
                 index: '/import',
                 title: '导入Excel',
-                permiss: '2',
+                permiss: '88',
             },
             {
                 index: '/export',
                 title: '导出Excel',
-                permiss: '2',
+                permiss: '8',
             },{
                 index: "/test",
                 title: "eeee",
-                permiss: '2'
+                permiss: '8'
             }
         ],
     },
@@ -89,28 +89,28 @@ const items = [
         icon: 'DocumentCopy',
         index: '/tabs',
         title: 'tab选项卡',
-        permiss: '3',
+        permiss: '8',
     },
     {
         icon: 'Edit',
-        index: '3',
+        index: '8',
         title: '表单相关',
-        permiss: '4',
+        permiss: '8',
         subs: [
             {
                 index: '/form',
                 title: '基本表单',
-                permiss: '5',
+                permiss: '8',
             },
             {
                 index: '/upload',
                 title: '文件上传',
-                permiss: '6',
+                permiss: '8',
             },
             {
                 index: '4',
                 title: '三级菜单',
-                permiss: '7',
+                permiss: '8',
                 subs: [
                     {
                         index: '/editor',
@@ -120,7 +120,7 @@ const items = [
                     {
                         index: '/markdown',
                         title: 'markdown编辑器',
-                        permiss: '9',
+                        permiss: '8',
                     },
                 ],
             },

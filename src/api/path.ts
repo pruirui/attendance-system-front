@@ -3,6 +3,8 @@ const path = {
 	login : "/user/login",
 	register: "/user/register",
 	searchAllDepartment:'/user/queryAllDepartments',
-	getDepartment:'/user/userInDepartment'
+	getDepartment:'/user/userInDepartment',
+	userApplyDepartment:"/user/userApplyDepartment"
+
 }
 export default path;

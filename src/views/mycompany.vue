@@ -24,9 +24,10 @@
                     </div>
                 </div>
         </div>
-        <el-button type="primary" @click="" v-permiss="3">创建公司</el-button>
-        <el-button type="primary" @click="router.push('/companysearch')" v-permiss="0">搜索公司</el-button>
+        
     </template>
+    <el-button type="primary" @click="router.push('/createcompany')" v-permiss="0">创建公司</el-button>
+    <el-button type="primary" @click="router.push('/companysearch')" v-permiss="1">搜索公司</el-button>
 </div>
   
 </template>
@@ -36,50 +37,38 @@ import { ref } from "vue";
 import { GetCompany } from "../api/index";
 import { ElMessage } from "element-plus";
 import { useRouter } from 'vue-router';
+import { extractColorByName } from "../utils/util";
 
-let u = localStorage.getItem("user");
-u = u ? u : '{"i":"1"}';
-let user = JSON.parse(u);
-user.id = "1";
+
+let uId = localStorage.getItem("ms_userId");
+
 const items = ref<any[]>([]);
 
-
 const router = useRouter()
-
-GetCompany({ uid: user.id }).then((res) => {
+if(uId === null){
+  ElMessage.error('未检测到用户登入，请登入！')
+  localStorage.clear();
+  router.push('/login');
+}else{
+  GetCompany(uId).then((res) => {
     console.log(res)
-  if (res.status != 200) {
-    ElMessage.error("出错了");
-    return;
-  }
-  let data = res.data;
-  console.log(data);
-  if (data.code == 1) {
-    items.value = data.data;
-    console.log(items.value);
-  } else {
-    ElMessage.error(data.msg);
-  }
-}).catch(e => {ElMessage.error('网络超时了');});
-
-const extractColorByName = (name: String) => {
-  var temp = [];
-  temp.push("#");
-  for (let cha of name) {
-    let unicode = cha.charCodeAt(0).toString();
-    temp.push(parseInt(unicode, 10).toString(16));
-  }
-  return temp.slice(0, 5).join("").slice(0, 4);
-};
-
+    if (res.status != 200) {
+      ElMessage.error("出错了");
+      return;
+    }
+    let data = res.data;
+    console.log(data);
+    if (data.code == 1) {
+      items.value = data.data;
+    } else {
+      ElMessage.error(data.msg);
+    }
+  }).catch(e => {ElMessage.error('网络超时了');});
+}
 
 
 const showCompany = (companyId:String)=>{
     
-}
-
-const searchCompany = ()=>{
-
 }
 
 </script>

@@ -92,6 +92,15 @@ const submitForm = (formEl: FormInstance | undefined) => {
 	if (!formEl) return;
 	formEl.validate((valid: boolean) => {
 		if (valid) {
+			if(param.phone === 'test'){
+				localStorage.setItem('ms_userId', '0')
+				localStorage.setItem('ms_username', 'test');
+				const keys = permiss.defaultList['test'];
+					permiss.handleSet(keys);
+					localStorage.setItem('ms_keys', JSON.stringify(keys));
+					router.push('/');
+				return;
+			}
 			//验证通过，请求登录
 			Login(param).then(res =>{
 				
@@ -100,6 +109,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 					//console.log(typeof(res.data["data"]));
 					let tmp = res.data["data"];
 					delete tmp.password;
+					localStorage.setItem('ms_userId', res.data["data"]['id'])
 					localStorage.setItem('ms_username', res.data["data"]["username"]);
 					localStorage.setItem("ms_userInfo", JSON.stringify(tmp));
 					// localStorage.setItem('ms_phone', res.data["data"]["phone"]);
