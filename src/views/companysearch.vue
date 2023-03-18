@@ -10,7 +10,7 @@
 				<!-- <el-button type="primary" :icon="Plus">新增</el-button> -->
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-				<el-table-column prop="departmentid" label="departmentid" hidden></el-table-column>
+				<el-table-column prop="departmentid" label="departmentid" ></el-table-column>
 				<el-table-column prop="departmentName" label="公司名"></el-table-column>
                 <el-table-column prop="username" label="注册人"></el-table-column>
 				<el-table-column prop="rmb" label="注册资本"></el-table-column>
@@ -94,8 +94,10 @@ const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
 // 获取表格数据
 const getData = () => {
+    console.log(query)
 	getAllDepartmentData(query.address, query.departmentName).then(res => {
-		tableData.value = res.data.list;
+        console.log(res)
+		tableData.value = res.data.data;
 		pageTotal.value = res.data.pageTotal || 50;
 	});
 };
