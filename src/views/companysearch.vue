@@ -85,7 +85,8 @@ import { Search, CirclePlusFilled,HelpFilled } from '@element-plus/icons-vue';
 import { getAllDepartmentData } from '../api/index';
 import { useRouter } from 'vue-router';
 import { extractColorByName } from '../utils/util';
-import {NewerApplyDepartment} from '../api/index'
+import {newerApplyDepartment} from '../api/index'
+import router from '../router';
 
 interface TableItem {
 	departmentid: string;
@@ -136,18 +137,7 @@ const handlePageChange = (val: number) => {
 	getData();
 };
 
-// 删除操作
-const handleDelete = (index: number) => {
-	// 二次确认删除
-	ElMessageBox.confirm('确定要删除吗？', '提示', {
-		type: 'warning'
-	})
-		.then(() => {
-			ElMessage.success('删除成功');
-			tableData.value.splice(index, 1);
-		})
-		.catch(() => {});
-};
+
 
 // 申请加入公司时弹窗和保存
 const visible = ref(false);
@@ -163,8 +153,9 @@ let singleDepartment = reactive({
 });
 
 
-const handleMore = (departmentId: String)=>{
-
+const handleMore = (departmentId: string)=>{
+	localStorage.setItem("departmentId", departmentId);
+	router.push('/companyinformation')
 }
 
 const handleJoin = (row: any) =>{
@@ -185,7 +176,7 @@ const join = ()=>{
 		return;
 	}
 	console.log(singleDepartment);
-	NewerApplyDepartment(singleDepartment.departmentid, uId).then((res) => {
+	newerApplyDepartment(singleDepartment.departmentid, uId).then((res) => {
 		console.log(res);
 		ElMessage.info(res.data.msg);
 	})

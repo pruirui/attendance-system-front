@@ -13,7 +13,7 @@ export const Register = (data :Object) => {
 };
 
 
-export const GetCompany = (uid: String) => {
+export const getDepartmentByUid = (uid: String) => {
     return request.post(path.baseUrl+path.getDepartment, {uid});
 };
 
@@ -22,16 +22,26 @@ export const uploadImg = (data :any, config :any) => {
 	return request.post(path.baseUrl+path.uploadImg, {"file": data}, config);
 }
 
-export const NewerApplyDepartment = (departmentid:string, uid:string) =>{
+export const newerApplyDepartment = (departmentid:string, uid:string) =>{
     return request.post(path.baseUrl+path.userApplyDepartment, {departmentid, uid});
 }
-export const CreateDepartment = (params:{departmentName: string, HRuid: string, description: string, hourPay: string, workOverPay: string, workOverLimit: string, startTime: string, endTime: string, 
+export const createDepartment = (departmentName: string, HRuid: string, description: string, hourPay: string, workOverPay: string, workOverLimit: string, startTime: string, endTime: string, 
     workdays: Array<string>,
     phone:string,
     address:string,
     rmb:string,
-    createTime:string}) =>{
-    return request.post(path.baseUrl+path.createDepartment, {...params});
+    createTime:string) =>{
+    return request.post(path.baseUrl+path.createDepartment, {departmentName,HRuid,description,hourPay,workOverPay,workOverLimit,startTime,endTime,workdays,phone,address,rmb,createTime});
 }
 
+export const getDepartmentByDepartmentId = (departmentid: string) => {
+    return request.post(path.baseUrl+path.queryDepartmentDetail,{departmentid});
+}
 
+export const getAllUserByDepartmentId = (departmentid: string, querystring:string, pageIndex:number, pageSize:number) => {
+    return request.post(path.baseUrl+path.usersInDepartment,{departmentid, querystring, pageIndex, pageSize});
+}
+
+export const deleteDepartmentById = (departmentid: string, uid:string) => {
+    return request.post(path.baseUrl+path.applyDeleteDepartment,{departmentid, uid});
+}

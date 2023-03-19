@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { GetCompany } from "../api/index";
+import { getDepartmentByUid } from "../api/index";
 import { ElMessage } from "element-plus";
 import { useRouter } from 'vue-router';
 import { extractColorByName } from "../utils/util";
@@ -50,7 +50,7 @@ if(uId === null){
   localStorage.clear();
   router.push('/login');
 }else{
-  GetCompany(uId).then((res) => {
+  getDepartmentByUid(uId).then((res) => {
     console.log(res)
     if (res.status != 200) {
       ElMessage.error("出错了");

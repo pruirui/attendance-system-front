@@ -7,5 +7,8 @@ const path = {
 	getDepartment:'/user/userInDepartment',
 	userApplyDepartment:"/user/userApplyDepartment",
 	createDepartment: "/HR/createDepartment",
+	queryDepartmentDetail: "/user/queryDepartmentDetail",
+	usersInDepartment: "/HR/usersInDepartment",
+	applyDeleteDepartment: "/HR/applyDeleteDepartment"
 }
 export default path;

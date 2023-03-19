@@ -220,6 +220,24 @@ const routes: RouteRecordRaw[] = [
                     permiss: '0'
                 },
                 component: () => import(/* webpackChunkName: "user" */ '../views/createcompany.vue'),
+            },
+            {
+                path: '/companyinformation',
+                name: 'companyinformation',
+                meta: {
+                    title: '公司信息',
+                    permiss: '2'
+                },
+                component: () => import(/* webpackChunkName: "user" */ '../views/companyinformation.vue'),
+            },
+            {
+                path: '/modifycompany',
+                name: 'modifycompany',
+                meta: {
+                    title: '修改公司信息',
+                    permiss: '4'
+                },
+                component: () => import(/* webpackChunkName: "user" */ '../views/modifycompany.vue'),
             }
         ],
     },

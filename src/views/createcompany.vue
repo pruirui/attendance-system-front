@@ -25,6 +25,8 @@
                                 placeholder="选择日期"
                                 v-model="form.createTime"
                                 style="width: 100%"
+                                format="YYYY-MM-DD"
+                                value-format="YYYY-MM-DD"
                             ></el-date-picker>
                         </el-form-item>
                     </el-col>
@@ -45,7 +47,7 @@
                 <el-form-item label="上班时间" prop="startTime">
                     <el-col :span="11">
                         <el-form-item prop="startTime">
-                            <el-time-picker placeholder="选择时间" v-model="form.startTime" style="width: 100%">
+                            <el-time-picker placeholder="选择时间" v-model="form.startTime" style="width: 100%" format="HH:mm" value-format="HH:mm">
                             </el-time-picker>
                         </el-form-item>
                     </el-col>
@@ -53,7 +55,7 @@
                 <el-form-item label="下班时间" prop="endTime">
                     <el-col :span="11">
                         <el-form-item prop="endTime">
-                            <el-time-picker placeholder="选择时间" v-model="form.endTime" style="width: 100%">
+                            <el-time-picker placeholder="选择时间" v-model="form.endTime" style="width: 100%"  format="HH:mm" value-format="HH:mm">
                             </el-time-picker>
                         </el-form-item>
                     </el-col>
@@ -85,7 +87,7 @@ import { reactive, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
 import { useRouter } from 'vue-router';
-import { CreateDepartment } from '../api';
+import { createDepartment } from '../api';
 
 const regions = [
     {
@@ -195,14 +197,14 @@ const form = reactive({
     address:'',
     rmb:'',
     region: [],
-    createTime:''
+    createTime: ''
 });
-const uId = localStorage.getItem("ms_userId");
+const router = useRouter()
+const uId = localStorage.getItem("ms_userId")
 if(uId === null){
-	ElMessage.error('未检测到用户登入，请登入！')
+	ElMessage.error('未检测到用户登入，请登入！');
 	localStorage.clear();
-	let router = useRouter()
-	router.push('/login');
+	router.push('/login')
 }
 
 // 提交
@@ -212,15 +214,26 @@ const onSubmit = (formEl: FormInstance | undefined) => {
     formEl.validate((valid) => {
         if (valid) {
             if(uId === null){
-                return;
+                return false;
             }
             form.HRuid = uId;
             form.address = form.region.join('') +  form.address;
-            CreateDepartment(form).then((res) => {
-                console.log(res);
-            })
-            console.log(form);
-            ElMessage.success('提交成功！');
+
+            createDepartment(form.departmentName, form.HRuid, form.description, 
+                form.hourPay, form.workOverPay, form.workOverLimit, form.startTime,
+                form.endTime, form.workdays,form.phone, form.address, form.rmb, form.createTime).then((res) => {
+                if (res.status != 200) {
+                    ElMessage.error("出错了");
+                    return;
+                }
+                let data = res.data;
+                if (data.code == 1) {
+                    ElMessage.info(data.msg);
+                    onReset(formRef.value);
+                } else {
+                    ElMessage.error(data.msg);
+                }
+            }).catch((e)=>{ElMessage.error("网路超时！");})
         } else {
             return false;
         }
