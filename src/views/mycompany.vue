@@ -4,7 +4,7 @@
         <el-empty style="align-self:center" description="还未加入公司呢！" />
       </template>
     <template v-else>
-        <div class="container"  v-for="subItem in items">
+        <div class="container"  v-for="subItem in items" @click="showCompany(subItem.departmentid)">
                 <div class="card">
                     <div class="left">
                         <el-avatar class="avatar" :style="`background:${extractColorByName(subItem.departmentName)}`" shape="square" :size="90">
@@ -24,9 +24,10 @@
                     </div>
                 </div>
         </div>
-        <el-button type="primary" @click="" v-permiss="3">创建公司</el-button>
-        <el-button type="primary" @click="" v-permiss="0">申请加入公司</el-button>
+        
     </template>
+    <el-button type="primary" @click="router.push('/createcompany')" v-permiss="0">创建公司</el-button>
+    <el-button type="primary" @click="router.push('/companysearch')" v-permiss="1">搜索公司</el-button>
 </div>
   
 </template>
@@ -35,69 +36,41 @@
 import { ref } from "vue";
 import { GetCompany } from "../api/index";
 import { ElMessage } from "element-plus";
-import $ from "wangeditor/dist/utils/dom-core";
+import { useRouter } from 'vue-router';
+import { extractColorByName } from "../utils/util";
 
-let u = localStorage.getItem("user");
-u = u ? u : '{"i":"1"}';
-let user = JSON.parse(u);
-user.id = "1";
+
+let uId = localStorage.getItem("ms_userId");
+
 const items = ref<any[]>([]);
 
-items.value = [
-        {address:"江苏省苏州市 工业园区文意人才公寓",
-            createTime : "2023-03-15 11:25:30",
-            departmentName : "白雪公组",
-            departmentid: 191406,
-            description: "该部门成立于315，是一所基于ai驱动的A轮融资大公司",
-            phone : "025-730594",
-            rmb: 15005,
-            username: "李夏天"
-        },
-        {address:"江苏省苏州市 工业园区文意人才公寓",
-            createTime : "2023-03-15 11:25:30",
-            departmentName : "白雪公组",
-            departmentid: 191406,
-            description: "该部门成立于315，是一所基于ai驱动的A轮融资大公司",
-            phone : "025-730594",
-            rmb: 15005,
-            username: "李夏天"
-        },
-        {address:"江苏省苏州市 工业园区文意人才公寓",
-            createTime : "2023-03-15 11:25:30",
-            departmentName : "白雪公组",
-            departmentid: 191406,
-            description: "该部门成立于315，是一所基于ai驱动的A轮融资大公司",
-            phone : "025-730594",
-            rmb: 15005,
-            username: "李夏天"
-        }]
-// GetCompany({ uid: user.id }).then((res) => {
-//     console.log(res)
-//   if (res.status != 200) {
-//     ElMessage.error("出错了");
-//     return;
-//   }
-//   let data = res.data;
-//   console.log(data);
-//   if (data.code == 1) {
-//     items.value = data.data;
-//     console.log(items.value);
-//   } else {
-//     ElMessage.error(data.msg);
-//   }
-// }).catch(e => {ElMessage.error('网络超时了');});
+const router = useRouter()
+if(uId === null){
+  ElMessage.error('未检测到用户登入，请登入！')
+  localStorage.clear();
+  router.push('/login');
+}else{
+  GetCompany(uId).then((res) => {
+    console.log(res)
+    if (res.status != 200) {
+      ElMessage.error("出错了");
+      return;
+    }
+    let data = res.data;
+    console.log(data);
+    if (data.code == 1) {
+      items.value = data.data;
+    } else {
+      ElMessage.error(data.msg);
+    }
+  }).catch(e => {ElMessage.error('网络超时了');});
+}
 
-const extractColorByName = (name: String) => {
-  var temp = [];
-  temp.push("#");
-  for (let cha of name) {
-    let unicode = cha.charCodeAt(0).toString();
-    temp.push(parseInt(unicode, 10).toString(16));
-  }
-  return temp.slice(0, 5).join("").slice(0, 4);
-};
 
-document.getElementsByClassName;
+const showCompany = (companyId:String)=>{
+    
+}
+
 </script>
 
 <style scoped>
@@ -125,6 +98,20 @@ document.getElementsByClassName;
 }
 .container{
     margin-bottom: 1rem;
+    transform: scale(1);
+}
+.container:active{
+    transform: scale(0.99);
+}
+.container:hover{
+    background: #f0f0f0;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 1px 1px 2px rgba(255, 255, 255, 0.2);
+    color: #262323;
+    text-decoration: none;
+    text-shadow: -0.5px -0.5px 0 #353434;
+    -webkit-transition: all 250ms linear;
+    transition: all 250ms linear;
 }
 
 </style>
