@@ -1,52 +1,35 @@
 <template>
-	<el-dialog v-model="dialogVisual" title="快速打卡登录" width="1065px">
-		
-		<div class="box">
-		    <video id="videoCamera" class="canvas" :width="camerainfo.videoWidth" :height="camerainfo.videoHeight" autoplay></video>
-		    <canvas id="canvasCamera" class="canvas" style="display: none;" :width="camerainfo.videoWidth" :height="camerainfo.videoHeight"></canvas>
-		</div>
-		
-		<div v-if="camerainfo.imgSrc" class="img_bg_camera">
-		      <p>效果预览</p>
-		      <img :src="camerainfo.imgSrc" alt class="tx_img" />
-		</div>
-
-		<div slot="footer">
-			<el-row :gutter="10">
-				<el-col :span="3">
-					<el-button type="info" class="grid-content ep-bg-purple" @click="setImage">拍照</el-button>
-				</el-col>
-				<el-col :span="3">
-					<el-button class="grid-content ep-bg-purple" v-model="camerainfo.open" @click="getCompetence" icon="el-icon-video-camera" size="small">打开摄像头</el-button>
-				</el-col>
-				<el-col :span="3">
-					<el-button class="grid-content ep-bg-purple" v-model="camerainfo.open" @click="stopNavigator" icon="el-icon-switch-button" size="small">关闭摄像头</el-button>
-				</el-col>
-				<el-col :span="3">
-					<el-button class="grid-content ep-bg-purple" @click="resetCanvas" icon="el-icon-refresh" size="small">重置</el-button>
-				</el-col>
-				<el-col :span="3">
-					<el-button class="grid-content ep-bg-purple" @click="cancel" icon="el-icon-circle-close" size="small">取消</el-button>
-				</el-col>
-				<el-col :span="3">
-					<el-button class="grid-content ep-bg-purple" @click="onUpload" :loading="camerainfo.loading" type="primary" icon="el-icon-upload2" size="small">上传</el-button>
-				</el-col>
-			</el-row>
-		</div>
-		
-	</el-dialog>
-	
+	<div class="camera-box" style="width: 900px;">
+	    <el-row :gutter="20">
+	      <el-col :span="12">
+	        <div style="text-align: center;font-size: 14px;font-weight: bold;margin-bottom: 10px;">摄像头</div>
+	        <!-- 这里就是摄像头显示的画面 -->
+	        <video id="videoCamera" width="400" height="300"></video>
+	        <div class="iCenter" >
+				<el-button type='primary' size='small' @click="getCompetence" style="margin-top: 10px;">打开摄像头</el-button>
+				<el-button type='primary' size='small' :icon="Camera" @click="setImage" style="margin-top: 10px;">拍 照</el-button>
+				<el-button type='primary' size='small' @click="stopNavigator" style="margin-top: 10px;">关闭摄像头</el-button>
+			</div>
+	      </el-col>
+	      <el-col :span="12">
+	        <div style="text-align: center;font-size: 14px;font-weight: bold;margin-bottom: 10px;">拍摄效果</div>
+	        <!-- 这里是点击拍照显示的图片画面 -->
+	        <canvas id='canvasCamera' width='400' height='300' style="display: block;"></canvas>
+			<el-form>
+				<el-form-item>
+					<el-button :icon="Check" type='primary' size='small' @click="onUpload" style="margin-top: 10px;">保存</el-button>
+				</el-form-item>
+			</el-form>
+	      </el-col>
+	    </el-row>
+	</div>	
 </template>
 
 <script setup lang="ts">
-import { ref, reactive} from 'vue';
-
-let dialogVisual = localStorage.getItem("ms_quickLogin") === "true" ? true:false;
-
-const cancel = () => {
-	localStorage.setItem("ms_quickLogin", "false");
-}
-
+import { ref, reactive, onBeforeUnmount , onUnmounted, onBeforeMount, onMounted} from 'vue';
+import { ElMessageBox } from 'element-plus'
+import { Login, uploadImg } from '../api/index'
+import { Camera ,CaretBottom,Check } from '@element-plus/icons-vue'
 interface cameraInfo{
 	//dialogVisible: Boolean,//弹窗
 	open: Boolean,//控制摄像头
@@ -58,7 +41,6 @@ interface cameraInfo{
 	videoWidth: any,
 	videoHeight: any,
 };
-
 
 const camerainfo = reactive<cameraInfo>({
 	//dialogVisible: true,//弹窗
@@ -72,11 +54,33 @@ const camerainfo = reactive<cameraInfo>({
 	videoHeight: 400,
 });
 
+const props = defineProps({
+	quickLogin:{
+		type: Boolean,
+		default:false
+	}
+});
+
+const emits = defineEmits(["changequickLogin"]);
+
+onMounted(() => {
+	getCompetence();
+	console.log(props.quickLogin);
+})
+
+onBeforeUnmount(() => {
+	camerainfo.open=false;
+	camerainfo.loading=false;
+	camerainfo.imgSrc="";
+	camerainfo.thisCancas=null;
+	camerainfo.thisVideo=null;
+	camerainfo.thisContext=null;
+});
+
 //const img_path = require('../assets/img/user');
 //打开摄像头
 const getCompetence = () => {
-	//camerainfo.dialogVisible=true;
-	camerainfo.open = false;
+	
 	camerainfo.thisCancas = document.getElementById("canvasCamera");
 	camerainfo.thisContext = camerainfo.thisCancas.getContext("2d");
 	camerainfo.thisVideo = document.getElementById("videoCamera");
@@ -121,28 +125,39 @@ const getCompetence = () => {
 	}).catch(err => {
 		console.log(err);
 	});
+	camerainfo.open = true;
 };
 //关闭摄像头
 const stopNavigator = () => {
-    camerainfo.thisVideo.srcObject.getTracks()[0].stop();
-	console.log("props.showDialog="+props.showDialog);
+	camerainfo.open=false;
+	camerainfo.thisVideo.srcObject.getTracks()[0].stop();
 };
 
 //拍照
-const setImage = () => {
-	// canvas画图
-	camerainfo.thisContext.drawImage(
-		camerainfo.thisVideo,
-		0,
-		0,
-		camerainfo.videoWidth,
-		camerainfo.videoHeight
-	);
-	// 获取图片base64链接
-	var image = camerainfo.thisCancas.toDataURL("image/png");
+const setImage = (done: () => void) => {
+	if(camerainfo.open){
+		// canvas画图
+		camerainfo.thisContext.drawImage(
+			camerainfo.thisVideo,
+			0,
+			0,
+			camerainfo.videoWidth,
+			camerainfo.videoHeight
+		);
+		// 获取图片base64链接
+		var image = camerainfo.thisCancas.toDataURL("image/png");
+		
+		camerainfo.imgSrc = image;//赋值并预览图片
+		//camerainfo.loading=true;
+	}
+	else{
+		ElMessageBox.confirm('你没有打开摄像头').then(() => {
+		    done()
+		}).catch(() => {
+		      // catch error
+		})
+	}
 	
-	camerainfo.imgSrc = image;//赋值并预览图片
-	console.log(camerainfo.imgSrc);
 };
 
  // base64转文件，此处没用到
@@ -171,23 +186,33 @@ const resetCanvas = () => {
 };
 
 
+const onUpload = (done: () => void) => {
+	if(camerainfo.imgSrc===""){
+		ElMessageBox.confirm('你没有拍照').then(() => {
+		    done()
+		}).catch(() => {
+		      // catch error
+		})
+	}
+	else{
+		let config = {
+		          headers:{'Content-Type':'multipart/form-data'}
+		        }; 
+		uploadImg(dataURLtoFile(camerainfo.imgSrc, "file"),config).then(res => {
+			console.log(res);
+		})
+		//emits("changequickLogin","ni");
+	}
+}
 
 </script>
 
 <style>
-	
-.el-row {
-	margin-bottom: 20px;
-}
-.el-row:last-child {
-	margin-bottom: 0;
-}
-.el-col {
-	border-radius: 4px;
-}
 
-.grid-content {
-	border-radius: 4px;
-	min-height: 36px;
+.el-form-item{
+	
+}
+.camera-box #canvas{
+border: 1px solid #DCDFE6;
 }
 </style>

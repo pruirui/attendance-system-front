@@ -20,3 +20,6 @@ export const GetCompany = (data :any) => {
     return request.post("http://10.6.12.158:5000/user/userInDepartment", data);
 };
 
+export const uploadImg = (data :any, config :any) => {
+	return request.post(path.baseUrl+path.uploadImg, {"file": data}, config);
+}

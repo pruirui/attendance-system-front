@@ -38,18 +38,10 @@
 				</div>
 				<p class="login-tips">Tips : 请输入你的账号和密码。</p>
 				
-				<el-button type= "primary" text @click="quickLogin = true">快速登录</el-button>
-				<el-dialog v-model="quickLogin" title="快速打卡登录" width="1000px">
-					<camera v-if="quickLogin" :quickLogin="quickLogin" @changequickLogin="getLoginUserData"></camera>
-					<template #footer>
-					      <span class="dialog-footer">
-					        <el-button @click="quickLogin = false">Cancel</el-button>
-					        <el-button type="primary" @click="quickLogin = false">
-					          Confirm
-					        </el-button>
-					      </span>
-					    </template>
-				</el-dialog>
+				<dialog-component>
+					<el-button type= "primary" text @click="quickLogin">快速登录</el-button>
+					<camera :showDialog="showDialog"></camera>
+				</dialog-component>
 			</el-form>
 		</div>
 	</div>
@@ -147,12 +139,14 @@ const registerUser = () => {
 	router.push('/register');
 };
 
-const quickLogin = ref(false);
+let showdialog = false;
 
-const getLoginUserData = (data) => {
-	quickLogin.value = false;
-	console.log(data);
-};
+let quickLogin = () => {
+	if(localStorage.getItem("ms_quickLogin")==="false") {
+		localStorage.setItem("ms_quickLogin", "true");
+		showdialog = true;
+	}
+}
 
 const tags = useTagsStore();
 tags.clearTags();
