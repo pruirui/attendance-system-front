@@ -50,3 +50,8 @@ export const grantUserHR = (HRuid: string, uid:string, departmentid:string) => {
     return request.post(path.baseUrl+path.grantUserHR,{departmentid, uid, HRuid});
 
 }
+
+export const queryMyApplications = (uid:string) => {
+    return request.post(path.baseUrl+path.queryMyApplications,{uid});
+
+}
