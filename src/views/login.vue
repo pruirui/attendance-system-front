@@ -39,16 +39,18 @@
 				<p class="login-tips">Tips : 请输入你的账号和密码。</p>
 				
 				<el-button type= "primary" text @click="quickLogin = true">快速登录</el-button>
-				<el-dialog v-model="quickLogin" title="快速打卡登录" width="1000px">
-					<camera v-if="quickLogin" :quickLogin="quickLogin" @changequickLogin="getLoginUserData"></camera>
-					<template #footer>
-					      <span class="dialog-footer">
-					        <el-button @click="quickLogin = false">Cancel</el-button>
-					        <el-button type="primary" @click="quickLogin = false">
-					          Confirm
-					        </el-button>
-					      </span>
-					    </template>
+				<el-dialog v-model="quickLogin" title="快速打卡登录" width="1100px" align-center destroy-on-close>
+						<camera v-if="quickLogin" :quickLogin="quickLogin" @changequickLogin="getLoginUserData"></camera>
+						<template #footer>
+						    <span class="dialog-footer">
+						        <el-button @click="quickLogin = false">Cancel</el-button>
+						        <el-button type="primary" @click="quickLogin = false">
+									Confirm
+						        </el-button>
+						    </span>
+						</template>
+					
+					
 				</el-dialog>
 			</el-form>
 		</div>
@@ -64,7 +66,6 @@ import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
 import { Lock, User } from '@element-plus/icons-vue';
 import { Login } from '../api/index'
-import quciklogindialog from './quicklogindialog.vue'
 import camera from './camera.vue'
 interface LoginInfo {
 	phone: string;
@@ -169,6 +170,9 @@ tags.clearTags();
 </script>
 
 <style scoped>
+.el-dialog-div{
+	height: 700px;
+}
 .login-wrap {
 	position: relative;
 	width: 100%;
@@ -222,7 +226,8 @@ tags.clearTags();
 	color: #fff;
 }
 .dialog-footer button:first-child {
-  margin-right: 10px;
+
+	margin-right: 10px;
 }
 
 </style>
