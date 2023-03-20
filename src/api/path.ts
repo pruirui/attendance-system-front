@@ -9,6 +9,7 @@ const path = {
 	createDepartment: "/HR/createDepartment",
 	queryDepartmentDetail: "/user/queryDepartmentDetail",
 	usersInDepartment: "/HR/usersInDepartment",
-	applyDeleteDepartment: "/HR/applyDeleteDepartment"
+	applyDeleteDepartment: "/HR/applyDeleteDepartment",
+	grantUserHR: "/HR/grantUserHR"
 }
 export default path;
