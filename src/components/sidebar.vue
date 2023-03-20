@@ -191,19 +191,7 @@ const items = [
         index: '/attendancemanagement',
         title: '考勤信息管理',
         permiss: '3',
-    },
-    {
-        icon: 'Warning',
-        index: '/permission',
-        title: '权限管理',
-        permiss: '3',
-    },
-    {
-        icon: 'Camera',
-        index: '/faceimport',
-        title: '人脸导入',
-        permiss: '4',
-    },
+    }
 ];
 
 const route = useRoute();
