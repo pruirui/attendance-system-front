@@ -247,14 +247,6 @@ const routes: RouteRecordRaw[] = [
 		},
 		component:() => import(/* webpackChunkName: "dashboard" */ '../views/register.vue'),
 	},
-	{
-		path: '/quicklogin',
-		name: 'quicklogin',
-		meta: {
-			title: '快速打卡登录',
-		},
-		component:() => import(/* webpackChunkName: "dashboard" */ '../views/quicklogindialog.vue'),
-	}
 	
 ];
 
