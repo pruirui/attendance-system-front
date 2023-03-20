@@ -5,7 +5,7 @@
 				<el-table :data="datas.unread" :show-header="false" style="width: 100%">
 					<el-table-column width="500">
 						<template #default="scope" >
-							<span class="message-title">[{{ scope.row.event }}]，发起人：{{scope.row.username}}， 部门名称：{{scope.row.departmentname}}</span>
+							<span class="message-title">[{{ scope.row.event }}]&nbsp;发起人:{{scope.row.sendername}}&nbsp;处理人:{{scope.row.processname}}&nbsp;部门名称:{{scope.row.departmentname}}</span>
 						</template>
 					</el-table-column>
 					<el-table-column  width="120">
@@ -21,8 +21,8 @@
 					<el-table-column prop="create_time" width="180"></el-table-column>
 					<el-table-column width="150" align="left">
 						<template #default="scope">
-							<el-button size="small" @click="handle(scope.id, '拒绝')">拒绝</el-button>
-							<el-button size="small" @click="handle(scope.id, '接受')">接受</el-button>
+							<el-button size="small" @click="handle(scope.row.id, '拒绝')">拒绝</el-button>
+							<el-button size="small" @click="handle(scope.row.id, '接受')">接受</el-button>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -35,7 +35,7 @@
 					<el-table :data="datas.read" :show-header="false" style="width: 100%">
 						<el-table-column width="500">
 							<template #default="scope">
-								<span class="message-title">[{{ scope.row.event }}]，处理人：{{scope.row.username}}， 部门名称：{{scope.row.departmentname}}</span>
+								<span class="message-title">[{{ scope.row.event }}]&nbsp;发起人:{{scope.row.sendername}}&nbsp;处理人:{{scope.row.processname}}&nbsp;部门名称:{{scope.row.departmentname}}</span>
 							</template>
 						</el-table-column>
 						<el-table-column width="120">
@@ -57,7 +57,7 @@
 					<el-table :data="datas.down" :show-header="false" style="width: 100%">
 						<el-table-column width="500">
 							<template #default="scope">
-								<span class="message-title">[{{ scope.row.event }}]，参与人：{{scope.row.username}}， 部门名称：{{scope.row.departmentname}}</span>
+								<span class="message-title">[{{ scope.row.event }}]&nbsp;发起人:{{scope.row.sendername}}&nbsp;处理人:{{scope.row.processname}}&nbsp;部门名称:{{scope.row.departmentname}}</span>
 							</template>
 						</el-table-column>
 						<el-table-column>
@@ -82,7 +82,7 @@
 import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Search, CirclePlusFilled,HelpFilled } from '@element-plus/icons-vue';
-import { queryMyApplications } from '../api/index';
+import { queryMyApplications,processMyApplications } from '../api/index';
 import { useRouter } from 'vue-router';
 
 interface DataTemplate{
@@ -99,6 +99,9 @@ interface DataTemplate{
 	description:string;
 	state:string;
 	makeup_clock:string;
+	sendername:string;
+	processname:string;
+
 }
 
 
@@ -106,49 +109,12 @@ interface DataTemplate{
 const message = ref('first');
 const datas = reactive({
 	unread: [
-		{	sender_id:'0',
-			process_id:'1',
-			name:'test',
-			departmentname:'腾讯',
-			department_id:'8',
-			content:'',
-			event:'hr邀请员工',
-			create_time:'2018-10-20 20:00:00',
-			apply_time:'2018-04-19 20:00:00',
-			description:'',
-			state:'',
-			makeup_clock:''
-		}
+		
 	],
 	read: [
-		{	sender_id:'0',
-			process_id:'1',
-			name:'test',
-			departmentname:'腾讯',
-			department_id:'8',
-			content:'',
-			event:'hr邀请员工',
-			create_time:'2018-10-20 20:00:00',
-			apply_time:'2018-04-19 20:00:00',
-			description:'',
-			state:'',
-			makeup_clock:''
-		}
+		
 	],
 	down: [
-		{	sender_id:'0',
-			process_id:'1',
-			name:'test',
-			departmentname:'腾讯',
-			department_id:'8',
-			content:'',
-			event:'hr邀请员工',
-			create_time:'2018-10-20 20:00:00',
-			apply_time:'2018-04-19 20:00:00',
-			description:'',
-			state:'',
-			makeup_clock:''
-		}
 	]
 });
 const uid = localStorage.getItem("ms_userId");
@@ -179,8 +145,15 @@ getData();
 
 
 const handle = (id:string, state:string) =>{
-	uid;
-	getData()
+	if(uid === null){
+		return;
+	}
+	console.log(id,state,uid)
+	processMyApplications(uid,id,state).then((res) => {
+		console.log(res);
+		ElMessage.success(res.data.msg);
+	})
+	//getData()
 } 
 
 
