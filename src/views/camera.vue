@@ -1,10 +1,10 @@
 <template>
-	<div class="camera-box" style="width: 1000px; height: 500;">
-	    <el-row :gutter="5">
-			<el-col :span="10">
-				<div style="text-align: center;font-size: 14px;font-weight: bold;margin-bottom: 10px;">摄像头</div>
+	<div class="camera-box" style="width: 1000px; ">
+	    <el-row :gutter="20">
+			<el-col :span="12">
+				<div style="text-align: center;font-size: 14px;font-weight: bold;margin-bottom: 10px; width: 400px;">摄像头{{"  "+camerainfo.Tips}}</div>
 				<!-- 这里就是摄像头显示的画面 -->
-				<video id="videoCamera" width="500" height="400"></video>
+				<video id="videoCamera" width="400" height="320"></video>
 				<div class="iCenter" >
 					<!-- <el-row type="flex" class="row-bg" justify="space-between">
 						<el-col :span="6">
@@ -23,14 +23,14 @@
 				</div>
 			</el-col>
 			
-			<el-col :span="4">
+			<!-- <el-col :span="4">
 				<div style="text-align: center;font-size: 14px;font-weight: bold;margin-bottom: 10px;">{{ camerainfo.Tips }}</div>
-			</el-col>
+			</el-col> -->
 			
-			<el-col :span="10">
-				<div style="text-align: center;font-size: 14px;font-weight: bold;margin-bottom: 10px;">拍摄效果</div>
+			<el-col :span="12">
+				<div style="text-align: center;font-size: 14px;font-weight: bold;margin-bottom: 10px; width: 400px;">拍摄效果</div>
 				<!-- 这里是点击拍照显示的图片画面 -->
-				<canvas id='canvasCamera' width='500' height='400' style="display: block;"></canvas>
+				<canvas id='canvasCamera' width='400' height='320' style="display: block;"></canvas>
 				<!-- <el-row class="row-bg" >
 					<el-col :span="6"> -->
 						<el-button :icon="Check" type='primary' size='small' @click="onUpload" style="margin-top: 10px;">保存</el-button>
@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onBeforeUnmount , onUnmounted, onBeforeMount, onMounted, camelize} from 'vue';
+import { ref, reactive, onBeforeUnmount , onMounted} from 'vue';
 import { usePermissStore } from '../store/permiss';
 import { ElMessageBox,ElMessage } from 'element-plus'
 import { Login, uploadImg } from '../api/index'
@@ -86,8 +86,8 @@ const camerainfo = reactive<cameraInfo>({
 	thisCancas: null,
 	thisContext: null,
 	thisVideo: null,
-	videoWidth: 500,
-	videoHeight: 400,
+	videoWidth: 400,
+	videoHeight: 320,
 });
 
 const props = defineProps({
@@ -119,9 +119,11 @@ onBeforeUnmount(() => {
 	camerainfo.thisContext=null;
 });
 
-function sleep(d){
-  for(var t = Date.now();Date.now() - t <= d;);
+function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
 }
+
+
 
 const initTrack = () => {
 	//camerainfo.thisCancas = document.getElementById("canvasCamera");
@@ -274,14 +276,30 @@ const setImage = () => {
 		var image = camerainfo.thisCancas.toDataURL("image/png");
 		
 		camerainfo.imgSrc = image;//赋值并预览图片
-		camerainfo.loading=true;
+		//camerainfo.loading=true;
 		if(camerainfo.TipsFlag&&camerainfo.faceFlag){
 			let config = {
 			          headers:{'Content-Type':'multipart/form-data'}
 			        }; 
 			uploadImg(dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config).then(res => {
 				console.log(res);
-			})
+				console.log(res.data["data"]);
+				if(res.data["data"]){	//打卡成功
+					ElMessage.success(res.data["msg"]);
+					camerainfo.loading=true;
+					emits("changequickLogin",res);
+					
+				}
+				else{
+					ElMessageBox.alert(res.data["msg"], 'Error');
+					(async function() {
+					  await sleep(2000);
+					  camerainfo.TipsFlag=false;
+					  camerainfo.faceFlag=false;
+					})();
+					
+				}
+			});
 		}
 	}
 	else{
@@ -328,7 +346,7 @@ const resetCanvas = () => {
 //上传图片
 const onUpload = () => {
 
-	if(camerainfo.imgSrc=""){
+	if(camerainfo.imgSrc===""){
 		console.log("null");
 		ElMessageBox.alert('你没有拍照', 'Error', {
 		    // if you want to disable its autofocus
@@ -348,16 +366,20 @@ const onUpload = () => {
 		        }; 
 		uploadImg(dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config).then(res => {
 			console.log(res);
-			if(res.data["code"]===-1){
-				ElMessageBox.alert('打卡成功', 'info', {
-				    confirmButtonText: 'OK',
-				    callback: (action: Action) => {
-				      ElMessage({
-				        type: 'info',
-				        message: `action: ${action}`,
-				      })
-				    },
-				});
+			if(res.data["data"]){	//打卡成功
+				ElMessage.success(res.data["msg"]);
+				camerainfo.loading=true;
+				emits("changequickLogin",res);
+				
+			}
+			else{
+				ElMessageBox.alert(res.data["msg"], 'Error');
+				(async function() {
+				  await sleep(2000);
+				  camerainfo.TipsFlag=false;
+				  camerainfo.faceFlag=false;
+				})();
+				
 			}
 		})
 		

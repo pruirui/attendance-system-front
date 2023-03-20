@@ -115,7 +115,7 @@
 // import VueAxios from 'vue-axios'
 // Vue.use(VueAxios, axios)
 
-import {GetCompany, GetEmployee} from "../api";
+//import {GetCompany, GetEmployee} from "../api/index";
 import * as moment from 'moment'
 
 export default {

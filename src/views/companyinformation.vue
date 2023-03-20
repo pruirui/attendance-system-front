@@ -81,14 +81,14 @@
         <el-button type="primary" @click="deleteCompany()" v-permiss="4">删除公司</el-button>
         <el-button type="primary" @click="router.push('/modifycompany')" v-permiss="4">修改公司信息</el-button>
 
-        <el-dialog :title="'为员工 '+user_current?.username+' 录入人脸'" v-model="visible" width="60%">
-			<div class="dialog">
-				
+        <el-dialog :title="'为员工 '+user_current?.username+' 录入人脸'" v-model="visible" width="1000px" destroy-on-close>
+			<div class="faceimp">
+				<faceimport :uid="user_current.id"></faceimport>
         	</div>
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="visible = false">取 消</el-button>
-					<el-button type="primary" @click="">确 定</el-button>
+					<el-button type="primary" @click="visible = false">确 定</el-button>
 				</span>
 			</template>
 		</el-dialog>
@@ -104,7 +104,7 @@ import {extractColorByName} from '../utils/util'
 import { Search, CirclePlusFilled,HelpFilled } from '@element-plus/icons-vue';
 import { useTagsStore } from '../store/tags';
 import {getDepartmentByDepartmentId, getAllUserByDepartmentId, deleteDepartmentById, grantUserHR} from '../api/index'
-
+import faceimport from './faceimport.vue'
 
 
 interface TableItem {
@@ -158,7 +158,6 @@ const closeThisTag = () => {
     }
 };
 
-
 if(uId === null){
 	ElMessage.error('未检测到用户登入，请登入！')
 	localStorage.clear();
@@ -168,7 +167,6 @@ if(departmentId === null){
     ElMessage.error('未检测到部门！');
     closeThisTag();
 }
-
 
 const getDepartment = ()=>{
     if(departmentId === null){
@@ -199,7 +197,7 @@ const getDepartment = ()=>{
     }).catch((e)=>{ElMessage.error("网路超时！");})
 }
 
-getDepartment()
+getDepartment();
 
 // 获取表格数据
 const getData = () => {
@@ -287,10 +285,9 @@ const deleteCompany = ()=>{
 		.catch(() => {});
 }
 
-
 const importface = (user: any)=>{
     user_current.value = user;
-    
+	visible.value = true;
 }
 
 </script>
@@ -338,7 +335,10 @@ const importface = (user: any)=>{
   .left {
 	width: 6.5rem;
   }
-  
+  .faceimp{
+  	height: 340px;
+  	width: 1000px;
+  }
   
   .card {
 	display: flex;

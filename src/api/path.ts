@@ -3,6 +3,7 @@ const path = {
 	login : "/user/login",
 	register: "/user/register",
 	uploadImg: "/user/clockIn",
+	uploadFaceImg: "/HR/createUserFace",
 	searchAllDepartment:'/user/queryAllDepartments',
 	getDepartment:'/user/userInDepartment',
 	userApplyDepartment:"/user/userApplyDepartment",

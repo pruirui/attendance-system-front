@@ -21,7 +21,9 @@ export const getDepartmentByUid = (uid: String) => {
 export const uploadImg = (data :any, config :any) => {
 	return request.post(path.baseUrl+path.uploadImg, {"file": data}, config);
 }
-
+export const uploadFaceImg = (data :any, uid: any, config :any) => {
+	return request.post(path.baseUrl+path.uploadFaceImg, {"file": data,"uid": uid}, config);
+}
 export const newerApplyDepartment = (departmentid:string, uid:string) =>{
     return request.post(path.baseUrl+path.userApplyDepartment, {departmentid, uid});
 }

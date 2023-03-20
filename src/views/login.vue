@@ -39,8 +39,11 @@
 				<p class="login-tips">Tips : 请输入你的账号和密码。</p>
 				
 				<el-button type= "primary" text @click="quickLogin = true">快速登录</el-button>
-				<el-dialog v-model="quickLogin" title="快速打卡登录" width="1100px" align-center destroy-on-close>
+				<el-dialog v-model="quickLogin" title="快速打卡登录" width="1000px" align-center destroy-on-close>
+					<div class="login-cav">
 						<camera v-if="quickLogin" :quickLogin="quickLogin" @changequickLogin="getLoginUserData"></camera>
+					</div>
+						
 						<template #footer>
 						    <span class="dialog-footer">
 						        <el-button @click="quickLogin = false">Cancel</el-button>
@@ -113,7 +116,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 			//验证通过，请求登录
 			Login(param).then(res =>{
 				
-				if(res.data["code"] == 1){
+				if(res.data["code"] === 1){
 					ElMessage.success('登录成功');
 					//console.log(typeof(res.data["data"]));
 					let tmp = res.data["data"];
@@ -160,9 +163,17 @@ const registerUser = () => {
 
 const quickLogin = ref(false);
 
-const getLoginUserData = (data :any) => {
+const getLoginUserData = (res :any) => {
 	quickLogin.value = false;
-	console.log(data);
+	let tmp = res.data["data"];
+	delete tmp.password;
+	localStorage.setItem('ms_userId', res.data["data"]['id'])
+	localStorage.setItem('ms_username', res.data["data"]["username"]);
+	localStorage.setItem("ms_userInfo", JSON.stringify(tmp));
+	const keys = permiss.defaultList[res.data["data"]["role"]];
+	permiss.handleSet(keys);
+	localStorage.setItem('ms_keys', JSON.stringify(keys));
+	router.push('/');
 };
 
 const tags = useTagsStore();
@@ -218,6 +229,11 @@ tags.clearTags();
 	font-size: 12px;
 	line-height: 30px;
 	color: #fff;
+}
+.login-cav{
+	
+	height: 340px;
+	width: 1000px;
 }
 
 .quciklogin-tips {
