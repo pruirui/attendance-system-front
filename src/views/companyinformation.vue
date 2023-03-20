@@ -56,7 +56,11 @@
                                 删除员工
                             </el-button>
                         </div>
-                        
+                        <div>
+                            <el-button text :icon="HelpFilled" @click="importface(scope.row)" v-permiss="4">
+                                人脸导入
+                            </el-button>
+                        </div>
                     </template>
                 </el-table-column>
             </el-table>
@@ -76,6 +80,18 @@
 
         <el-button type="primary" @click="deleteCompany()" v-permiss="4">删除公司</el-button>
         <el-button type="primary" @click="router.push('/modifycompany')" v-permiss="4">修改公司信息</el-button>
+
+        <el-dialog :title="'为员工 '+user_current?.username+' 录入人脸'" v-model="visible" width="60%">
+			<div class="dialog">
+				
+        	</div>
+			<template #footer>
+				<span class="dialog-footer">
+					<el-button @click="visible = false">取 消</el-button>
+					<el-button type="primary" @click="">确 定</el-button>
+				</span>
+			</template>
+		</el-dialog>
     </div>
 </template>
 
@@ -87,8 +103,7 @@ import { useRoute, useRouter } from 'vue-router';
 import {extractColorByName} from '../utils/util'
 import { Search, CirclePlusFilled,HelpFilled } from '@element-plus/icons-vue';
 import { useTagsStore } from '../store/tags';
-import {getDepartmentByDepartmentId, getAllUserByDepartmentId, deleteDepartmentById} from '../api/index'
-
+import {getDepartmentByDepartmentId, getAllUserByDepartmentId, deleteDepartmentById, grantUserHR} from '../api/index'
 
 
 
@@ -128,6 +143,8 @@ const router = useRouter()
 const route = useRoute();
 const tags = useTagsStore();
 const visible = ref(false);
+const user_current = ref<TableItem>()
+
 // 关闭单个标签
 const closeThisTag = () => {
     let index = tags.list.length - 1;
@@ -206,9 +223,21 @@ const handle= (idx:number, user: any, operation: number)=>{
 		    type: 'warning'
 	    })
 		.then(() => {
-
-			ElMessage.success('授权成功！');
-            tableData.value[idx].role = 'HR';
+            if(departmentId === null || uId === null){
+                ElMessage.error('未检测到部门或者无用户！');
+                closeThisTag();
+                return;
+            }
+            grantUserHR(uId, user.id, departmentId).then((res)=>{
+                if (res.status != 200) {
+                    ElMessage.error("出错了");
+                    return;
+                }
+                let data = res.data;
+                ElMessage.info(data.msg);
+                tableData.value[idx].role = 'HR';
+            });
+			
 		})
 		.catch(() => {});
     }
@@ -258,6 +287,11 @@ const deleteCompany = ()=>{
 		.catch(() => {});
 }
 
+
+const importface = (user: any)=>{
+    user_current.value = user;
+    
+}
 
 </script>
 

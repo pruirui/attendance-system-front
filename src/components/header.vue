@@ -9,7 +9,7 @@
 		<div class="header-right">
 			<div class="header-user-con">
 				<!-- 消息中心 -->
-				<div class="btn-bell" @click="router.push('/tabs')">
+				<div class="btn-bell" @click="router.push('/information')">
 					<el-tooltip
 						effect="dark"
 						:content="message ? `有${message}条未读消息` : `消息中心`"
@@ -31,9 +31,9 @@
 					</span>
 					<template #dropdown>
 						<el-dropdown-menu>
-							<a href="https://github.com/lin-xin/vue-manage-system" target="_blank">
+							<!-- <a href="https://github.com/lin-xin/vue-manage-system" target="_blank">
 								<el-dropdown-item>项目仓库</el-dropdown-item>
-							</a>
+							</a> -->
 							<el-dropdown-item command="user">个人中心</el-dropdown-item>
 							<el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
 						</el-dropdown-menu>
@@ -44,19 +44,36 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useSidebarStore } from '../store/sidebar';
 import { useRouter } from 'vue-router';
 import imgurl from '../assets/img/img.jpg';
+import { queryMyApplications } from '../api';
+import { ElMessage} from 'element-plus';
 
 const username: string | null = localStorage.getItem('ms_username');
-const message: number = 2;
+const uid = localStorage.getItem('ms_userId');
+const message =  ref(0);
 
 const sidebar = useSidebarStore();
 // 侧边栏折叠
 const collapseChage = () => {
 	sidebar.handleCollapse();
 };
+const getData = ()=>{
+	if(uid === null){
+		return;
+	}
+	queryMyApplications(uid).then((res)=>{
+		console.log(res)
+		if(res.status  != 200){
+			ElMessage.error("出错了");
+		}
+		message.value = res.data.data.read.length + res.data.data.unread.length
+	})
+}
+
+getData();
 
 onMounted(() => {
 	if (document.body.clientWidth < 1500) {
@@ -69,6 +86,7 @@ const router = useRouter();
 const handleCommand = (command: string) => {
 	if (command == 'loginout') {
 		localStorage.removeItem('ms_username');
+		localStorage.removeItem('ms_userId')
 		router.push('/login');
 	} else if (command == 'user') {
 		router.push('/user');

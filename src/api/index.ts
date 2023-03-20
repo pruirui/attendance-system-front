@@ -45,3 +45,13 @@ export const getAllUserByDepartmentId = (departmentid: string, querystring:strin
 export const deleteDepartmentById = (departmentid: string, uid:string) => {
     return request.post(path.baseUrl+path.applyDeleteDepartment,{departmentid, uid});
 }
+
+export const grantUserHR = (HRuid: string, uid:string, departmentid:string) => {
+    return request.post(path.baseUrl+path.grantUserHR,{departmentid, uid, HRuid});
+
+}
+
+export const queryMyApplications = (uid:string) => {
+    return request.post(path.baseUrl+path.queryMyApplications,{uid});
+
+}
