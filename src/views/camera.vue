@@ -18,7 +18,7 @@
 						</el-col>
 					</el-row> -->
 					<el-button type='primary' size='small' @click="getCompetence" style="margin-top: 10px;">打开摄像头</el-button>
-					<el-button type='primary' size='small' :icon="Camera" @click="setImage" style="margin-top: 10px;">拍    照</el-button>
+					<el-button type='primary' size='small' :icon="Camera" @click="setImage" style="margin-top: 10px;">人脸拍照</el-button>
 					<el-button type='primary' size='small' @click="stopNavigator" style="margin-top: 10px;">关闭摄像头</el-button>
 				</div>
 			</el-col>
@@ -33,7 +33,7 @@
 				<canvas id='canvasCamera' width='400' height='320' style="display: block;"></canvas>
 				<!-- <el-row class="row-bg" >
 					<el-col :span="6"> -->
-						<el-button :icon="Check" type='primary' size='small' @click="onUpload" style="margin-top: 10px;">保存</el-button>
+						<el-button :icon="Check" type='primary' size='small' @click="onUpload" style="margin-top: 10px;">打卡登录</el-button>
 				<!-- 	</el-col >
 				</el-row> -->
 			</el-col>
@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onBeforeUnmount , onMounted} from 'vue';
+import { ref, reactive, onBeforeUnmount , onMounted, camelize} from 'vue';
 import { usePermissStore } from '../store/permiss';
 import { ElMessageBox,ElMessage } from 'element-plus'
 import { Login, uploadImg } from '../api/index'
@@ -55,7 +55,7 @@ import "../assets/js/mouth-min.js"
 import { setActivePinia } from 'pinia';
 
 interface cameraInfo{
-	//dialogVisible: Boolean,//弹窗
+	countNum: any,//计数器
 	open: Boolean,//控制摄像头
 	loading: Boolean,//上传
 	imgSrc: String,
@@ -73,11 +73,11 @@ interface cameraInfo{
 };
 
 const camerainfo = reactive<cameraInfo>({
-	//dialogVisible: true,//弹窗
+	countNum: 0,//计数器
 	open: false,//控制摄像头
 	loading: false,//上传
 	imgSrc: "",
-	Tips: "人脸识别中...",
+	Tips: "未检测到人脸",
 	TipsFlag: false,
 	faceFlag: false,
 	//streamIns: null,
@@ -105,10 +105,11 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
 	stopNavigator();
+	camerainfo.countNum=0;
 	camerainfo.open=false;
 	camerainfo.loading=false;
 	camerainfo.imgSrc="";
-	camerainfo.Tips="人脸识别中...";
+	camerainfo.Tips="未检测到人脸";
 	camerainfo.TipsFlag=false;
 	camerainfo.faceFlag=false;
 	//camerainfo.streamIns=null;
@@ -142,7 +143,7 @@ const initTrack = () => {
 			camerainfo.thisContext.clearRect(0,0, camerainfo.thisCancas.width, camerainfo.thisCancas.height);
 			
 			if(event.data.length === 0){
-				camerainfo.Tips = "未检测到人脸";
+				camerainfo.Tips = "人脸识别中...";
 			}
 			else if(event.data.length === 1){
 				if(!camerainfo.TipsFlag){
@@ -151,21 +152,26 @@ const initTrack = () => {
 						camerainfo.thisContext.strokeStyle = '#ff7146'
 						camerainfo.thisContext.fillStyle = '#ff7146'
 					});
-					if(!camerainfo.faceFlag){
-						
-						camerainfo.Tips = "检测成功，请保持两秒不动";
-						sleep(500);
-					}
 					
 					if(!camerainfo.faceFlag){
+						(async function() {
+							await sleep(500);
+							camerainfo.Tips = "检测成功，请保持两秒不动";
+						})();
+						
 						camerainfo.faceFlag=true;
 						//camerainfo.Tips = "检测成功，请保持两秒不动";
+						(async function() {
+							await sleep(900);
+							camerainfo.Tips = "拍照中...";
+							
+						})();
 						
-						camerainfo.Tips = "拍照中...";
-						sleep(500);
 						setTimeout(() => {
 							camerainfo.TipsFlag = true;
+							
 							setImage();
+							
 							camerainfo.Tips = "拍照成功";
 						}, 1000);
 					}
@@ -173,24 +179,10 @@ const initTrack = () => {
 			}
 			else{
 				if(!camerainfo.TipsFlag){
-					// ElMessageBox.alert('只能对一个人脸检测', 'Error', {
-					//     // if you want to disable its autofocus
-					//     // autofocus: false,
-					//     confirmButtonText: 'OK',
-					//     callback: (action: Action) => {
-					//       ElMessage({
-					//         type: 'error',
-					//         message: `action: ${action}`,
-					//       })
-					//     },
-					// });
 					ElMessage.error('只能对一个人脸检测.');
 				}
 			}
 		}
-
-		
-		
 	});
 };
 
@@ -246,7 +238,7 @@ const getCompetence = () => {
 		setTimeout(() => {
 			camerainfo.thisVideo.play()
 			initTrack()
-		},100);
+		},10);
 	}).catch(err => {
 		handleError();
 		console.log(err);
@@ -263,6 +255,7 @@ const stopNavigator = () => {
 
 //拍照
 const setImage = () => {
+	
 	if(camerainfo.open){
 		// canvas画图
 		camerainfo.thisContext.drawImage(
@@ -274,10 +267,12 @@ const setImage = () => {
 		);
 		// 获取图片base64链接
 		var image = camerainfo.thisCancas.toDataURL("image/png");
-		
+		camerainfo.countNum += 1;
+		if(camerainfo.countNum>2){
+			camerainfo.Tips = "拍照成功";
+		}
 		camerainfo.imgSrc = image;//赋值并预览图片
-		//camerainfo.loading=true;
-		if(camerainfo.TipsFlag&&camerainfo.faceFlag){
+		if(camerainfo.TipsFlag&&camerainfo.faceFlag&&camerainfo.countNum<=2){
 			let config = {
 			          headers:{'Content-Type':'multipart/form-data'}
 			        }; 
@@ -288,31 +283,38 @@ const setImage = () => {
 					ElMessage.success(res.data["msg"]);
 					camerainfo.loading=true;
 					emits("changequickLogin",res);
-					
 				}
 				else{
-					ElMessageBox.alert(res.data["msg"], 'Error');
-					(async function() {
-					  await sleep(2000);
-					  camerainfo.TipsFlag=false;
-					  camerainfo.faceFlag=false;
-					})();
-					
+					if(camerainfo.countNum<2){
+						ElMessageBox.alert(res.data["msg"], 'Error',{
+							center: true,
+							type: 'error'
+						});
+						(async function() {
+						  await sleep(2000);
+						  camerainfo.TipsFlag=false;
+						  camerainfo.faceFlag=false;
+						})();
+					}
+					else{
+						ElMessageBox.alert(
+						    '你的自动人脸打卡检测已失败2次！<br/>'+"请你手动打卡登录!",
+						    'Error',
+						    {
+						      dangerouslyUseHTMLString: true,
+							  type: 'error',
+							  center: true
+						    }
+						)
+						//ElMessageBox.alert(res.data["msg"]+"请你手动打卡登录!", 'Error');
+						camerainfo.Tips = "请你手动拍照";
+					}
 				}
 			});
 		}
 	}
 	else{
-		// ElMessageBox.alert('请打开摄像头', 'Error', {
-		//     confirmButtonText: 'OK',
-		//     callback: (action: Action) => {
-		//       ElMessage({
-		//         type: 'error',
-		//         message: `action: ${action}`,
-		//       })
-		//     },
-		// });
-		ElMessage.error('请打开摄像头.');
+		ElMessage.error('你没有打开摄像头，请打开摄像头.');
 	}
 	
 };
@@ -347,7 +349,7 @@ const resetCanvas = () => {
 const onUpload = () => {
 
 	if(camerainfo.imgSrc===""){
-		console.log("null");
+
 		ElMessageBox.alert('你没有拍照', 'Error', {
 		    // if you want to disable its autofocus
 		    // autofocus: false,
@@ -373,16 +375,13 @@ const onUpload = () => {
 				
 			}
 			else{
-				ElMessageBox.alert(res.data["msg"], 'Error');
-				(async function() {
-				  await sleep(2000);
-				  camerainfo.TipsFlag=false;
-				  camerainfo.faceFlag=false;
-				})();
-				
+				ElMessageBox.alert(res.data["msg"], 'Error',{
+					center: true,
+					type: 'error'
+				});
+				camerainfo.Tips = "请你手动拍照";
 			}
 		})
-		
 	}
 }
 

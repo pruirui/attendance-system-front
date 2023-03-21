@@ -290,6 +290,11 @@ const importface = (user: any)=>{
 	visible.value = true;
 }
 
+const changevisible = () => {
+	visible.value=false;
+}
+
+
 </script>
 
 

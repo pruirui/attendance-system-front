@@ -16,7 +16,7 @@
 				<div style="text-align: center;font-size: 14px;font-weight: bold;margin-bottom: 10px; width: 400px;">拍摄效果</div>
 				<!-- 这里是点击拍照显示的图片画面 -->
 				<canvas id='canvasCamera' width='400' height='320' style="display: block;"></canvas>
-					<el-button :icon="Check" type='primary' size='small' @click="onUpload" style="margin-top: 10px;">保存</el-button>
+					<el-button :icon="Check" type='primary' size='small' @click="onUpload" style="margin-top: 10px;">上传人脸信息</el-button>
 			</el-col>
 	    </el-row>
 	</div>	
@@ -24,14 +24,14 @@
   
   
 <script setup lang="ts">
-import { ref, reactive, onBeforeUnmount , onMounted} from 'vue';
+import { reactive, onBeforeUnmount , onMounted} from 'vue';
 import { Camera ,Check } from '@element-plus/icons-vue'
 import { ElMessageBox,ElMessage } from 'element-plus'
 import type {Action} from 'element-plus'
 import { uploadFaceImg } from '../api/index'
 
 const props = defineProps(['uid']);
-
+const emits = defineEmits(['changevisible']);
 
 interface cameraInfo{
 	open: Boolean,//控制摄像头
@@ -176,15 +176,18 @@ const onUpload = () => {
 		let config = {
 		          headers:{'Content-Type':'multipart/form-data'}
 		        }; 
-		console.log(props.uid);
 		uploadFaceImg(dataURLtoFile(camerainfo.imgSrc, "file.jpg"),props.uid, config).then(res => {
 			console.log(res);
-			if(res.data["data"]){	//打卡成功
+			if(res.data["code"] === 1){	//人脸上传成功
 				ElMessage.success(res.data["msg"]);
 				camerainfo.loading=true;
+				emits('changevisible');
 			}
 			else{
-				ElMessageBox.alert(res.data["msg"], 'Error');
+				ElMessageBox.alert(res.data["msg"], 'Error',{
+					center: true,
+					type: 'error'
+				});
 			}
 		});
 	}

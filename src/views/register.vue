@@ -49,8 +49,10 @@
 				<div class="register-btn">
 					<el-button type="primary" @click="submitForm(register)">注册</el-button>
 				</div>
-				
-				<p class="register-tips">Tips : 请输入你的账号和密码。</p>
+				<li class="register-tips">
+					<router-link to="/login">返回首页</router-link>
+				</li>
+				<!-- <p class="register-tips">Tips : 请输入你的账号和密码。</p> -->
 			</el-form>
 		</div>
 	</div>
@@ -87,11 +89,12 @@ const rules: FormRules = {
 			message: '请输入用户名',
 			trigger: 'blur'
 		},
-		{ 	//用户名正则，4到16位（字母，数字，下划线，减号）
-			pattern:/^[\w\u4E00-\u9FA5]{4,20}$/,
-			min: 4, max: 16,
+		{ 	//用户名正则，6到12位（字母，数字，下划线，减号）
+			pattern:/^[\u4e00-\u9fa5a-zA-Z0-9]{1,8}$/,
+
+			min: 1, max: 8,
 			transform(value){return value.trim()}, 
-			message: "请输入4到16位字母、数字、下划线的组合", 
+			message: "请输入1到8位中文、字母、数字的组合", 
 			trigger: "blur" ,
 		},
 	],
