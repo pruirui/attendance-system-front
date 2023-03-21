@@ -60,8 +60,8 @@ interface cameraInfo{
 	loading: Boolean,//上传
 	imgSrc: String,
 	Tips: String,
-	TipsFlag: Boolean,
-	faceFlag: Boolean,
+	TipsFlag: Boolean,//false 追踪人脸，true不追踪
+	faceFlag: Boolean,//false 拍照，true不拍照
 	//streamIns: any,
 	tracker: any,	//人脸追踪
 	trackertask: any,
