@@ -5,7 +5,7 @@
 				<el-select v-model="query.address" placeholder="地址" class="handle-select mr10">
 					<el-option v-for="p in provinces" :label="p" :value="p" ></el-option>
 				</el-select>
-				<el-input v-model="query.departmentName" placeholder="公司名" class="handle-input mr10"></el-input>
+				<el-input v-model="query.departmentName" placeholder="公司名或者用户名" class="handle-input mr10"></el-input>
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
 				<!-- <el-button type="primary" :icon="Plus">新增</el-button> -->
 			</div>

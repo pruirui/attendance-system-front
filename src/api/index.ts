@@ -57,3 +57,7 @@ export const queryMyApplications = (uid:string) => {
     return request.post(path.baseUrl+path.queryMyApplications,{uid});
 
 }
+
+export const processMyApplications = (uid:string, id:string, state:string) =>{
+    return request.post(path.baseUrl+path.processMyApplications,{uid, id, state});
+}

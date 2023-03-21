@@ -12,6 +12,7 @@ const path = {
 	usersInDepartment: "/HR/usersInDepartment",
 	applyDeleteDepartment: "/HR/applyDeleteDepartment",
 	grantUserHR: "/HR/grantUserHR",
-	queryMyApplications: "/user/queryMyApplications"
+	queryMyApplications: "/user/queryMyApplications",
+	processMyApplications:"/user/processMyApplications"
 }
 export default path;
