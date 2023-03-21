@@ -83,7 +83,7 @@
 
         <el-dialog :title="'为员工 '+user_current?.username+' 录入人脸'" v-model="visible" width="1000px" destroy-on-close>
 			<div class="faceimp">
-				<faceimport :uid="user_current.id"></faceimport>
+				<faceimport :uid="user_current.id"  @changevisible="changevisible"></faceimport>
         	</div>
 			<template #footer>
 				<span class="dialog-footer">
@@ -289,6 +289,11 @@ const importface = (user: any)=>{
     user_current.value = user;
 	visible.value = true;
 }
+
+const changevisible = () => {
+	visible.value=false;
+}
+
 
 </script>
 
