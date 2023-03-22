@@ -44,7 +44,7 @@ interface cameraInfo{
 	videoWidth: any,
 	videoHeight: any,
 };
-  
+
 const camerainfo = reactive<cameraInfo>({
 	open: false,//控制摄像头
 	loading: false,//上传
