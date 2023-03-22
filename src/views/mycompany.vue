@@ -1,6 +1,9 @@
 <template>
 <div>
+  
     <template v-if:="items.length === 0">
+      <el-button type="primary" @click="router.push('/createcompany')" v-permiss="0">创建公司</el-button>
+      <el-button type="primary" @click="router.push('/companysearch')" v-permiss="1">搜索公司</el-button>
         <el-empty style="align-self:center" description="还未加入公司呢！" />
       </template>
     <template v-else>
@@ -24,9 +27,10 @@
                     </div>
                 </div>
         </div>
+        <el-button type="primary" @click="router.push('/createcompany')" v-permiss="0">创建公司</el-button>
+        <el-button type="primary" @click="router.push('/companysearch')" v-permiss="1">搜索公司</el-button>
     </template>
-    <el-button type="primary" @click="router.push('/createcompany')" v-permiss="0">创建公司</el-button>
-    <el-button type="primary" @click="router.push('/companysearch')" v-permiss="1">搜索公司</el-button>
+   
 </div>
   
 </template>

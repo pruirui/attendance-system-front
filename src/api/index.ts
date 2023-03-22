@@ -62,7 +62,33 @@ export const queryMyApplications = (uid:string) => {
 export const processMyApplications = (uid:string, id:string, state:string) =>{
     return request.post(path.baseUrl+path.processMyApplications,{uid, id, state});
 }
+<<<<<<< HEAD
 
 export const getUserClockinfo = (now_month: any, uid: any) => {
 	return request.post(path.baseUrl+path.userClockData, {"month":now_month, "uid":uid});
+=======
+export const updateDepartConfig = (departmentid:string, departmentName: string, HRuid: string, description: string, hourPay: string, workOverPay: string, workOverLimit: string, startTime: string, endTime: string, 
+    workdays: Array<string>,
+    phone:string,
+    address:string,
+    rmb:string,
+    createTime:string) =>{
+    return request.post(path.baseUrl+path.updateDepartConfig,{departmentid, departmentName,HRuid,description,hourPay,workOverPay,workOverLimit,startTime,endTime,workdays,phone,address,rmb,createTime});
+}
+
+export const queryAllUsers = (querystring:string, pageIndex:number, pageSize:number) => {
+    return request.post(path.baseUrl+path.queryAllUsers,{querystring, pageIndex, pageSize});
+}
+
+export const inviteUserJoinDepart = (HRuid: string, uid:string, departmentid:string) => {
+    return request.post(path.baseUrl+path.inviteUserJoinDepart,{departmentid, uid, HRuid});
+}
+
+export const userBaseData = (uid:string)=>{
+    return request.post(path.baseUrl+path.userBaseData, {uid});
+}
+
+export const dismissUserInDepart = (HRuid: string, uid:string, departmentid:string)=>{
+    return request.post(path.baseUrl+path.dismissUserInDepart, {HRuid,uid,departmentid})
+>>>>>>> 04e566698bcaf2356b959c820fb0d034d0da7cc4
 }

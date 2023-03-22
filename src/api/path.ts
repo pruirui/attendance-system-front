@@ -14,6 +14,14 @@ const path = {
 	grantUserHR: "/HR/grantUserHR",
 	queryMyApplications: "/user/queryMyApplications",
 	processMyApplications:"/user/processMyApplications",
+<<<<<<< HEAD
 	userClockData: "/user/userClockData",
+=======
+	updateDepartConfig : "/HR/updateDepartConfig",
+	queryAllUsers:"/HR/queryAllUsers",
+	inviteUserJoinDepart:"/HR/inviteUserJoinDepart",
+	userBaseData: "/user/userBaseData",
+	dismissUserInDepart:"/HR/dismissUserInDepart"
+>>>>>>> 04e566698bcaf2356b959c820fb0d034d0da7cc4
 }
 export default path;

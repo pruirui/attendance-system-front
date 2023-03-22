@@ -216,9 +216,15 @@ const cropImg = ref('');
 const dialogVisible = ref(false);
 const cropper: any = ref();
 
+
 const showDialog = () => {
 	dialogVisible.value = true;
 	imgSrc.value = avatarImg.value;
+	console.log(avatar)
+	console.log(imgSrc)
+	console.log(avatarImg)
+	console.log(cropImg)
+	console.log(cropper)
 };
 
 const setImage = (e: any) => {
@@ -228,9 +234,12 @@ const setImage = (e: any) => {
 	}
 	const reader = new FileReader();
 	reader.onload = (event: any) => {
-		dialogVisible.value = true;
 		imgSrc.value = event.target.result;
+		console.log('--------------')
+		console.log(imgSrc)
+		console.log(cropper)
 		cropper.value && cropper.value.replace(event.target.result);
+		console.log(cropper)
 	};
 	reader.readAsDataURL(file);
 };

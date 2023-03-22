@@ -82,8 +82,9 @@
 import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Search, CirclePlusFilled,HelpFilled } from '@element-plus/icons-vue';
-import { queryMyApplications,processMyApplications } from '../api/index';
+import { queryMyApplications,processMyApplications,userBaseData } from '../api/index';
 import { useRouter } from 'vue-router';
+import { usePermissStore } from '../store/permiss';
 
 interface DataTemplate{
 	id:string;
@@ -152,6 +153,27 @@ const handle = (id:string, state:string) =>{
 	processMyApplications(uid,id,state).then((res) => {
 		console.log(res);
 		ElMessage.success(res.data.msg);
+		if(state === '接受'){
+			userBaseData(uid).then(response =>{
+				const permiss = usePermissStore();//权限管理
+
+				if(response.status != 200){
+					ElMessage.error('网络超时，请重新登入');
+					router.push('/login')
+					return;
+				}
+				let tmp = response.data["data"];
+				if(tmp.role != localStorage.getItem("ms_role")){
+					localStorage.setItem("ms_role",tmp.role )
+					const keys = permiss.defaultList[tmp.role];
+					permiss.handleSet(keys);
+					localStorage.setItem('ms_keys', JSON.stringify(keys));
+					router.push('/');
+				}
+				
+			});
+		}
+		getData()
 	})
 	//getData()
 } 

@@ -5,7 +5,7 @@
 			<el-icon v-if="sidebar.collapse"><Expand /></el-icon>
 			<el-icon v-else><Fold /></el-icon>
 		</div>
-		<div class="logo">智慧考勤系统</div>
+		<div class="logo">智慧考勤</div>
 		<div class="header-right">
 			<div class="header-user-con">
 				<!-- 消息中心 -->
@@ -100,7 +100,10 @@ const handleCommand = (command: string) => {
 	width: 100%;
 	height: 70px;
 	font-size: 22px;
-	color: #fff;
+	
+	border-bottom:1px solid #d2d1d1;
+	
+	color: #000000;
 }
 .collapse-btn {
 	display: flex;
@@ -152,7 +155,7 @@ const handleCommand = (command: string) => {
 	color: #fff;
 }
 .btn-bell .el-icon-lx-notice {
-	color: #fff;
+	color: #282828;
 }
 .user-name {
 	margin-left: 10px;
@@ -161,7 +164,7 @@ const handleCommand = (command: string) => {
 	margin-left: 20px;
 }
 .el-dropdown-link {
-	color: #fff;
+	color: #010101;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
