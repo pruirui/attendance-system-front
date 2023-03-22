@@ -9,7 +9,9 @@
             class="sidebar-el-menu"
             :default-active="onRoutes"
             :collapse="sidebar.collapse"
-
+            :background-color="background_color"
+            :text-color="text_color"
+            :active-text-color="active_text_color"
             unique-opened
             router
         >
@@ -55,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useSidebarStore } from '../store/sidebar';
 import { useRoute } from 'vue-router';
 
@@ -201,6 +203,22 @@ const route = useRoute();
 const onRoutes = computed(() => {
     return route.path;
 });
+const background_color = ref('')
+                    
+const text_color= ref('')
+const active_text_color=ref('')
+ 
+onMounted(() =>{
+    let role = localStorage.getItem('ms_role');
+    if(role === 'admin'){
+        background_color.value = '#324157'
+        text_color.value = '#bfcbd9'
+        active_text_color.value = '#20a0ff'
+    }
+})
+
+
+
 
 const sidebar = useSidebarStore();
 </script>

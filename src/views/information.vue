@@ -85,6 +85,7 @@ import { Search, CirclePlusFilled,HelpFilled } from '@element-plus/icons-vue';
 import { queryMyApplications,processMyApplications,userBaseData } from '../api/index';
 import { useRouter } from 'vue-router';
 import { usePermissStore } from '../store/permiss';
+import {useBellMessage} from '../store/bell'
 
 interface DataTemplate{
 	id:string;
@@ -120,6 +121,7 @@ const datas = reactive({
 });
 const uid = localStorage.getItem("ms_userId");
 const router = useRouter()
+const bell_msg = useBellMessage();
 
 if(uid === null){
 	ElMessage.error('未检测到用户登入，请登入！')
@@ -169,10 +171,12 @@ const handle = (id:string, state:string) =>{
 					permiss.handleSet(keys);
 					localStorage.setItem('ms_keys', JSON.stringify(keys));
 					router.push('/');
+
 				}
 				
 			});
 		}
+		bell_msg.handle()
 		getData()
 	})
 	//getData()

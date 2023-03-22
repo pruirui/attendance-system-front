@@ -1,5 +1,5 @@
 <template>
-	<div class="header">
+	<div class="header" :style="color">
 		<!-- 折叠按钮 -->
 		<div class="collapse-btn" @click="collapseChage">
 			<el-icon v-if="sidebar.collapse"><Expand /></el-icon>
@@ -9,21 +9,21 @@
 		<div class="header-right">
 			<div class="header-user-con">
 				<!-- 消息中心 -->
-				<div class="btn-bell" @click="router.push('/information')">
+				<div class="btn-bell" :style="btn_bell_color" @click="router.push('/information')">
 					<el-tooltip
 						effect="dark"
-						:content="message ? `有${message}条未读消息` : `消息中心`"
+						:content="bell_msg ? `有${bell_msg.count}条未读消息` : `消息中心`"
 						placement="bottom"
 					>
-						<i class="el-icon-lx-notice"></i>
+						<i class="el-icon-lx-notice" :style="btn_bell_color"></i>
 					</el-tooltip>
-					<span class="btn-bell-badge" v-if="message"></span>
+					<span class="btn-bell-badge" v-if="bell_msg.count"></span>
 				</div>
 				<!-- 用户头像 -->
 				<el-avatar class="user-avator" :size="30" :src="imgurl" />
 				<!-- 用户名下拉菜单 -->
 				<el-dropdown class="user-name" trigger="click" @command="handleCommand">
-					<span class="el-dropdown-link">
+					<span class="el-dropdown-link" :style="btn_bell_color">
 						{{ username }}
 						<el-icon class="el-icon--right">
 							<arrow-down />
@@ -50,6 +50,7 @@ import { useRouter } from 'vue-router';
 import imgurl from '../assets/img/img.jpg';
 import { queryMyApplications } from '../api';
 import { ElMessage} from 'element-plus';
+import {useBellMessage} from '../store/bell'
 
 const username: string | null = localStorage.getItem('ms_username');
 const uid = localStorage.getItem('ms_userId');
@@ -75,9 +76,20 @@ const getData = ()=>{
 
 getData();
 
+
+
+const color = ref('')
+const btn_bell_color = ref('')
+const bell_msg = useBellMessage()
+bell_msg.handle()
+
 onMounted(() => {
 	if (document.body.clientWidth < 1500) {
 		collapseChage();
+	}
+	if(localStorage.getItem('ms_role') === 'admin'){
+		color.value = 'color:aliceblue; background-color:#242f42';
+		btn_bell_color.value = 'color:#ffffff'
 	}
 });
 
@@ -92,7 +104,9 @@ const handleCommand = (command: string) => {
 		router.push('/user');
 	}
 };
+
 </script>
+<!-- 左边字体颜色header color -->
 <style scoped>
 .header {
 	position: relative;
@@ -103,8 +117,10 @@ const handleCommand = (command: string) => {
 	
 	border-bottom:1px solid #d2d1d1;
 	
-	color: #000000;
+	color: #0d0c12;
 }
+
+
 .collapse-btn {
 	display: flex;
 	justify-content: center;
