@@ -62,11 +62,11 @@ export const queryMyApplications = (uid:string) => {
 export const processMyApplications = (uid:string, id:string, state:string) =>{
     return request.post(path.baseUrl+path.processMyApplications,{uid, id, state});
 }
-<<<<<<< HEAD
+
 
 export const getUserClockinfo = (now_month: any, uid: any) => {
 	return request.post(path.baseUrl+path.userClockData, {"month":now_month, "uid":uid});
-=======
+
 export const updateDepartConfig = (departmentid:string, departmentName: string, HRuid: string, description: string, hourPay: string, workOverPay: string, workOverLimit: string, startTime: string, endTime: string, 
     workdays: Array<string>,
     phone:string,
