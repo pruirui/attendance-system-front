@@ -64,8 +64,11 @@ export const processMyApplications = (uid:string, id:string, state:string) =>{
 }
 
 
+
 export const getUserClockinfo = (now_month: any, uid: any) => {
 	return request.post(path.baseUrl+path.userClockData, {"month":now_month, "uid":uid});
+}
+
 
 export const updateDepartConfig = (departmentid:string, departmentName: string, HRuid: string, description: string, hourPay: string, workOverPay: string, workOverLimit: string, startTime: string, endTime: string, 
     workdays: Array<string>,
@@ -90,5 +93,4 @@ export const userBaseData = (uid:string)=>{
 
 export const dismissUserInDepart = (HRuid: string, uid:string, departmentid:string)=>{
     return request.post(path.baseUrl+path.dismissUserInDepart, {HRuid,uid,departmentid})
->>>>>>> 04e566698bcaf2356b959c820fb0d034d0da7cc4
 }

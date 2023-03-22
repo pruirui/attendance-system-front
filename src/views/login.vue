@@ -170,6 +170,7 @@ const getLoginUserData = (res :any) => {
 	localStorage.setItem('ms_userId', res.data["data"]['id'])
 	localStorage.setItem('ms_username', res.data["data"]["username"]);
 	localStorage.setItem("ms_userInfo", JSON.stringify(tmp));
+	localStorage.setItem('ms_role', res.data["data"]["role"]);
 	const keys = permiss.defaultList[res.data["data"]["role"]];
 	permiss.handleSet(keys);
 	localStorage.setItem('ms_keys', JSON.stringify(keys));
