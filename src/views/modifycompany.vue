@@ -11,9 +11,6 @@
                 <el-form-item label="注册资本(万元)" prop="rmb">
                     <el-input v-model="form.rmb"></el-input>
                 </el-form-item>
-                <el-form-item label="所在区域" prop="region">
-                    <el-cascader :options="regions" v-model="form.region"></el-cascader>
-                </el-form-item>
                  <el-form-item label="详细地址" prop="address">
                     <el-input v-model="form.address"></el-input>
                 </el-form-item>
@@ -86,7 +83,7 @@ import { reactive, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
 import { useRouter } from 'vue-router';
-import { createDepartment } from '../api';
+import { updateDepartConfig, getDepartmentByDepartmentId} from '../api';
 import {regions} from '../utils/util'
 
 const rules: FormRules = {
@@ -132,6 +129,7 @@ const rules: FormRules = {
 };
 const formRef = ref<FormInstance>();
 const form = reactive({
+    departmentid:'',
     departmentName: '',
     HRuid: '',
     description: '',
@@ -156,6 +154,37 @@ if(uId === null){
 	localStorage.clear();
 	router.push('/login')
 }
+const getData = ()=>{
+    if(departmentId===null){
+        return;
+    }
+    getDepartmentByDepartmentId(departmentId).then(res =>{
+        console.log(res);
+        if (res.status != 200) {
+            ElMessage.error("出错了");
+            return;
+        }
+        let data = res.data.data;
+        form.departmentid = data.departmentid
+        form.departmentName = data.departmentName
+        form.HRuid = data.HRuid
+        form.description = data.description
+        form.hourPay = data.hourPay
+        form.workOverPay = data.workOverPay
+        form.workOverLimit = data.workOverLimit
+        form.startTime = data.startTime
+        form.endTime = data.endTime
+        form.workdays = data.workdays
+        form.phone = data.phone
+        form.address = data.address
+        form.rmb = data.rmb
+        let length = data.rmb.length
+        form.rmb = data.rmb.substr(0, length-1)
+        form.createTime = data.createTime
+        console.log(form)
+    })
+}
+getData()
 
 // 提交
 const onSubmit = (formEl: FormInstance | undefined) => {
@@ -169,7 +198,7 @@ const onSubmit = (formEl: FormInstance | undefined) => {
             form.HRuid = uId;
             form.address = form.region.join('') +  form.address;
 
-            createDepartment(form.departmentName, form.HRuid, form.description, 
+            updateDepartConfig(form.departmentid, form.departmentName, form.HRuid, form.description, 
                 form.hourPay, form.workOverPay, form.workOverLimit, form.startTime,
                 form.endTime, form.workdays,form.phone, form.address, form.rmb, form.createTime).then((res) => {
                 if (res.status != 200) {
@@ -178,8 +207,8 @@ const onSubmit = (formEl: FormInstance | undefined) => {
                 }
                 let data = res.data;
                 if (data.code == 1) {
-                    ElMessage.info(data.msg);
-                    onReset(formRef.value);
+                    ElMessage.success(data.msg);
+                    getData();
                 } else {
                     ElMessage.error(data.msg);
                 }

@@ -133,7 +133,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 					// localStorage.setItem('ms_email', res.data["data"]["email"]);
 					// localStorage.setItem('ms_birthday', res.data["data"]["birthday"]);
 					// localStorage.setItem('ms_address', res.data["data"]["address"]);
-					// localStorage.setItem('ms_role', res.data["data"]["role"]);
+					localStorage.setItem('ms_role', res.data["data"]["role"]);
 					const keys = permiss.defaultList[res.data["data"]["role"]];
 					permiss.handleSet(keys);
 					localStorage.setItem('ms_keys', JSON.stringify(keys));
@@ -188,7 +188,7 @@ tags.clearTags();
 	position: relative;
 	width: 100%;
 	height: 100%;
-	background-image: url(../assets/img/login-bg.jpg);
+	background-image: url(../assets/img/p-bg.jpg);
 	background-size: 100%;
 }
 .ms-title {
@@ -206,7 +206,7 @@ tags.clearTags();
 	width: 350px;
 	margin: -190px 0 0 -175px;
 	border-radius: 5px;
-	background: rgba(255, 255, 255, 0.3);
+	background: rgba(255, 255, 255, 0.598);
 	overflow: hidden;
 }
 .ms-content {

@@ -30,7 +30,7 @@
             <el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
                 <el-table-column prop="username" label="用户名" ></el-table-column>
                 <el-table-column prop="phone" label="手机号"></el-table-column>
-                <el-table-column prop="gender" label="性别"></el-table-column>
+                <el-table-column prop="gender" label="性别"  width="80px"></el-table-column>
                 <el-table-column prop="email" label="邮箱">
                     <template #default="scope">{{ scope.row.email?scope.row.email:'无' }}</template>
                 </el-table-column>
@@ -40,8 +40,8 @@
                 <el-table-column prop="address" label="地址">
                     <template #default="scope">{{ scope.row.address?scope.row.address:'无' }}</template>
                 </el-table-column>
-                <el-table-column prop="role" label="角色" width="50">
-                    <template #default="scope">{{ scope.row.role === 'user'?'员工':scope.row.role }}</template>
+                <el-table-column prop="role" label="角色" width="100px">
+                    <template #default="scope">{{ scope.row.role === 'user'?'员工':scope.row.role === 'hr'?'HR': scope.row.role}}</template>
                 </el-table-column>
                 
                 <el-table-column label="操作" width="220" align="left">
@@ -52,7 +52,7 @@
                             </el-button>
                         </div>
                         <div>
-                            <el-button text :icon="HelpFilled" @click="handle(scope.$index, scope.row, 2)" v-permiss="4">
+                            <el-button text :icon="DeleteFilled" @click="handle(scope.$index, scope.row, 2)" v-permiss="4">
                                 删除员工
                             </el-button>
                         </div>
@@ -79,7 +79,8 @@
         </div>
 
         <el-button type="primary" @click="deleteCompany()" v-permiss="4">删除公司</el-button>
-        <el-button type="primary" @click="router.push('/modifycompany')" v-permiss="4">修改公司信息</el-button>
+        <el-button type="primary" @click="modifyCompany()" v-permiss="4">修改公司信息</el-button>
+        <el-button type="primary" @click="invite()" v-permiss="4">邀请员工加入公司</el-button>
 
         <el-dialog :title="'为员工 '+user_current?.username+' 录入人脸'" v-model="visible" width="1000px" destroy-on-close>
 			<div class="faceimp">
@@ -92,23 +93,69 @@
 				</span>
 			</template>
 		</el-dialog>
+
+
+        <el-dialog title="邀请用户加入公司" v-model="visible2" destroy-on-close>
+            
+            <div class="handle-box">
+				
+				<el-input v-model="query2.querystring" placeholder="员工名或者员工手机号" class="handle-input mr10"></el-input>
+				<el-button type="primary" :icon="Search" @click="handleSearch2">搜索</el-button>
+				<!-- <el-button type="primary" :icon="Plus">新增</el-button> -->
+			</div>
+            <el-scrollbar height="400px">
+                <el-card shadow="hover" class="usercard" v-for="item in inviteTable" @click="inviteUser(item)">
+                    <div class="info">
+                        <div class="info-image">
+                            <el-avatar :size="70" :src="path.baseUrl + item.headshot" />
+                        </div>
+                        <div class="userright">
+                            <div class="username"> <span style="font-size: large;">{{ item.username}}</span> </div>
+                            <div class="text2"> <span>手机号:</span> {{item.phone}}&nbsp;&nbsp;&nbsp;&nbsp;
+                                <template v-if="item.email">
+                                    <span >邮箱:</span>{{ item.email }}&nbsp;&nbsp;&nbsp;&nbsp;
+                                </template>
+                                <template v-if="item.address">
+                                    <span >地址:</span>{{ item.address}}&nbsp;&nbsp;&nbsp;&nbsp;
+                                </template>
+                            </div>
+                           
+                        </div>
+                    </div>
+                </el-card>
+            </el-scrollbar>
+			<div class="pagination">
+                <el-pagination
+                    background
+                    layout="total, prev, pager, next"
+                    :current-page="query2.pageIndex"
+                    :page-size="query2.pageSize"
+                    :total="totals2"
+                    :pager-count="4"
+                    @current-change="handlePageChange2"
+                ></el-pagination>
+            </div>
+		</el-dialog>
     </div>
 </template>
 
 <script setup lang="ts" name="baseform">
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
 import { useRoute, useRouter } from 'vue-router';
 import {extractColorByName} from '../utils/util'
-import { Search, CirclePlusFilled,HelpFilled } from '@element-plus/icons-vue';
+import { Search, CirclePlusFilled,HelpFilled, DeleteFilled} from '@element-plus/icons-vue';
 import { useTagsStore } from '../store/tags';
-import {getDepartmentByDepartmentId, getAllUserByDepartmentId, deleteDepartmentById, grantUserHR} from '../api/index'
+import {getDepartmentByDepartmentId, getAllUserByDepartmentId, deleteDepartmentById, grantUserHR, queryAllUsers, inviteUserJoinDepart, dismissUserInDepart} from '../api/index'
 import faceimport from './faceimport.vue'
+import Modifycompany from './modifycompany.vue';
+import path from '../api/path'
 
 
 interface TableItem {
 	id: string;
+    headshot:string;
 	username: string;
 	phone: string;
     gender:string;
@@ -134,15 +181,22 @@ const query = reactive({
 	pageIndex: 1,
 	pageSize: 10
 });
-
+const query2 = reactive({
+	querystring: '',
+	pageIndex: 1,
+	pageSize: 5
+});
 const tableData = ref<TableItem[]>([]);
-const totals = ref(1);
+const inviteTable = ref<TableItem[]>([]);
+const totals = ref(0);
+const totals2 = ref(0);
 const uId = localStorage.getItem("ms_userId");
 const departmentId = localStorage.getItem("departmentId");
 const router = useRouter()
 const route = useRoute();
 const tags = useTagsStore();
 const visible = ref(false);
+const visible2 = ref(false)
 const user_current = ref<TableItem>()
 
 // 关闭单个标签
@@ -213,6 +267,16 @@ const getData = () => {
 		totals.value = res.data.totals;
 	});
 };
+// 获取表格数据
+const getData2 = () => {
+
+    console.log(query2)
+	queryAllUsers(query2.querystring, query2.pageIndex, query2.pageSize).then(res => {
+        console.log(res)
+		inviteTable.value = res.data.data;
+		totals2.value = res.data.totals;
+	});
+};
 getData();
 
 const handle= (idx:number, user: any, operation: number)=>{
@@ -232,8 +296,8 @@ const handle= (idx:number, user: any, operation: number)=>{
                     return;
                 }
                 let data = res.data;
-                ElMessage.info(data.msg);
-                tableData.value[idx].role = 'HR';
+                ElMessage.success(data.msg);
+                getData();
             });
 			
 		})
@@ -244,9 +308,14 @@ const handle= (idx:number, user: any, operation: number)=>{
 		    type: 'warning'
 	    })
 		.then(() => {
-
-			ElMessage.success('已将删除信息发送给员工'+user.username+'，待其通过即可删除！');
-            tableData.value[idx].role = '正在离职';
+            if(uId === null || departmentId === null){
+                return false;
+            }
+            dismissUserInDepart(uId, user.id, departmentId).then(res =>{
+                console.log(res);
+                ElMessage.success(res.data.msg);
+            })
+			
 		})
 		.catch(() => {});
     }
@@ -257,10 +326,22 @@ const handleSearch = () => {
 	query.pageIndex = 1;
 	getData();
 };
+
+// 查询操作
+const handleSearch2 = () => {
+	query.pageIndex = 1;
+	getData2();
+};
+
 // 分页导航
 const handlePageChange = (val: number) => {
 	query.pageIndex = val;
 	getData();
+};
+// 分页导航
+const handlePageChange2 = (val: number) => {
+	query2.pageIndex = val;
+	getData2();
 };
 
 const deleteCompany = ()=>{
@@ -284,15 +365,55 @@ const deleteCompany = ()=>{
 		})
 		.catch(() => {});
 }
-
+const modifyCompany  = () => {
+    if(departmentId === null){
+        return;
+    }
+    localStorage.setItem('departmentId',departmentId);
+    router.push('/modifycompany');
+}
 const importface = (user: any)=>{
     user_current.value = user;
 	visible.value = true;
 }
 
+
+const inviteUser = (user:any)=>{
+    if(departmentId === null){
+        return;
+    }
+    ElMessageBox.confirm('确定邀请用户 '+user.username+' 到 '+singleDepartment.departmentName+' 吗？', '提示', {
+		    type: 'warning'
+	    })
+		.then(() => {
+            if(departmentId === null || uId === null){
+                ElMessage.error('未检测到部门或者无用户！');
+                closeThisTag();
+                return;
+            }
+            inviteUserJoinDepart(uId, user.id, departmentId).then((res)=>{
+                if (res.status != 200) {
+                    ElMessage.error("出错了");
+                    return;
+                }
+                ElMessage.success(res.data.msg);
+                getData2();
+            });
+			
+		})
+		.catch(() => {});
+}
+const invite = () =>{
+    visible2.value = true
+    getData2()
+}
+
 const changevisible = () => {
 	visible.value=false;
 }
+
+
+
 
 
 </script>
@@ -353,5 +474,31 @@ const changevisible = () => {
   }
  
 
+.info {
+    display: flex;
+	width: 100%;
+	gap: 1.3rem;
+	align-self: center;
+}
 
+.info-image {
+	position: relative;
+	width: 70px;
+	height: 70px;
+	background: #f8f8f8;
+	border: 1px solid #eee;
+	border-radius: 50px;
+	overflow: hidden;
+}
+.usercard{
+    text-align: left;
+    margin-bottom: 0.2rem;
+}
+.username{
+    margin-top: 5px;
+}
+.text2 {
+    font-weight: lighter;
+    margin-top: 0.45rem;
+}
 </style>

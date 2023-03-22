@@ -178,7 +178,7 @@ const join = ()=>{
 	console.log(singleDepartment);
 	newerApplyDepartment(singleDepartment.departmentid, uId).then((res) => {
 		console.log(res);
-		ElMessage.info(res.data.msg);
+		ElMessage.success(res.data.msg);
 	})
 	visible.value = false;
 }

@@ -1,12 +1,15 @@
 <template>
     <div class="sidebar">
+        <!-- background-color="#324157"
+                    
+            text-color="#bfcbd9"
+            active-text-color="#20a0ff"
+        -->
         <el-menu
             class="sidebar-el-menu"
             :default-active="onRoutes"
             :collapse="sidebar.collapse"
-            background-color="#324157"
-            text-color="#bfcbd9"
-            active-text-color="#20a0ff"
+
             unique-opened
             router
         >
