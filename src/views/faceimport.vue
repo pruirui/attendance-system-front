@@ -145,7 +145,6 @@ const setImage = () => {
 		);
 		// 获取图片base64链接
 		var image = camerainfo.thisCancas.toDataURL("image/png");
-		
 		camerainfo.imgSrc = image;//赋值并预览图片
 		camerainfo.loading=true;
 	}
