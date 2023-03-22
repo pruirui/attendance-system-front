@@ -1,3 +1,4 @@
+import { pa } from 'element-plus/es/locale';
 import request from '../utils/request';
 import path from './path'
 export const getAllDepartmentData = (address:String, departmentName:String, pageIndex:number, pageSize:number) => {
@@ -60,4 +61,8 @@ export const queryMyApplications = (uid:string) => {
 
 export const processMyApplications = (uid:string, id:string, state:string) =>{
     return request.post(path.baseUrl+path.processMyApplications,{uid, id, state});
+}
+
+export const getUserClockinfo = (now_month: any, uid: any) => {
+	return request.post(path.baseUrl+path.userClockData, {"month":now_month, "uid":uid});
 }

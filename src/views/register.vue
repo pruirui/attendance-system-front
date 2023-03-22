@@ -148,13 +148,21 @@ const submitForm = (formEl: FormInstance | undefined) => {
 	formEl.validate((valid: boolean) => {
 		console.log("-------------");
 		if (valid) {
-			ElMessage.success('注册成功');
+			
 			//localStorage.setItem('ms_username', param.phone);
 			//const keys = permiss.defaultList[param.phone == 'admin' ? 'admin' : 'user'];
 			//permiss.handleSet(keys);
 			//localStorage.setItem('ms_keys', JSON.stringify(keys));
-			Register({"username":param.username,"phone":param.phone,"password":param.password});
-			router.push('/login');
+			Register({"username":param.username,"phone":param.phone,"password":param.password}).then((res) =>{
+				if(res.data["code"] === -1){
+					ElMessage.error(res.data["msg"]);
+				}
+				else{
+					ElMessage.success('注册成功');
+					router.push('/login');
+				}
+			});
+			
 		} else {
 			ElMessage.error('注册失败');
 			return false;
