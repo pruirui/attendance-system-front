@@ -134,7 +134,6 @@ const getData = ()=>{
 		return;
 	}
 	queryMyApplications(uid).then((res)=>{
-		console.log(res)
 		if(res.status  != 200){
 			ElMessage.error("出错了");
 		}

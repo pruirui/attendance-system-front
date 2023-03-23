@@ -1,115 +1,102 @@
 <template>
 	<div>
-		<el-row :gutter="20">
-			<el-col :span="8">
-				<el-card shadow="hover" class="mgb20" style="height: 252px">
-					<div class="user-info">
-						<el-avatar :size="120" :src="imgurl" />
-						<div class="user-info-cont">
-							<div class="user-info-name">{{ name }}</div>
-							<div>{{ role }}</div>
-						</div>
-					</div>
-					<div class="user-info-list">
-						上次登录时间：
-						<span>2022-10-01</span>
-					</div>
-					<div class="user-info-list">
-						上次登录地点：
-						<span>东莞</span>
-					</div>
-				</el-card>
-				<el-card shadow="hover" style="height: 252px">
-					<template #header>
-						<div class="clearfix">
-							<span>语言详情</span>
-						</div>
-					</template>
-					Vue
-					<el-progress :percentage="79.4" color="#42b983"></el-progress>
-					TypeScript
-					<el-progress :percentage="14" color="#f1e05a"></el-progress>
-					CSS
-					<el-progress :percentage="5.6"></el-progress>
-					HTML
-					<el-progress :percentage="1" color="#f56c6c"></el-progress>
-				</el-card>
-			</el-col>
-			<el-col :span="16">
-				<el-row :gutter="20" class="mgb20">
-					<el-col :span="8">
-						<el-card shadow="hover" :body-style="{ padding: '0px' }">
-							<div class="grid-content grid-con-1">
-								<el-icon class="grid-con-icon"><User /></el-icon>
-								<div class="grid-cont-right">
-									<div class="grid-num">1234</div>
-									<div>用户访问量</div>
-								</div>
-							</div>
-						</el-card>
-					</el-col>
-					<el-col :span="8">
-						<el-card shadow="hover" :body-style="{ padding: '0px' }">
-							<div class="grid-content grid-con-2">
-								<el-icon class="grid-con-icon"><ChatDotRound /></el-icon>
-								<div class="grid-cont-right">
-									<div class="grid-num">321</div>
-									<div>系统消息</div>
-								</div>
-							</div>
-						</el-card>
-					</el-col>
-					<el-col :span="8">
-						<el-card shadow="hover" :body-style="{ padding: '0px' }">
-							<div class="grid-content grid-con-3">
-								<el-icon class="grid-con-icon"><Goods /></el-icon>
-								<div class="grid-cont-right">
-									<div class="grid-num">5000</div>
-									<div>商品数量</div>
-								</div>
-							</div>
-						</el-card>
-					</el-col>
-				</el-row>
-				<el-card shadow="hover" style="height: 403px">
-					<template #header>
-						<div class="clearfix">
-							<span>待办事项</span>
-							<el-button style="float: right; padding: 3px 0" text>添加</el-button>
-						</div>
-					</template>
+       
+        <div style="margin-top: 0.5%;">
 
-					<el-table :show-header="false" :data="todoList" style="width: 100%">
-						<el-table-column width="40">
-							<template #default="scope">
-								<el-checkbox v-model="scope.row.status"></el-checkbox>
-							</template>
-						</el-table-column>
-						<el-table-column>
-							<template #default="scope">
-								<div
-									class="todo-item"
-									:class="{
-										'todo-item-del': scope.row.status
-									}"
-								>
-									{{ scope.row.title }}
-								</div>
-							</template>
-						</el-table-column>
-					</el-table>
-				</el-card>
-			</el-col>
+        </div>
+        <el-date-picker
+            v-model="date"
+            :default-value="date"
+            type="month"
+            placeholder="选择月份"
+            value-format="YYYY-MM"
+            format="YYYY-MM"
+            style="margin-bottom:1%"
+            :disabled-date="disabledDate"
+            @change="onDateChange"
+        />
+		<el-row gutter="20" >
+            <el-col :span="6">
+                <el-card shadow="always" class="card">
+                    <div class="grid-content grid-con-1">
+                        <div class="grid-cont-right">
+                            <div class="up">
+                                <span class="green">打卡次数</span>
+                                <span class="lighter">&nbsp;/&nbsp;</span>
+                                <span class="red">缺卡次数</span></div>
+                            <div class="down">
+                                {{ paramUp.daka }}
+                                <span class="lighter">/</span>
+                                {{ paramUp.weidaka }}
+                            </div>
+                        </div>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :span="6">
+                <el-card shadow="always" class="card">
+                    <div class="grid-content grid-con-1">
+                        <div class="grid-cont-right">
+                            <div class="up">
+                                <span class="green">加班次数</span>
+                                <span class="lighter">&nbsp;/&nbsp;</span>
+                                <span class="red">请假次数</span></div>
+                            <div class="down">
+                                {{ paramUp.jiaban }}
+                                <span class="lighter">/</span>
+                                {{ paramUp.qingjia }}
+                            </div>
+                        </div>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :span="6">
+                <el-card shadow="always" class="card">
+                    <div class="grid-content grid-con-1">
+                        <div class="grid-cont-right">
+                            <div class="up">
+                                <span class="red">迟到次数</span>
+                                <span class="lighter">&nbsp;/&nbsp;</span>
+                                <span class="red">早退次数</span></div>
+                            <div class="down">
+                                {{ paramUp.chidao }}
+                                <span class="lighter">/</span>
+                                {{ paramUp.zaotui }}
+                            </div>
+                        </div>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :span="6">
+                <el-card shadow="always" class="card">
+                    <div class="grid-content grid-con-1">
+                        <div class="grid-cont-right">
+                            <div class="up">
+                                <span class="blue">考勤薪资</span>
+                            </div>
+                            <div class="down">
+                                {{ paramUp.xinzi }}
+                            </div>
+                        </div>
+                    </div>
+                </el-card>
+            </el-col>
 		</el-row>
+       
 		<el-row :gutter="20">
-			<el-col :span="12">
+			<el-col :span="9">
+               
 				<el-card shadow="hover">
-					<schart ref="bar" class="schart" canvasId="bar" :options="options"></schart>
+					<div class="echarts-box">
+                        <div id="pie" style="height:500px; width:100%"></div>
+                    </div>
 				</el-card>
 			</el-col>
-			<el-col :span="12">
+			<el-col :span="15">
 				<el-card shadow="hover">
-					<schart ref="line" class="schart" canvasId="line" :options="options2"></schart>
+                    <div class="echarts-box">
+                        <div id="line" style="height:500px; width:100%"></div>
+                    </div>
 				</el-card>
 			</el-col>
 		</el-row>
@@ -118,113 +105,385 @@
 
 <script setup lang="ts" name="dashboard">
 import Schart from 'vue-schart';
-import { reactive } from 'vue';
+import { onMounted, provide, reactive, ref } from 'vue';
+import {userClockInfo} from '../api/index'
 import imgurl from '../assets/img/img.jpg';
+import * as echarts from "echarts";
+import { ElMessage } from 'element-plus';
+import { PieChart } from '@element-plus/icons-vue';
 
 const name = localStorage.getItem('ms_username');
 const role: string = name === 'admin' ? '超级管理员' : '普通用户';
 
-const options = {
-	type: 'bar',
-	title: {
-		text: '最近一周各品类销售图'
-	},
-	xRorate: 25,
-	labels: ['周一', '周二', '周三', '周四', '周五'],
-	datasets: [
-		{
-			label: '家电',
-			data: [234, 278, 270, 190, 230]
-		},
-		{
-			label: '百货',
-			data: [164, 178, 190, 135, 160]
-		},
-		{
-			label: '食品',
-			data: [144, 198, 150, 235, 120]
-		}
-	]
+const params = reactive({
+    "code": 1,
+    "data": {
+        "bing": {
+            "chidao": 5,
+            "daka": 1,
+            "weidaka": 39,
+            "zaotui": 1,
+             jiaban: 0,
+             qingjia:0,
+             xinzi:0
+        },
+        "zhexiantu": {
+            "clockin": [
+                [
+                    "01",
+                    "02",
+                    "03",
+                    "04",
+                    "05",
+                    "06",
+                    "07",
+                    "08",
+                    "09",
+                    "10",
+                    "11",
+                    "12",
+                    "16",
+                    "17",
+                    "18",
+                    "19",
+                    "23",
+                    "13",
+                    "14",
+                    "15",
+                    "20",
+                    "21",
+                    "22"
+                ],
+                [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "20:22:40",
+                    "15:12:16",
+                    "10:40:54",
+                    "15:38:50",
+                    "11:44:48",
+                    "09:15:04"
+                ]
+            ],
+            "clockout": [
+                [
+                    "01",
+                    "02",
+                    "03",
+                    "04",
+                    "05",
+                    "06",
+                    "07",
+                    "08",
+                    "09",
+                    "10",
+                    "11",
+                    "12",
+                    "14",
+                    "15",
+                    "16",
+                    "17",
+                    "18",
+                    "19",
+                    "20",
+                    "21",
+                    "22",
+                    "23",
+                    "13"
+                ],
+                [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "21:15:20"
+                ]
+            ],
+            "end": "23:00:00",
+            "front": "10:00:00"
+        }
+    }
+});
+
+const pieData = ref<any>([])
+const lineX = ref<any>([])
+const lineY1 = ref<any>([])
+const lineY2 = ref<any>([])
+const clockin_time = ref('')
+const clockout_time = ref('')
+
+const option1 = {
+  title: {
+    text: '考勤比率图',
+    left: 'center'
+  },
+  tooltip: {
+    trigger: 'item'
+  },
+  legend: {
+    orient: 'vertical',
+    left: 'left'
+  },
+  series: [
+    {
+      name: 'Access From',
+      type: 'pie',
+      radius: '50%',
+      data: [{value: 100, name:'打卡次数'}, {value:100, name:'缺卡次数'}, 
+            {value:100, name:'加班次数'},{value:100, name:'请假次数'},
+            {value:100, name:'迟到次数'},{value:100, name:'早退次数'}],
+      emphasis: {
+        itemStyle: {
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: 'rgba(0, 0, 0, 0.5)'
+        }
+      }
+    }
+  ]
 };
-const options2 = {
-	type: 'line',
-	title: {
-		text: '最近几个月各品类销售趋势图'
-	},
-	labels: ['6月', '7月', '8月', '9月', '10月'],
-	datasets: [
-		{
-			label: '家电',
-			data: [234, 278, 270, 190, 230]
-		},
-		{
-			label: '百货',
-			data: [164, 178, 150, 135, 160]
-		},
-		{
-			label: '食品',
-			data: [74, 118, 200, 235, 90]
-		}
-	]
+
+
+const option2 = {
+  title: {
+    text: '签到签退时间图'
+  },
+  tooltip: {
+    trigger: 'axis'
+  },
+  legend: {},
+  toolbox: {
+    show: true,
+    feature: {
+      dataZoom: {
+        yAxisIndex: 'none'
+      },
+      dataView: { readOnly: false },
+      magicType: { type: ['line', 'bar'] },
+      restore: {},
+      saveAsImage: {}
+    }
+  },
+  xAxis: {
+    type: 'category',
+    boundaryGap: false,
+    data: []
+  },
+  yAxis: {
+    type: 'value',
+    axisLabel: {
+      formatter: '{value}'
+    }
+  },
+  series: [
+    {
+      name: '签到时间',
+      type: 'line',
+      data: [],
+      markPoint: {
+        data: [
+          { type: 'max', name: 'Max' },
+          { type: 'min', name: 'Min' }
+        ]
+      },
+      markLine: {
+        data: [{ type: 'average', name: 'Avg' }]
+      }
+    },
+    {
+      name: '签退时间',
+      type: 'line',
+      data: [],
+      markPoint: {
+        data: [{ name: '周最低', value: -2, xAxis: 1, yAxis: -1.5 }]
+      },
+      markLine: {
+        data: [
+          { type: 'average', name: 'Avg' },
+          [
+            {
+              symbol: 'none',
+              x: '90%',
+              yAxis: 'max'
+            },
+            {
+              symbol: 'circle',
+              label: {
+                position: 'start',
+                formatter: 'Max'
+              },
+              type: 'max',
+              name: '最高点'
+            }
+          ]
+        ]
+      }
+    }
+  ]
 };
-const todoList = reactive([
-	{
-		title: '今天要修复100个bug',
-		status: false
-	},
-	{
-		title: '今天要修复100个bug',
-		status: false
-	},
-	{
-		title: '今天要写100行代码加几个bug吧',
-		status: false
-	},
-	{
-		title: '今天要修复100个bug',
-		status: false
-	},
-	{
-		title: '今天要修复100个bug',
-		status: true
-	},
-	{
-		title: '今天要写100行代码加几个bug吧',
-		status: true
-	}
-]);
+const paramUp = ref({chidao: 5,
+                daka: 1,
+                weidaka: 39,
+                zaotui: 1,
+                jiaban: 0,
+                qingjia:0,
+                xinzi:0})
+
+const piechartDom = ref()
+const linechartDom = ref()
+const pieChart = ref()
+const lineChart = ref()
+
+onMounted(() =>{
+    piechartDom.value = document.getElementById('pie')!;
+    pieChart.value = echarts.init(piechartDom.value);
+    linechartDom.value = document.getElementById('line')!;
+    lineChart.value = echarts.init(linechartDom.value);
+    pieChart.value.setOption(option1)
+    lineChart.value.setOption(option2)
+    updatePage()
+})
+const disabledDate = (time:any) =>{
+      return time.getTime() > Date.now(); // 禁止选择未来的日期
+}
+
+const date = ref((new Date().getFullYear()).toString() + '-' +( new Date().getMonth()+1).toString())
+const uid = localStorage.getItem('ms_userId');
+
+const onDateChange = (value:any)=> {
+    updatePage();
+}
+const updatePage = ()=>{
+    userClockInfo(date.value.split('-')[0], date.value.split('-')[1], uid).then(res => {
+        if(res.status != 200){
+            ElMessage.error('网络错误')
+        }
+        let data = res.data.data;
+        console.log(data)
+        paramUp.value = data.bing;
+        let opt1 = {
+            title: {
+                text: '考勤比率图',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left'
+            },
+            series: [
+                {
+                name: 'Access From',
+                type: 'pie',
+                radius: '50%',
+                data: [ {value:data.bing.zaotui, name:'早退次数'},{value: data.bing.daka, name:'打卡次数'},
+                    {value:data.bing.chidao, name:'迟到次数'},{value:data.bing.weidaka, name:'缺卡次数'}, 
+                    {value:data.bing.qingjia, name:'请假次数'}, {value:data.bing.jiaban, name:'加班次数'}],
+                emphasis: {
+                    itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+                }
+            ]
+        }
+        pieChart.value.setOption(opt1)
+    });
+   
+}
+
+
+
+
 </script>
 
 <style scoped>
+
+.chart {
+    height: 100vh;
+  }
 .el-row {
 	margin-bottom: 20px;
 }
-
+.card{
+    border-radius:10%;
+}
 .grid-content {
 	display: flex;
 	align-items: center;
-	height: 100px;
+	height: 180px;
 }
 
 .grid-cont-right {
 	flex: 1;
 	text-align: center;
-	font-size: 14px;
-	color: #999;
 }
 
 .grid-num {
 	font-size: 30px;
 	font-weight: bold;
 }
+.lighter{
+    color:#999
+}
 
-.grid-con-icon {
-	font-size: 50px;
-	width: 100px;
-	height: 100px;
-	text-align: center;
-	line-height: 100px;
-	color: #fff;
+.up{
+    font-size: large;
+    font-weight: bold;
+    margin-bottom: 4%;
+}
+.down{
+    font-family: Arial, sans-serif;
+    font-size: 2.2rem;
+    font-weight:500;
+}
+
+.green{
+    color: rgb(100, 213, 114);
+}
+.red{
+    color: rgb(242, 94, 67);
+}
+
+.blue{
+    color: rgb(45, 140, 240);
 }
 
 .grid-con-1 .grid-con-icon {
@@ -249,49 +508,6 @@ const todoList = reactive([
 
 .grid-con-3 .grid-num {
 	color: rgb(242, 94, 67);
-}
-
-.user-info {
-	display: flex;
-	align-items: center;
-	padding-bottom: 20px;
-	border-bottom: 2px solid #ccc;
-	margin-bottom: 20px;
-}
-
-.user-info-cont {
-	padding-left: 50px;
-	flex: 1;
-	font-size: 14px;
-	color: #999;
-}
-
-.user-info-cont div:first-child {
-	font-size: 30px;
-	color: #222;
-}
-
-.user-info-list {
-	font-size: 14px;
-	color: #999;
-	line-height: 25px;
-}
-
-.user-info-list span {
-	margin-left: 70px;
-}
-
-.mgb20 {
-	margin-bottom: 20px;
-}
-
-.todo-item {
-	font-size: 14px;
-}
-
-.todo-item-del {
-	text-decoration: line-through;
-	color: #999;
 }
 
 .schart {
