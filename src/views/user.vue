@@ -180,7 +180,7 @@ function loadInfo(){
   userForm.birthday = '2000.04.20';
   userForm.hometown = '广东东莞';
   userForm.e_mail = '22222222@qq.com';
-  userForm.motto = '一杯酒一包烟，一个bug调一天';
+  userForm.motto = '见贤思齐焉，见不贤而内自省也！';
 };
 loadInfo();
 const newPassword1 = ref('');

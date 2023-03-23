@@ -36,7 +36,7 @@
 								</template>
 							    <template #date-cell="{ data }">
 									<p style="height: 30px; font-size: 20px;">
-										{{ data.day.split('-').slice(1).join('-') }}
+										{{ data.day.split('-').slice(2).join('-') }}
 									</p>
 									<div v-for="(item, index) in calendarData" :key="index">
 										<div v-if="data.day===item.today">

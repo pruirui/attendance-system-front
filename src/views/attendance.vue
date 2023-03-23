@@ -111,6 +111,7 @@ import imgurl from '../assets/img/img.jpg';
 import * as echarts from "echarts";
 import { ElMessage } from 'element-plus';
 import { PieChart } from '@element-plus/icons-vue';
+import { time2value, value2time } from '../utils/util';
 
 const name = localStorage.getItem('ms_username');
 const role: string = name === 'admin' ? '超级管理员' : '普通用户';
@@ -238,12 +239,6 @@ const params = reactive({
     }
 });
 
-const pieData = ref<any>([])
-const lineX = ref<any>([])
-const lineY1 = ref<any>([])
-const lineY2 = ref<any>([])
-const clockin_time = ref('')
-const clockout_time = ref('')
 
 const option1 = {
   title: {
@@ -282,7 +277,12 @@ const option2 = {
     text: '签到签退时间图'
   },
   tooltip: {
-    trigger: 'axis'
+    trigger: 'axis',
+    valueFormatter: (value:any) => {
+     let h = String(Math.floor(value/60));
+        let m = String(value % 60);
+        return h+":"+m
+   }
   },
   legend: {},
   toolbox: {
@@ -295,7 +295,8 @@ const option2 = {
       magicType: { type: ['line', 'bar'] },
       restore: {},
       saveAsImage: {}
-    }
+    },
+
   },
   xAxis: {
     type: 'category',
@@ -305,11 +306,7 @@ const option2 = {
   yAxis: {
     type: 'value',
     axisLabel: {
-        formatter: function(value:any, index:any){
-            let h = String(Math.floor(value/60));
-            let m = String(value % 60);
-            return h+":"+m
-        }
+        formatter: (value:any)=>value2time(value)
     }
   },
   series: [
@@ -323,16 +320,14 @@ const option2 = {
           { type: 'min', name: 'Min' }
         ],
         label:{
-          formatter:  function(params:any){
-            let value = params.value;
-            let h = String(Math.floor(value/60));
-            let m = String(value % 60);
-            return h+":"+m
-          }
+          formatter: (params:any) => value2time(params.value)
         }
       },
       markLine: {
-        data: [{ type: 'average', name: 'Avg' }]
+        data: [{name: '上班平均时间' , yAxis:450}],
+        label:{
+            formatter:  (params:any) => value2time(params.value)
+        }
       }
     },
     {
@@ -340,28 +335,13 @@ const option2 = {
       type: 'line',
       data: [],
       markPoint: {
-        data: [{ name: '周最低', value: -2, xAxis: 1, yAxis: -1.5 }]
+        data: [{ type: 'max', name: 'Max' },{ type: 'min', name: 'Min' }]
       },
       markLine: {
-        data: [
-          { type: 'average', name: 'Avg' },
-          [
-            {
-              symbol: 'none',
-              x: '90%',
-              yAxis: 'max'
-            },
-            {
-              symbol: 'circle',
-              label: {
-                position: 'start',
-                formatter: 'Max'
-              },
-              type: 'max',
-              name: '最高点'
-            }
-          ]
-        ]
+        data: [{name: '下班平均时间' , yAxis:900}],
+        label:{
+            formatter:  (params:any) => value2time(params.value)
+        }
       }
     }
   ]
@@ -437,11 +417,81 @@ const updatePage = ()=>{
             ]
         }
         pieChart.value.setOption(opt1)
+        let opt2 = {
+            title: {
+                text: '签到签退时间图'
+            },
+            tooltip: {
+                trigger: 'axis',
+                valueFormatter: (value:any) => value2time(value)
+            },
+            legend: {},
+            toolbox: {
+                show: true,
+                feature: {
+                dataZoom: {
+                    yAxisIndex: 'none'
+                },
+                dataView: { readOnly: false },
+                magicType: { type: ['line', 'bar'] },
+                restore: {},
+                saveAsImage: {}
+                },
+
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: data.zhexiantu.clockin[0]
+            },
+            yAxis: {
+                type: 'value',
+                axisLabel: {
+                    formatter: (value:any)=>value2time(value)
+                }
+            },
+            series: [
+                {
+                name: '签到时间',
+                type: 'line',
+                data:  data.zhexiantu.clockin[1].map((item: any) => time2value(item)),
+                markPoint: {
+                    data: [
+                    { type: 'max', name: 'Max' },
+                    { type: 'min', name: 'Min' }
+                    ],
+                    label:{
+                    formatter: (params:any) => value2time(params.value)
+                    }
+                },
+                markLine: {
+                    data: [{name: '上班平均时间' , yAxis:time2value(data.zhexiantu.front)}],
+                    label:{
+                        formatter:  (params:any) => value2time(params.value)
+                    }
+                }
+                },
+                {
+                name: '签退时间',
+                type: 'line',
+                data: data.zhexiantu.clockout[1].map((item: any) => time2value(item)),
+                markPoint: {
+                    data: [{ type: 'max', name: 'Max' },{ type: 'min', name: 'Min' }]
+                },
+                markLine: {
+                    data: [{name: '下班平均时间' , yAxis:time2value(data.zhexiantu.end)}],
+                    label:{
+                        formatter:  (params:any) => value2time(params.value)
+                    }
+                }
+                }
+            ]
+        };
+        console.log(opt2)
+        lineChart.value.setOption(opt2)
     });
    
 }
-
-
 
 
 </script>

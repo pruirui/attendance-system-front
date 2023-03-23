@@ -8,6 +8,25 @@ export const extractColorByName = (name: String) => {
   return temp.slice(0, 5).join("").slice(0, 4);
 };
 
+export const value2time = (value: any)=>{
+  if(value === null){
+    return null;
+  }
+  let h = String(Math.floor(value/60));
+  let m = String(value % 60);
+  if(m.length === 1){
+    m = '0'+m;
+  }
+  return h+":"+m
+}
+
+export const time2value = (time: any)=>{
+  if(time === null){
+    return null;
+  }
+  let data = time.split(':');
+  return Number(data[0])*60 + Number(data[1])
+}
 
 export const regions = [
   {
