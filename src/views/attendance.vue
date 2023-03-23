@@ -305,7 +305,11 @@ const option2 = {
   yAxis: {
     type: 'value',
     axisLabel: {
-      formatter: '{value}'
+        formatter: function(value:any, index:any){
+            let h = String(Math.floor(value/60));
+            let m = String(value % 60);
+            return h+":"+m
+        }
     }
   },
   series: [
@@ -317,7 +321,15 @@ const option2 = {
         data: [
           { type: 'max', name: 'Max' },
           { type: 'min', name: 'Min' }
-        ]
+        ],
+        label:{
+          formatter:  function(params:any){
+            let value = params.value;
+            let h = String(Math.floor(value/60));
+            let m = String(value % 60);
+            return h+":"+m
+          }
+        }
       },
       markLine: {
         data: [{ type: 'average', name: 'Avg' }]
