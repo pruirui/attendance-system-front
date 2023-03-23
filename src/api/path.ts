@@ -20,6 +20,8 @@ const path = {
 	inviteUserJoinDepart:"/HR/inviteUserJoinDepart",
 	userBaseData: "/user/userBaseData",
 	dismissUserInDepart:"/HR/dismissUserInDepart",
-	makeUpClock:"/user/makeUpClock"
+	makeUpClock:"/user/makeUpClock",
+	userClockInfo: "/user/userClockInfo",
+
 }
 export default path;
