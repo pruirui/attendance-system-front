@@ -19,6 +19,7 @@ const path = {
 	queryAllUsers:"/HR/queryAllUsers",
 	inviteUserJoinDepart:"/HR/inviteUserJoinDepart",
 	userBaseData: "/user/userBaseData",
-	dismissUserInDepart:"/HR/dismissUserInDepart"
+	dismissUserInDepart:"/HR/dismissUserInDepart",
+	makeUpClock:"/user/makeUpClock"
 }
 export default path;

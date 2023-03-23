@@ -94,3 +94,8 @@ export const userBaseData = (uid:string)=>{
 export const dismissUserInDepart = (HRuid: string, uid:string, departmentid:string)=>{
     return request.post(path.baseUrl+path.dismissUserInDepart, {HRuid,uid,departmentid})
 }
+
+
+export const usermakeUpClock = (uid : String, departmentid: String, date:String, content: String, description:String) => {
+	return request.post(path.baseUrl+path.makeUpClock, {uid, departmentid, date, content, description});
+}
