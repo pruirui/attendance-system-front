@@ -20,11 +20,11 @@
 					<span class="btn-bell-badge" v-if="bell_msg.count"></span>
 				</div>
 				<!-- 用户头像 -->
-				<el-avatar class="user-avator" :size="30" :src="imgurl" />
+				<el-avatar class="user-avator" :size="30" :src="path.baseUrl + user.user.headshot" />
 				<!-- 用户名下拉菜单 -->
 				<el-dropdown class="user-name" trigger="click" @command="handleCommand">
 					<span class="el-dropdown-link" :style="btn_bell_color">
-						{{ username }}
+						{{ user.user.username }}
 						<el-icon class="el-icon--right">
 							<arrow-down />
 						</el-icon>
@@ -47,40 +47,23 @@
 import { onMounted, ref } from 'vue';
 import { useSidebarStore } from '../store/sidebar';
 import { useRouter } from 'vue-router';
-import imgurl from '../assets/img/img.jpg';
-import { queryMyApplications } from '../api';
 import { ElMessage} from 'element-plus';
 import {useBellMessage} from '../store/bell'
-
-const username: string | null = localStorage.getItem('ms_username');
-const uid = localStorage.getItem('ms_userId');
-const message =  ref(0);
+import { useUserMessage } from '../store/user';
+import path from '../api/path'
 
 const sidebar = useSidebarStore();
 // 侧边栏折叠
 const collapseChage = () => {
 	sidebar.handleCollapse();
 };
-const getData = ()=>{
-	if(uid === null){
-		return;
-	}
-	queryMyApplications(uid).then((res)=>{
-		if(res.status  != 200){
-			ElMessage.error("出错了");
-		}
-		message.value = res.data.data.read.length + res.data.data.unread.length
-	})
-}
-
-getData();
-
-
 
 const color = ref('')
 const btn_bell_color = ref('')
 const bell_msg = useBellMessage()
 bell_msg.handle()
+const user = useUserMessage();
+user.fresh();
 
 onMounted(() => {
 	if (document.body.clientWidth < 1500) {
