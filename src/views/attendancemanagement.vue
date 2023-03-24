@@ -1,25 +1,21 @@
 <template>
   <div>
-    <div>
+
+    <div class="location1">
       <span class="demonstration">公司</span>
-      <el-select v-model="department" placeholder="请选择公司" style="margin-right: 10px" class="box-select">
+      <el-select v-model="selectedCompany" placeholder="请选择公司" class="box-select" @change="backId(selectedCompany)">
         <el-option
-            v-for="item in departmentOptions"
-            :key="item.department_id"
-            :label="item.department_name"
-            :value="item.department_id">
-          <!--       label:下拉框展示的内容，对应元素的名字  -->
-          <!--       value：传递到后台的值，对应元素的值-->
+            v-for="item in companyOptions"
+            :key="item.company_id"
+            :label="item.company_name"
+            :value="item.company_id">
         </el-option>
       </el-select>
 
-      <el-button type="primary"
-                 class="el-button"
-                 @click="checkDepartment()"
-                 style="margin-right: 30px">确定</el-button>
-
       <span class="demonstration">员工</span>
-      <el-select v-model="employee" placeholder="请选择员工" style="margin-right: 10px" class="box-select">
+      <el-select v-model="selectedEmployee" placeholder="请选择员工" class="box-select"
+                 @focus="loadEmployee"
+                 @change="employeeId(selectedEmployee)">
         <el-option
             v-for="item in employeeOptions"
             :key="item.employee_id"
@@ -28,270 +24,181 @@
         </el-option>
       </el-select>
 
-      <el-button type="primary"
-                 class="el-button"
-                 @click="checkEmployee()"
-                 style="margin-right: 30px">确定</el-button>
+      <span class="demonstration">时间</span>
+      <el-date-picker
+          v-model="selectedTime"
+          type="datetimerange"
+          :shortcuts="shortcuts"
+          range-separator="To"
+          start-placeholder="请选择起始时间"
+          end-placeholder="请选择结束时间"
+          size="large"
+          :disabled-date="disabledDate"
+          @change="backDate(selectedTime)"
+      />
 
+      <el-button type="primary" class="el-button" @click="checkSelect">确定</el-button>
     </div>
-    <br>
-    <div>
-      <span class="demonstration">查看</span>
-      <el-select v-model="selectedDate" placeholder="请选择查看方式" @change="changeDateSelect">
-        <el-option label="日" value="1"></el-option>
-        <el-option label="周" value="2"></el-option>
-        <el-option label="月" value="3"></el-option>
-        <el-option label="年" value="4"></el-option>
-      </el-select>
-
-      <el-date-picker
-          v-if="selectedDate === '1'"
-          v-model="selectedDay"
-          format="YYYY-MM-DD"
-          value-format="YYYY-MM-DD"
-          type="date"
-          :picker-options="dayDateOption"
-          placeholder="选择日"
-          @change="changeDay">
-      </el-date-picker>
-
-      <el-date-picker
-          v-if="selectedDate === '2'"
-          v-model="selectedWeek"
-          format="yyyy 第 WW 周"
-          value-format="yyyy 第 WW 周"
-          type="week"
-          :picker-options="weekDateOption"
-          placeholder="选择周"
-          @change="changeWeek">
-      </el-date-picker>
-
-      <el-date-picker
-          v-if="selectedDate === '3'"
-          v-model="selectedMonth"
-          format="YYYY-MM"
-          value-format="YYYY-MM"
-          type="month"
-          :picker-options="monthDateOption"
-          placeholder="选择月"
-          @change="changeMonth">
-      </el-date-picker>
-
-      <el-date-picker
-          v-if="selectedDate === '4'"
-          v-model="selectedYear"
-          format="YYYY"
-          value-format="YYYY"
-          type="year"
-          :picker-options="yearDateOption"
-          placeholder="选择年"
-          @change="changeYear">
-      </el-date-picker>
-
-      <el-button type="primary" class="loadDate" @click="loadDate">确定</el-button>
-
-    </div>
-
-
-
-
-
-
-
-
-
-
 
 
   </div>
 </template>
 
+<script setup lang="ts" name="attendancemanagement">
+import { reactive, ref } from 'vue';
+import {ElMessage, FormInstance, FormRules} from 'element-plus';
+import moment from 'moment';
+import {GetCompany, GetEmployee} from "../api/index";
+import {start} from "repl";
 
-<script>
-// import axios from "axios"
-// import VueAxios from 'vue-axios'
-// Vue.use(VueAxios, axios)
+const uId = localStorage.getItem("ms_userId");
+const selectedCompany = ref('');
+const selectedEmployee = ref('');
+const companyOptions = ref();
+const companyID = ref('');
+const employeeOptions = ref();
+const employeeID = ref('');
+const selectedTime = ref('');
+const backTime = ref();
 
-//import {GetCompany, GetEmployee} from "../api/index";
-import * as moment from 'moment'
-
-export default {
-  name:"Attendancemanagement",
-  data:function() {
-    return {
-      department: '',
-      employee:'',
-      // departmentOptions:[{
-      //   department_id:'',
-      //   department_name:'',
-      // }],
-      departmentOptions: [{
-        department_id: '001',
-        department_name: '请选择'
-      }, {
-        department_id: '002',
-        department_name: '所有部门'
-      }, {
-        department_id: '003',
-        department_name: '天猫'
-      }, {
-        department_id: '004',
-        department_name: '京东'
-      }, {
-        department_id: '005',
-        department_name: '腾讯'
-      }],
-
-      // employeeOptions:[{
-      //   employee_id:'',
-      //   employee_name:'',
-      // }],
-      employeeOptions: [{
-        employee_id: 'E001',
-        employee_name: '请选择'
-      }, {
-        employee_id: 'E002',
-        employee_name: '黄蓉'
-      }, {
-        employee_id: 'E003',
-        employee_name: '张无忌'
-      }, {
-        employee_id: 'E004',
-        employee_name: '欧阳锋'
-      }, {
-        employee_id: 'E005',
-        employee_name: '张三丰'
-      }],
-
-      selectedDate:'',
-      selectedDay:'',
-      selectedWeek:'',
-      selectedMonth:'',
-      selectedYear:'',
-
-
-
-    }
-  },
-  created() {  //页面加载时调用
-    this.loadAllDepartmets(); // 加载部门下拉菜单所需数据
-    // datatimestatus()
-    // {
-    //   this.pickerOptions.disabledDate = (time) => {
-    //     // 一天
-    //     let tempTime = 3600 * 1000 * 24
-    //     return time.getTime() < new Date() - tempTime
-    //   },
-
-
-    },
-
-  methods: {
-    // 加载部门下拉菜单所需数据
-    loadAllDepartmets(){
-      this.departmentOptions=[];
-      let userId = localStorage.getItem('ms_userId');
-      console.log(userId)
-      GetCompany(userId).then((res) =>{
-          console.log(res);
-          for(let item of res.data.data){
-              this.departmentOptions.push({department_id: item.departmentid, department_name: item.departmentName})
-          } //名称要与后端相同
-      })
-    },
-
-    // 加载员工下拉菜单所需数据
-    loadAllEployees(){
-      this.employeeOptions = [];
-      // let userId = localStorage.getItem('ms_userId');
-      let d_id = this.department;
-      console.log(d_id); //打印第一个下拉框的公司id
-      // GetEmployee(d_id).then((res) => {
-      //   console.log(res);
-      //   for (let items of res.data.data){
-      //     this.employeeOptions.push({employee_id: items.id, employee_name: items.name})
-      //   }  //用户名和用户id,根据后端改名
-      // })
-    },
-
-    //向后端传送公司id
-    checkDepartment(){
-      let d_id = this.department;  //如果选择所有公司，公司id？前/后端判断？
-      console.log(d_id);
-      submitCompany(d_id).then((res) => {  //submitCompany？？？
-        console.log(res);
-        if (res.data.code == 200){
-          this.$message.success(res.data.msg);
-          this.loadAllEployees();  //调用加载公司员工接口
-        }else{
-          this.$message.error(res.data.msg);
-        }
-      })
-    },
-
-    // 加载员工考勤信息页面
-    checkEmployee(){
-      let e_id = this.employee;
-      console.log(e_id);
-      submitEmployee(e_id).then((res) => {
-        console.log(res);
-        if (res.data.code == 200){
-          this.$message.success(res.data.msg);
-          this.$router.push({  //push？？
-            path: '/attendance',  //跳转到个人考勤信息页面
-            query: {
-              id: e_id,
-            }
-          })
-        }else {
-          this.$message.error(res.data.msg);
-        }
-      })
-    },
-
-
-
-    // dateGet(){
-    //   // 默认昨日所在的日
-    //   this.day = moment().subtract(1, 'days').format('YYYY-MM-DD');
-    //   // 直接计算具体的年,周
-    //   this.week = moment(this.day).format('YYYY') + ' 第 ' + Number(moment(this.day).format('WW')) + ' 周';
-    //   // 借用element自带周组件回显
-    //   this.selectedWeek = moment(this.day).format('yyyy-MM-DD');
-    //   this.month = moment(this.day).format('YYYY') + '-' + Number(moment(this.day).format('MM'));
-    //   this.selectedMonth = moment(this.day).format('MM')
-    //   this.selectedYear = moment(this.day).format('yyyy');
-    // },
-
-
-    // cascadeChange(){
-    //   this.options2 = {
-    //
-    //   }
-    // }
-
-    },
-  mounted() {
-  }
-
-
+const disabledDate = (time: Date) => {
+  return time.getTime() > Date.now()
 }
+
+const shortcuts = [
+  {
+    text: 'Last week',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+      return [start, end]
+    },
+  },
+  {
+    text: 'Last month',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+      return [start, end]
+    },
+  },
+  {
+    text: 'Last 3 months',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+      return [start, end]
+    },
+  },
+]
+
+function loadCompany(){
+  if (uId === null) {
+    return;
+  }
+  GetCompany(uId).then((res)=>{
+    // console.log(res);
+    let data =  res.data.data;
+    let tmp = [];
+    for(let item of data){
+      tmp.push({'company_id':item['departmentid'], 'company_name':item['departmentName']});
+    }
+    companyOptions.value = tmp;
+    // console.log('--------');
+    // console.log(tmp);
+  });
+};
+loadCompany();
+
+const backId = (val:any) => {
+  companyID.value = val;
+  // alert(companyID.value);
+}
+
+const loadEmployee = () => {
+  GetEmployee(companyID.value, 1, 10000, '').then((res) => {
+    console.log(res);
+    let data =  res.data.data;
+    let tmp = [];
+    for(let item of data){
+      tmp.push({'employee_id':item['id'], 'employee_name':item['username']});
+    }
+    employeeOptions.value = tmp;
+  });
+}
+
+const employeeId = (val:any) => {
+  employeeID.value = val;
+  // alert(employeeID.value);
+}
+
+const backDate = (val:any) => {
+  backTime.value = val;
+  alert(backTime.value);
+}
+
+//日期相关模块
+// const changeDay = (val:any) => {
+//   dayTime.value = val;
+//   // alert(dayTime.value);
+// }
+//
+// // function setDate(choosedMonthLastDay) {
+// //   let setdate =
+// //       choosedMonthLastDay.getFullYear() +
+// //       '-' +
+// //       (choosedMonthLastDay.getMonth() + 1) +
+// //       '-' +
+// //       choosedMonthLastDay.getDate() +
+// //       ' ' +
+// //       choosedMonthLastDay.getHours() +
+// //       ':' +
+// //       choosedMonthLastDay.getMinutes() +
+// //       ':' +
+// //       choosedMonthLastDay.getSeconds();
+// //   let resdate = moment(setdate, 'YYYY/MM/DD HH:mm:ss');//转换自己想要的日期格式
+// //   return resdate;
+// // };
+// const changeMonth = (val:any) => {
+//   monthTime.value = val;
+//   // let y = monthTime.value.split(' ')[0].split('-')[0];
+//   let m = monthTime.value.split(' ')[0].split('-')[1];
+//   // let startTime = new Date( parseInt(y),  parseInt(m), 0);
+//   alert(m);
+// }
+
 </script>
 
 <style scoped>
+.location1{
+  margin-top: 20px;
+  padding: 30px 0;
+  text-align: center;
+  border-right: solid 1px var(--el-border-color);
+  flex: 1;
+}
+
+.demonstration{
+  margin-left: 20px;
+  margin-right: 20px;
+}
 
 .box-select .el-input__inner{
-  width: 200px;
-  height:50px;
+  width: 150px;
+  height:40px;
+  margin-right: 20px;
   /*color: red;*/
 }
-.loadAllDepartmets{
-  height:50px;
-}
-.loadAllEployees{
-  height:50px;
-}
 
+.el-button{
+  height:40px;
+  width: 100px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
 
 
 </style>
