@@ -183,7 +183,7 @@ const routes: RouteRecordRaw[] = [
                     title: '考勤信息管理',
                     permiss: '3'
                 },
-                component: () => import(/* webpackChunkName: "user" */ '../views/attendancemanagement.vue'),
+                component: () => import(/* webpackChunkName: "user" */ '../views/attendancemanagement1.vue'),
             },
             {
                 path: '/permission',

@@ -226,26 +226,46 @@ const showDialog = () => {
 const setImage = (e: any) => {
 	const file = e.target.files[0];
 	if (!file.type.includes('image/')) {
-		return;
+		alert('请传入图像！');
+        return false;
 	}
 	const reader = new FileReader();
 	reader.onload = (event: any) => {
-		imgSrc.value = event.target.result;
-		console.log('--------------')
+		let data;
+		if(typeof event.target.result === 'object'){
+			 // 把Array Buffer转化为blob 如果是base64不需要
+			imgSrc.value = window.URL.createObjectURL(new Blob([e.target.result]))
+			console.log('-------------setImage if object-------')
+		}else{
+			imgSrc.value = event.target.result;
+			console.log('-------setImage if not object-------')
+		}
+		
 		console.log(imgSrc)
 		console.log(cropper)
 		cropper.value && cropper.value.replace(event.target.result);
 		console.log(cropper)
 	};
+	// 转化为base64
+    // reader.readAsDataURL(file)
+    // 转化为blob
+    //reader.readAsArrayBuffer(file);
 	reader.readAsDataURL(file);
 };
 
 const cropImage = () => {
+	console.log('---------cropImage----------');
 	cropImg.value = cropper.value.getCroppedCanvas().toDataURL();
+	console.log(cropImg)
 };
 
 const saveAvatar = () => {
 	avatarImg.value = cropImg.value;
+	console.log('--------saveAvatar--------')
+	console.log(cropper);
+	cropper.value.getCropData(async (data:any) => {
+		console.log(data);
+	})
 	dialogVisible.value = false;
 };
 </script>

@@ -1,8 +1,5 @@
 <template>
   <div>
-
-
-<!--    <h1>考勤信息管理</h1>-->
     <div>
       <span class="demonstration">公司</span>
       <el-select v-model="department" placeholder="请选择公司" style="margin-right: 10px" class="box-select">
@@ -209,12 +206,12 @@ export default {
       // let userId = localStorage.getItem('ms_userId');
       let d_id = this.department;
       console.log(d_id); //打印第一个下拉框的公司id
-      GetEmployee(d_id).then((res) => {
-        console.log(res);
-        for (let items of res.data.data){
-          this.employeeOptions.push({employee_id: items.id, employee_name: items.name})
-        }  //用户名和用户id,根据后端改名
-      })
+      // GetEmployee(d_id).then((res) => {
+      //   console.log(res);
+      //   for (let items of res.data.data){
+      //     this.employeeOptions.push({employee_id: items.id, employee_name: items.name})
+      //   }  //用户名和用户id,根据后端改名
+      // })
     },
 
     //向后端传送公司id
@@ -283,7 +280,7 @@ export default {
 
 <style scoped>
 
-/deep/ .box-select .el-input__inner{
+.box-select .el-input__inner{
   width: 200px;
   height:50px;
   /*color: red;*/
