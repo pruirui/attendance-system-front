@@ -19,6 +19,12 @@ const path = {
 	queryAllUsers:"/HR/queryAllUsers",
 	inviteUserJoinDepart:"/HR/inviteUserJoinDepart",
 	userBaseData: "/user/userBaseData",
-	dismissUserInDepart:"/HR/dismissUserInDepart"
+	dismissUserInDepart:"/HR/dismissUserInDepart",
+	passwordPolish:"/user/updatePassword",
+	getUserInfo:"/user/userBaseData",
+	infoPolish:"/user/userUpdate",
+	avatarUpload:'/user/uploadHeadImg',
+	getOnesCompany:'/user/userInDepartment',
+	getOnesEmployee:'/HR/usersInDepartment',
 }
 export default path;

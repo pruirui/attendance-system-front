@@ -89,3 +89,31 @@ export const userBaseData = (uid:string)=>{
 export const dismissUserInDepart = (HRuid: string, uid:string, departmentid:string)=>{
     return request.post(path.baseUrl+path.dismissUserInDepart, {HRuid,uid,departmentid})
 }
+
+export const PasswordPolish = (uid:string, password:string) => {
+    return request.post(path.baseUrl+path.passwordPolish, {uid, password});
+};
+
+export const getUserInfo = (uid:string) => {
+    return request.post(path.baseUrl+path.getUserInfo, {uid});
+};
+
+export const infoPolish = (uid:string, username:string, password:string, phone:string, address:string, birthday:string,
+                           motto:string, gender:string, home:string, email:string,) => {
+    return request.post(path.baseUrl+path.infoPolish, {uid, username, password, phone, address, birthday, motto, gender, home, email});
+};
+
+export const avatarPolish = (uid:any, file: any) => {
+    let config = {
+        headers:{'Content-Type':'multipart/form-data'}
+    };
+    return request.post(path.baseUrl+path.avatarUpload, {"uid":uid, "file":file}, config);
+};
+
+export const GetCompany = (uid:string) => {
+    return request.post(path.baseUrl + path.getOnesCompany, {uid});
+};
+
+export const GetEmployee = (departmentid:string, pageIndex:any, pageSize:any, querystring:any) => {
+    return request.post(path.baseUrl + path.getOnesEmployee, {departmentid, pageIndex, pageSize, querystring});
+};
