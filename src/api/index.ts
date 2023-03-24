@@ -95,6 +95,35 @@ export const dismissUserInDepart = (HRuid: string, uid:string, departmentid:stri
     return request.post(path.baseUrl+path.dismissUserInDepart, {HRuid,uid,departmentid})
 }
 
+
+export const PasswordPolish = (uid:string, password:string) => {
+    return request.post(path.baseUrl+path.passwordPolish, {uid, password});
+};
+
+export const getUserInfo = (uid:string) => {
+    return request.post(path.baseUrl+path.getUserInfo, {uid});
+};
+
+export const infoPolish = (uid:string, username:string, password:string, phone:string, address:string, birthday:string,
+                           motto:string, gender:string, home:string, email:string,) => {
+    return request.post(path.baseUrl+path.infoPolish, {uid, username, password, phone, address, birthday, motto, gender, home, email});
+};
+
+export const avatarPolish = (uid:any, file: any) => {
+    let config = {
+        headers:{'Content-Type':'multipart/form-data'}
+    };
+    return request.post(path.baseUrl+path.avatarUpload, {"uid":uid, "file":file}, config);
+};
+
+export const GetCompany = (uid:string) => {
+    return request.post(path.baseUrl + path.getOnesCompany, {uid});
+};
+
+export const GetEmployee = (departmentid:string, pageIndex:any, pageSize:any, querystring:any) => {
+    return request.post(path.baseUrl + path.getOnesEmployee, {departmentid, pageIndex, pageSize, querystring});
+};
+
 export const usermakeUpClock = (uid : String, departmentid: String, date:String, content: String, description:String) => {
 	return request.post(path.baseUrl+path.makeUpClock, {uid, departmentid, date, content, description});
 }
@@ -103,6 +132,7 @@ export const userClockInfo = (year: any, month: any, uid: any) => {
 	return request.post(path.baseUrl+path.userClockInfo, {year, month, uid});
 }
 
+
 export const userLeave = (uid :String, departmentid: string, starttime :String, endtime :String, description :String) => {
 	return request.post(path.baseUrl+path.userLeave, {uid, departmentid, starttime, endtime, description});
 }
@@ -110,3 +140,4 @@ export const userLeave = (uid :String, departmentid: string, starttime :String, 
 export const userOverTime = (uid :String, departmentid: string, starttime :String, endtime :String, description :String) => {
 	return request.post(path.baseUrl+path.userovertime, {uid, departmentid, starttime, endtime, description});
 }
+
