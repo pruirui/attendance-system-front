@@ -26,5 +26,9 @@ const path = {
 	avatarUpload:'/user/uploadHeadImg',
 	getOnesCompany:'/user/userInDepartment',
 	getOnesEmployee:'/HR/usersInDepartment',
+	makeUpClock:"/user/makeUpClock",
+	userClockInfo: "/user/userClockInfo",
+
+
 }
 export default path;

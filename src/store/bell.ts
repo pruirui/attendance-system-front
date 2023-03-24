@@ -14,7 +14,6 @@ export const useBellMessage = defineStore('messages', {
                 return;
             }
             queryMyApplications(uid).then((res)=>{
-                console.log(res)
                 this.count = res.data.data.read.length + res.data.data.unread.length
             })
 		}

@@ -173,6 +173,7 @@ const mottoo = ref('');
 const genderr = ref('');
 const avatarImg = ref(avatar); //后端传来头像
 
+
 function loadInfo() {
   if (userId === null) {
     return;
@@ -197,12 +198,6 @@ function loadInfo() {
   });
 };
 loadInfo()
-// const addr = ref(userForm.address);
-// const birth = ref(userForm.birthday);
-// const home = ref(userForm.hometown);
-// const e_maill = ref(userForm.e_mail);
-// const mottoo = ref(userForm.motto);
-// const genderr = ref(userForm.gender);
 
 const passwordPolish = ref<FormInstance>();
 const onSubmit = (pswdform: FormInstance | undefined) => {
@@ -287,7 +282,7 @@ const showDialog = () => {
 const setImage = (e: any) => {  //选择、读取图片
 	const file = e.target.files[0];
   console.log(file);
-	if (!file.type.includes('image/jpg')) {  //r如果为非图片格式
+	if (!file.type.includes('image/')) {  //r如果为非图片格式
 		return;
 	}
   const isLt2M = file.size / 1024 / 1024 < 2;

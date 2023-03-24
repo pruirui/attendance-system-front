@@ -44,7 +44,7 @@ interface cameraInfo{
 	videoWidth: any,
 	videoHeight: any,
 };
-  
+
 const camerainfo = reactive<cameraInfo>({
 	open: false,//控制摄像头
 	loading: false,//上传
@@ -145,7 +145,6 @@ const setImage = () => {
 		);
 		// 获取图片base64链接
 		var image = camerainfo.thisCancas.toDataURL("image/png");
-		
 		camerainfo.imgSrc = image;//赋值并预览图片
 		camerainfo.loading=true;
 	}

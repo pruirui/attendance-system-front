@@ -63,8 +63,13 @@ export const processMyApplications = (uid:string, id:string, state:string) =>{
     return request.post(path.baseUrl+path.processMyApplications,{uid, id, state});
 }
 
+
+
 export const getUserClockinfo = (now_month: any, uid: any) => {
-	return request.post(path.baseUrl+path.userClockData, {"month":now_month, "uid":uid});}
+	return request.post(path.baseUrl+path.userClockData, {"month":now_month, "uid":uid});
+}
+
+
 export const updateDepartConfig = (departmentid:string, departmentName: string, HRuid: string, description: string, hourPay: string, workOverPay: string, workOverLimit: string, startTime: string, endTime: string, 
     workdays: Array<string>,
     phone:string,
@@ -89,6 +94,7 @@ export const userBaseData = (uid:string)=>{
 export const dismissUserInDepart = (HRuid: string, uid:string, departmentid:string)=>{
     return request.post(path.baseUrl+path.dismissUserInDepart, {HRuid,uid,departmentid})
 }
+
 
 export const PasswordPolish = (uid:string, password:string) => {
     return request.post(path.baseUrl+path.passwordPolish, {uid, password});
@@ -117,3 +123,12 @@ export const GetCompany = (uid:string) => {
 export const GetEmployee = (departmentid:string, pageIndex:any, pageSize:any, querystring:any) => {
     return request.post(path.baseUrl + path.getOnesEmployee, {departmentid, pageIndex, pageSize, querystring});
 };
+
+export const usermakeUpClock = (uid : String, departmentid: String, date:String, content: String, description:String) => {
+	return request.post(path.baseUrl+path.makeUpClock, {uid, departmentid, date, content, description});
+}
+
+export const userClockInfo = (year: any, month: any, uid: any) => {
+	return request.post(path.baseUrl+path.userClockInfo, {year, month, uid});
+}
+
