@@ -168,15 +168,6 @@ const routes: RouteRecordRaw[] = [
                 component: () => import(/* webpackChunkName: "user" */ '../views/attendance.vue'),
             },
             {
-                path: '/leave',
-                name: 'leave',
-                meta: {
-                    title: '我的请假',
-                    permiss: '2'
-                },
-                component: () => import(/* webpackChunkName: "user" */ '../views/leave.vue'),
-            },
-            {
                 path: '/attendancemanagement',
                 name: 'attendancemanagement',
                 meta: {

@@ -13,7 +13,7 @@ import { ref, onMounted } from 'vue'
 export default {
   name: 'Clock',
   setup() {
-	const info = ref('GMT+0800 (中国标准时间)')
+	const info = ref('')
     const time = ref('')
     const formattedDate = ref('')
     const dayOfWeek = ref('')
@@ -29,7 +29,7 @@ export default {
       const day = ('0' + now.getDate()).slice(-2)
       formattedDate.value = `${year}-${month}-${day}`
       dayOfWeek.value = now.toLocaleString('default', { weekday: 'long' })
-	  
+	  info.value = 'GMT+0800 (中国标准时间)';
     }
 
     onMounted(() => {

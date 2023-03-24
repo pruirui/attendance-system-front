@@ -102,3 +102,11 @@ export const usermakeUpClock = (uid : String, departmentid: String, date:String,
 export const userClockInfo = (year: any, month: any, uid: any) => {
 	return request.post(path.baseUrl+path.userClockInfo, {year, month, uid});
 }
+
+export const userLeave = (uid :String, departmentid: string, starttime :String, endtime :String, description :String) => {
+	return request.post(path.baseUrl+path.userLeave, {uid, departmentid, starttime, endtime, description});
+}
+
+export const userOverTime = (uid :String, departmentid: string, starttime :String, endtime :String, description :String) => {
+	return request.post(path.baseUrl+path.userovertime, {uid, departmentid, starttime, endtime, description});
+}
