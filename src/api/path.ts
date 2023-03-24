@@ -28,7 +28,8 @@ const path = {
 	getOnesEmployee:'/HR/usersInDepartment',
 	makeUpClock:"/user/makeUpClock",
 	userClockInfo: "/user/userClockInfo",
-
+	userLeave: "/user/userLeave",
+	userovertime :"/user/userOverTime",
 
 }
 export default path;

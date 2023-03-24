@@ -55,22 +55,37 @@
 			<el-tab-pane :label="`已处理事项(${datas.down.length})`" name="third">
 				<template v-if="message === 'third'">
 					<el-table :data="datas.down" :show-header="false" style="width: 100%">
-						<el-table-column width="500">
+						<el-table-column width="400">
 							<template #default="scope">
-								<span class="message-title">[{{ scope.row.event }}]&nbsp;发起人:{{scope.row.sendername}}&nbsp;处理人:{{scope.row.processname}}&nbsp;部门名称:{{scope.row.departmentname}}</span>
+								<el-popover placement="top-start" width="600px" trigger="click">
+									
+								    <template #reference>
+										<span class="message-title">[{{ scope.row.event }}]&nbsp;发起人:{{scope.row.sendername}}&nbsp;处理人:{{scope.row.processname}}&nbsp;部门名称:{{scope.row.departmentname}}</span>
+									</template>
+									<el-descriptions :title="scope.row.event" :column="3" border size="small">
+									    <el-descriptions-item label="发起人" label-align="right" align="center" >{{scope.row.sendername}}</el-descriptions-item>
+									    <el-descriptions-item label="处理人" label-align="right" align="center">{{scope.row.processname}}</el-descriptions-item>
+									    <el-descriptions-item label="部门名称" label-align="right" align="center">{{scope.row.departmentname}}</el-descriptions-item >
+									    <el-descriptions-item label="状态" label-align="right" align="center">{{scope.row.state}}</el-descriptions-item>
+									    <el-descriptions-item label="详细信息" label-align="right" align="center">{{scope.row.content?'补'+scope.row.content+" ":""}}{{scope.row.description}}</el-descriptions-item>
+										<el-descriptions-item label="处理时间" label-align="right" align="center">{{scope.row.apply_time}}</el-descriptions-item>
+									  </el-descriptions>
+								  </el-popover>
+
 							</template>
 						</el-table-column>
 						<el-table-column>
-							<template #default="scope" width="100">
+							<template #default="scope" width="70">
 								<span class="state">状态：{{scope.row.state}}</span>
 							</template>
 						</el-table-column>
 						<el-table-column>
-							<template #default="scope" width="300">
-								<span class="description">详细信息：{{scope.row.content?'补'+scope.row.content+"，":""}}{{scope.row.description}}</span>
+							<template #default="scope" width="400">
+								<span class="description">详细信息：{{scope.row.content?'补'+scope.row.content+" ":""}}{{scope.row.description}}</span>
 							</template>
 						</el-table-column>
 						<el-table-column prop="apply_time" width="250"></el-table-column>
+
 					</el-table>
 				</template>
 			</el-tab-pane>
@@ -87,6 +102,10 @@ import { useRouter } from 'vue-router';
 import { usePermissStore } from '../store/permiss';
 import {useBellMessage} from '../store/bell'
 
+const handleclick = () =>{
+	
+}
+const visible = ref(false);
 interface DataTemplate{
 	id:string;
 	sender_id:string;
