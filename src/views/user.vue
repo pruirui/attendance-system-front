@@ -40,7 +40,7 @@
 							<span>账户编辑</span>
 						</div>
 					</template>
-					<el-form :model="passwordForm" :rules="rules" ref="passwordPolish" label-width="90px">
+					<el-form :model="passwordForm" :rules="rules" ref="passwordPolish" label-width="100px">
 						<el-form-item label="用户名："> {{ name }} </el-form-item>
 						<el-form-item label="旧密码：">
 							<el-input type="password" v-model="passwordForm.oldpswd" show-password></el-input>
@@ -56,7 +56,7 @@
 							<el-button type="primary" @click="onSubmit(passwordPolish)">保存</el-button>
 						</el-form-item>
 
-            <el-form label-width="90px">
+            <el-form label-width="100px">
               <el-form-item label="性别：">
                 <el-input v-model="genderr"></el-input>
               </el-form-item>
@@ -117,9 +117,12 @@
 import { reactive, ref } from 'vue';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
-import avatar from '../assets/img/img.jpg';
+import avatar from '../assets/img/unknow.png';
 import {ElMessage, FormInstance, FormRules} from 'element-plus';
 import {getUserInfo, infoPolish, PasswordPolish, avatarPolish} from '../api/index'
+import {base64toFile} from '../utils/util'
+import { useUserMessage } from '../store/user';
+import path from '../api/path';
 
 const name = localStorage.getItem('ms_username');
 const userId = localStorage.getItem('ms_userId');
@@ -179,7 +182,6 @@ function loadInfo() {
     return;
   }
   getUserInfo(userId).then((res)=> {
-    console.log(res);
     userForm.address = res.data.data.address;
     userForm.birthday = res.data.data.birthday;
     userForm.hometown = res.data.data.home;
@@ -194,7 +196,7 @@ function loadInfo() {
     e_maill.value = userForm.e_mail;
     mottoo.value = userForm.motto;
     genderr.value = userForm.gender;
-    avatarImg.value = "http://10.6.12.158:5000" + res.data.data.headshot;
+    avatarImg.value = path.baseUrl + res.data.data.headshot;
   });
 };
 loadInfo()
@@ -202,10 +204,8 @@ loadInfo()
 const passwordPolish = ref<FormInstance>();
 const onSubmit = (pswdform: FormInstance | undefined) => {
   if (!pswdform){
-    console.log("null");
     return;
   }
-  console.log("-----");
   pswdform.validate((valid: boolean) => {
     if (valid) {
       passwordForm.oldpswd = passwordForm.newpswd;
@@ -218,6 +218,8 @@ const onSubmit = (pswdform: FormInstance | undefined) => {
           return;
         }
         let data = res.data;
+        let u = useUserMessage();
+        u.fresh();
         if (data.code == 1) {
           ElMessage.success("修改密码成功！");
           passwordForm.newpswd = '';
@@ -246,7 +248,9 @@ const onSubmit2 = () => {
       ElMessage.error("修改出错了");
       return;
     }
-    console.log('修改个人信息');
+    let u = useUserMessage();
+    u.fresh();
+    
     let data = res.data;
     if (data.code == 1) {
       ElMessage.success("修改成功！");
@@ -265,7 +269,6 @@ const clearInputs = () => {
   e_maill.value = userForm.e_mail;
   mottoo.value = userForm.motto;
   genderr.value = userForm.gender;
-  console.log('cleared');
 };
 
 const imgSrc = ref('');  //本地图片
@@ -281,15 +284,9 @@ const showDialog = () => {
 
 const setImage = (e: any) => {  //选择、读取图片
 	const file = e.target.files[0];
-<<<<<<< HEAD
 	if (!file.type.includes('image/')) {
 		alert('请传入图像！');
         return false;
-=======
-  console.log(file);
-	if (!file.type.includes('image/')) {  //r如果为非图片格式
-		return;
->>>>>>> efef50b0df89c5ce1fc2fcadc995965d67d5cc17
 	}
   const isLt2M = file.size / 1024 / 1024 < 2;
   if (!isLt2M) {
@@ -300,27 +297,16 @@ const setImage = (e: any) => {  //选择、读取图片
 
   //读取文件,会触发 onload 异步事件,可使用回调函数 来获取最终的值.
 	reader.onload = (event: any) => {
-<<<<<<< HEAD
 		let data;
 		if(typeof event.target.result === 'object'){
 			 // 把Array Buffer转化为blob 如果是base64不需要
 			imgSrc.value = window.URL.createObjectURL(new Blob([e.target.result]))
-			console.log('-------------setImage if object-------')
 		}else{
 			imgSrc.value = event.target.result;
-			console.log('-------setImage if not object-------')
 		}
-		
-		console.log(imgSrc)
-		console.log(cropper)
-=======
-		dialogVisible.value = true;
-		imgSrc.value = event.target.result;  //图片类可将此值赋给img的src
-    // cropper.value.replace(event.target.result).toDataURL();
->>>>>>> efef50b0df89c5ce1fc2fcadc995965d67d5cc17
+	
 		cropper.value && cropper.value.replace(event.target.result);
 	};
-<<<<<<< HEAD
 	// 转化为base64
     // reader.readAsDataURL(file)
     // 转化为blob
@@ -329,84 +315,31 @@ const setImage = (e: any) => {  //选择、读取图片
 };
 
 const cropImage = () => {
-	console.log('---------cropImage----------');
 	cropImg.value = cropper.value.getCroppedCanvas().toDataURL();
-	console.log(cropImg)
-=======
-
-};
-
-const cropImage = () => {  //获取裁剪后的图像
-	cropImg.value = cropper.value.getCroppedCanvas().toDataURL(); //获取裁剪后图像（base64）
-  console.log(cropImg);
-  // cropImg2.value = cropper.value.getCroppedCanvas().toDataURL("image/jpeg", 1.0);
-};
-
-// import { Base64 } from 'js-base64';
-// const fs = require("fs")
-//
-// function base64ToImg(file:any){
-//   const avatar_str = file.replace('data:image/png;base64,', '');
-//   const avatar_bytes = Base64.decode(avatar_str);
-//   console.log(avatar_bytes);
-//   fs.writeFile("http://10.6.12.158:5000"+"demo.png", avatar_bytes, function (){
-//     console.log("demo.png has been converted to complete!");
-//   })
-// };
-
-const dataURLtoFile = (dataurl:any, filename:any)  => {
-  var arr = dataurl.split(",");
-  var mime = arr[0].match(/:(.*?);/)[1];
-  var bstr = atob(arr[1]);
-  var n = bstr.length;
-  var u8arr = new Uint8Array(n);
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n);
-  }
-  return new File([u8arr], filename, { type: mime });
->>>>>>> efef50b0df89c5ce1fc2fcadc995965d67d5cc17
 };
 
 const saveAvatar = () => {
 	avatarImg.value = cropImg.value;
-<<<<<<< HEAD
-	console.log('--------saveAvatar--------')
-	console.log(cropper);
-	cropper.value.getCropData(async (data:any) => {
-		console.log(data);
-	})
-	dialogVisible.value = false;
-};
-=======
 
-  if (cropImg.value === ''){
-    console.log("未上传头像");
-  }else {
-    console.log('--------------------------');
-    console.log(cropImg);
-    let imgData = dataURLtoFile(cropImg.value, "demo.jpg");
-    console.log('imgData', imgData);
-    if (userId === null){
-      return;
-    }
-    avatarPolish(userId, imgData).then((res) => {
-      console.log(res);
+  let imgData = base64toFile(cropImg.value, "demo.jpg");
+  if (userId === null){
+    return;
+  }
+  avatarPolish(userId, imgData).then((res) => {
       let data = res.data;
+      let u = useUserMessage();
+      u.fresh();
       if (data.code == 1){
         ElMessage.success('用户头像修改成功！');
-        avatarImg.value = cropImg.value;
       }else {
         ElMessage.error('用户头像修改失败！');
       }
-    })
-  }
+  })
   dialogVisible.value = false;
 }
 
 
 
-
->>>>>>> efef50b0df89c5ce1fc2fcadc995965d67d5cc17
 </script>
 
 <style scoped>
