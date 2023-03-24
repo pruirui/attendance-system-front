@@ -115,7 +115,8 @@ const submitForm = (formEl: FormInstance | undefined) => {
 			}
 			//验证通过，请求登录
 			Login(param).then(res =>{
-				
+				console.log('================')
+				console.log(res)
 				if(res.data["code"] === 1){
 					ElMessage.success('登录成功');
 					//console.log(typeof(res.data["data"]));

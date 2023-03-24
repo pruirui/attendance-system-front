@@ -1,9 +1,28 @@
 <template>
-	<div>
-       
-        <div style="margin-top: 0.5%;">
-
-        </div>
+	<div> 
+        <el-select
+            v-model="departments"
+            multiple
+            collapse-tags
+            placeholder="选择部门"
+            style="width: 240px;margin:1%"
+            @visible-change="selectCompany"
+        >
+            <el-option
+            v-for="item in departmentsOptions"
+            :key="item.departmentid"
+            :label="item.departmentName"
+            :value="item.departmentid"
+            />
+        </el-select>
+        <el-select v-model="employee" filterable placeholder="选择员工" style="margin:1%">
+            <el-option
+                v-for="item in employeeOptions"
+                :key="item.id"
+                :label="item.username"
+                :value="item.id"
+            />
+        </el-select>
         <el-date-picker
             v-model="date"
             :default-value="date"
@@ -11,7 +30,7 @@
             placeholder="选择月份"
             value-format="YYYY-MM"
             format="YYYY-MM"
-            style="margin-bottom:1%"
+            style="margin:1%;"
             :disabled-date="disabledDate"
             @change="onDateChange"
         />
@@ -106,138 +125,14 @@
 <script setup lang="ts" name="dashboard">
 import Schart from 'vue-schart';
 import { onMounted, provide, reactive, ref } from 'vue';
-import {userClockInfo} from '../api/index'
+import {getAllUserByDepartmentId, getDepartmentByUid, GetEmployee, queryAllUsers, userClockInfo} from '../api/index'
 import imgurl from '../assets/img/img.jpg';
 import * as echarts from "echarts";
 import { ElMessage } from 'element-plus';
 import { PieChart } from '@element-plus/icons-vue';
 import { time2value, value2time } from '../utils/util';
+import { useRouter } from 'vue-router';
 
-const name = localStorage.getItem('ms_username');
-const role: string = name === 'admin' ? '超级管理员' : '普通用户';
-
-const params = reactive({
-    "code": 1,
-    "data": {
-        "bing": {
-            "chidao": 5,
-            "daka": 1,
-            "weidaka": 39,
-            "zaotui": 1,
-             jiaban: 0,
-             qingjia:0,
-             xinzi:0
-        },
-        "zhexiantu": {
-            "clockin": [
-                [
-                    "01",
-                    "02",
-                    "03",
-                    "04",
-                    "05",
-                    "06",
-                    "07",
-                    "08",
-                    "09",
-                    "10",
-                    "11",
-                    "12",
-                    "16",
-                    "17",
-                    "18",
-                    "19",
-                    "23",
-                    "13",
-                    "14",
-                    "15",
-                    "20",
-                    "21",
-                    "22"
-                ],
-                [
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    "20:22:40",
-                    "15:12:16",
-                    "10:40:54",
-                    "15:38:50",
-                    "11:44:48",
-                    "09:15:04"
-                ]
-            ],
-            "clockout": [
-                [
-                    "01",
-                    "02",
-                    "03",
-                    "04",
-                    "05",
-                    "06",
-                    "07",
-                    "08",
-                    "09",
-                    "10",
-                    "11",
-                    "12",
-                    "14",
-                    "15",
-                    "16",
-                    "17",
-                    "18",
-                    "19",
-                    "20",
-                    "21",
-                    "22",
-                    "23",
-                    "13"
-                ],
-                [
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    "21:15:20"
-                ]
-            ],
-            "end": "23:00:00",
-            "front": "10:00:00"
-        }
-    }
-});
 
 
 const option1 = {
@@ -372,10 +267,47 @@ const disabledDate = (time:any) =>{
       return time.getTime() > Date.now(); // 禁止选择未来的日期
 }
 
+const departments = ref()
+const departmentsOptions = ref()
+const employee = ref()
+const employeeOptions = ref()
+
 const date = ref((new Date().getFullYear()).toString() + '-' +( new Date().getMonth()+1).toString())
 const uid = localStorage.getItem('ms_userId');
+const router = useRouter()
 
-const onDateChange = (value:any)=> {
+const selectCompany = (v:any) =>{
+    if(!v){
+        getAllUserByDepartmentId(departments.value[0],'', 1, 10000).then((res) => {
+            let data =  res.data.data;
+            employeeOptions.value = data.map((_item: any) => {return {id: _item.id, username: _item.username}});
+        });
+    }
+}
+if(uid === null){
+  ElMessage.error('未检测到用户登入，请登入！')
+  localStorage.clear();
+  router.push('/login');
+}else{
+  getDepartmentByUid(uid).then((res) => {
+    console.log(res)
+    if (res.status != 200) {
+      ElMessage.error("出错了");
+      return;
+    }
+    let data = res.data;
+    console.log(data);
+    if (data.code == 1) {
+        departmentsOptions.value = data.data.map((_item: any) => {return {departmentid:_item.departmentid,departmentName:_item.departmentName}});
+    } else {
+      ElMessage.error(data.msg);
+    }
+    console.log('=============')
+    console.log(employeeOptions)
+  }).catch(_e => {ElMessage.error('网络超时了');});
+}
+
+const onDateChange = (_value:any)=> {
     updatePage();
 }
 const updatePage = ()=>{

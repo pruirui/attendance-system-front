@@ -4,9 +4,9 @@
 			<el-col :span="8">
 				<el-card shadow="hover" class="mgb20" style="height: 252px">
 					<div class="user-info">
-						<el-avatar :size="120" :src="imgurl" />
+						<el-avatar :size="120" :src="path.baseUrl + user.user.headshot" />
 						<div class="user-info-cont">
-							<div class="user-info-name">{{ name }}</div>
+							<div class="user-info-name">{{ user.user.username }}</div>
 							<div>{{ role }}</div>
 						</div>
 					</div>
@@ -119,7 +119,9 @@
 <script setup lang="ts" name="dashboard">
 import Schart from 'vue-schart';
 import { reactive } from 'vue';
-import imgurl from '../assets/img/img.jpg';
+import { useUserMessage } from '../store/user';
+import path from '../api/path'
+const user = useUserMessage();
 
 const name = localStorage.getItem('ms_username');
 const role: string = name === 'admin' ? '超级管理员' : '普通用户';
