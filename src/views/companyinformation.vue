@@ -13,7 +13,7 @@
                     <span >注册资本:</span>{{ singleDepartment.rmb }}&nbsp;&nbsp;&nbsp;&nbsp;
                     <span >注册日期:</span>{{ singleDepartment.createTime}}
                 </div>
-                <div class="text item"><span >公司电话:</span>{{ singleDepartment.phone }} </div>
+                <div class="text item"><span >团队电话:</span>{{ singleDepartment.phone }} </div>
                 <div class="text item"><span >地址:</span>{{ singleDepartment.address }}</div>
                 <div class="text item"><span>部门简介:</span>{{ singleDepartment.description }}</div>
             </div>
@@ -47,17 +47,17 @@
                 <el-table-column label="操作" width="220" align="left">
                     <template #default="scope">
                         <div>
-                            <el-button text :icon="CirclePlusFilled" @click="handle(scope.$index, scope.row, 1)" v-permiss="4">
+                            <el-button text :icon="CirclePlusFilled" @click="handle(scope.$index, scope.row, 1)" v-permiss="5">
                                 授予HR权限
                             </el-button>
                         </div>
                         <div>
-                            <el-button text :icon="DeleteFilled" @click="handle(scope.$index, scope.row, 2)" v-permiss="4">
+                            <el-button text :icon="DeleteFilled" @click="handle(scope.$index, scope.row, 2)" v-permiss="6">
                                 删除员工
                             </el-button>
                         </div>
                         <div>
-                            <el-button text :icon="HelpFilled" @click="importface(scope.row)" v-permiss="4">
+                            <el-button text :icon="HelpFilled" @click="importface(scope.row)" v-permiss="6">
                                 人脸导入
                             </el-button>
                         </div>
@@ -78,9 +78,9 @@
             ></el-pagination>
         </div>
 
-        <el-button type="primary" @click="deleteCompany()" v-permiss="4">删除公司</el-button>
-        <el-button type="primary" @click="modifyCompany()" v-permiss="4">修改公司信息</el-button>
-        <el-button type="primary" @click="invite()" v-permiss="4">邀请员工加入公司</el-button>
+        <el-button type="primary" @click="deleteCompany()" v-permiss="5">删除团队</el-button>
+        <el-button type="primary" @click="modifyCompany()" v-permiss="5">修改团队信息</el-button>
+        <el-button type="primary" @click="invite()" v-permiss="6">邀请员工加入团队</el-button>
 
         <el-dialog :title="'为员工 '+user_current?.username+' 录入人脸'" v-model="visible" width="1000px" destroy-on-close>
 			<div class="faceimp">
@@ -95,7 +95,7 @@
 		</el-dialog>
 
 
-        <el-dialog title="邀请用户加入公司" v-model="visible2" destroy-on-close>
+        <el-dialog title="邀请用户加入团队" v-model="visible2" destroy-on-close>
             
             <div class="handle-box">
 				

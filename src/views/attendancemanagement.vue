@@ -1,204 +1,631 @@
 <template>
-  <div>
-
-    <div class="location1">
-      <span class="demonstration">公司</span>
-      <el-select v-model="selectedCompany" placeholder="请选择公司" class="box-select" @change="backId(selectedCompany)">
-        <el-option
-            v-for="item in companyOptions"
-            :key="item.company_id"
-            :label="item.company_name"
-            :value="item.company_id">
-        </el-option>
-      </el-select>
-
-      <span class="demonstration">员工</span>
-      <el-select v-model="selectedEmployee" placeholder="请选择员工" class="box-select"
-                 @focus="loadEmployee"
-                 @change="employeeId(selectedEmployee)">
-        <el-option
-            v-for="item in employeeOptions"
-            :key="item.employee_id"
-            :label="item.employee_name"
-            :value="item.employee_id">
-        </el-option>
-      </el-select>
-
-      <span class="demonstration">时间</span>
-      <el-date-picker
-          v-model="selectedTime"
-          type="datetimerange"
-          :shortcuts="shortcuts"
-          range-separator="To"
-          start-placeholder="请选择起始时间"
-          end-placeholder="请选择结束时间"
-          size="large"
-          :disabled-date="disabledDate"
-          @change="backDate(selectedTime)"
-      />
-
-      <el-button type="primary" class="el-button" @click="checkSelect">确定</el-button>
-    </div>
-
-
-  </div>
+	<div> 
+        <el-select
+            v-model="departments"
+            multiple
+            collapse-tags
+            placeholder="选择部门"
+            style="width: 240px;margin:1%"
+            @visible-change="selectCompany"
+        >
+            <el-option
+            v-for="item in departmentsOptions"
+            :key="item.departmentid"
+            :label="item.departmentName"
+            :value="item.departmentid"
+            />
+        </el-select>
+        <el-select v-model="employee" filterable placeholder="选择员工" clearable style="margin:1%" @change="selectUser">
+            <el-option
+                v-for="item in employeeOptions"
+                :key="item.id"
+                :label="item.username"
+                :value="item.id"
+            />
+        </el-select>
+        <el-date-picker
+            v-model="date"
+            :default-value="date"
+            type="month"
+            placeholder="选择月份"
+            value-format="YYYY-MM"
+            format="YYYY-MM"
+            style="margin:1%;"
+            :disabled-date="disabledDate"
+            @change="onDateChange"
+        />
+		<el-row gutter="20" >
+            <el-col :span="6">
+                <el-card shadow="always" class="card">
+                    <div class="grid-content grid-con-1">
+                        <div class="grid-cont-right">
+                            <div class="up">
+                                <span class="green">打卡</span>
+                                <span class="lighter">&nbsp;/&nbsp;</span>
+                                <span class="red">缺卡</span></div>
+                            <div class="down">
+                                {{ paramUp.daka }}
+                                <span class="lighter">/</span>
+                                {{ paramUp.weidaka }}
+                            </div>
+                        </div>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :span="6">
+                <el-card shadow="always" class="card">
+                    <div class="grid-content grid-con-1">
+                        <div class="grid-cont-right">
+                            <div class="up">
+                                <span class="green">加班</span>
+                                <span class="lighter">&nbsp;/&nbsp;</span>
+                                <span class="red">请假</span></div>
+                            <div class="down">
+                                {{ paramUp.jiaban }}
+                                <span class="lighter">/</span>
+                                {{ paramUp.qingjia }}
+                            </div>
+                        </div>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :span="6">
+                <el-card shadow="always" class="card">
+                    <div class="grid-content grid-con-1">
+                        <div class="grid-cont-right">
+                            <div class="up">
+                                <span class="red">迟到</span>
+                                <span class="lighter">&nbsp;/&nbsp;</span>
+                                <span class="red">早退</span></div>
+                            <div class="down">
+                                {{ paramUp.chidao }}
+                                <span class="lighter">/</span>
+                                {{ paramUp.zaotui }}
+                            </div>
+                        </div>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :span="6">
+                <el-card shadow="always" class="card">
+                    <div class="grid-content grid-con-1">
+                        <div class="grid-cont-right">
+                            <div class="up">
+                                <span class="blue">考勤薪资</span>
+                            </div>
+                            <div class="down">
+                                {{ paramUp.xinzi }}
+                            </div>
+                        </div>
+                    </div>
+                </el-card>
+            </el-col>
+		</el-row>
+       
+		<el-row :gutter="20">
+			<el-col :span="9">
+               
+				<el-card shadow="hover">
+					<div class="echarts-box">
+                        <div id="pie" style="height:500px; width:100%"></div>
+                    </div>
+				</el-card>
+			</el-col>
+			<el-col :span="15">
+				<el-card shadow="hover">
+                    <div class="echarts-box">
+                        <div id="line" style="height:500px; width:100%"></div>
+                    </div>
+				</el-card>
+			</el-col>
+		</el-row>
+	</div>
 </template>
 
-<script setup lang="ts" name="attendancemanagement">
-import { reactive, ref } from 'vue';
-import {ElMessage, FormInstance, FormRules} from 'element-plus';
-import moment from 'moment';
-import {GetCompany, GetEmployee} from "../api/index";
-import {start} from "repl";
+<script setup lang="ts" name="dashboard">
+import Schart from 'vue-schart';
+import { onMounted, provide, reactive, ref } from 'vue';
+import {usersInDepartments, getDepartmentByUid, allDepartmentsClockData,userClockInfo} from '../api/index'
+import imgurl from '../assets/img/img.jpg';
+import * as echarts from "echarts";
+import { ElMessage } from 'element-plus';
+import { PieChart } from '@element-plus/icons-vue';
+import { time2value, value2time } from '../utils/util';
+import { useRouter } from 'vue-router';
 
-const uId = localStorage.getItem("ms_userId");
-const selectedCompany = ref('');
-const selectedEmployee = ref('');
-const companyOptions = ref();
-const companyID = ref('');
-const employeeOptions = ref();
-const employeeID = ref('');
-const selectedTime = ref('');
-const backTime = ref();
 
-const disabledDate = (time: Date) => {
-  return time.getTime() > Date.now()
-}
 
-const shortcuts = [
-  {
-    text: 'Last week',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-      return [start, end]
-    },
+const option1 = {
+  title: {
+    text: '考勤比率图',
+    left: 'center'
   },
-  {
-    text: 'Last month',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-      return [start, end]
-    },
+  tooltip: {
+    trigger: 'item'
   },
-  {
-    text: 'Last 3 months',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-      return [start, end]
-    },
+  legend: {
+    orient: 'vertical',
+    left: 'left'
   },
-]
-
-function loadCompany(){
-  if (uId === null) {
-    return;
-  }
-  GetCompany(uId).then((res)=>{
-    // console.log(res);
-    let data =  res.data.data;
-    let tmp = [];
-    for(let item of data){
-      tmp.push({'company_id':item['departmentid'], 'company_name':item['departmentName']});
+  series: [
+    {
+      name: 'Access From',
+      type: 'pie',
+      radius: '50%',
+      data: [{value: 100, name:'打卡次数'}, {value:100, name:'缺卡次数'}, 
+            {value:100, name:'加班次数'},{value:100, name:'请假次数'},
+            {value:100, name:'迟到次数'},{value:100, name:'早退次数'}],
+      emphasis: {
+        itemStyle: {
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: 'rgba(0, 0, 0, 0.5)'
+        }
+      }
     }
-    companyOptions.value = tmp;
-    // console.log('--------');
-    // console.log(tmp);
-  });
+  ]
 };
-loadCompany();
 
-const backId = (val:any) => {
-  companyID.value = val;
-  // alert(companyID.value);
-}
 
-const loadEmployee = () => {
-  GetEmployee(companyID.value, 1, 10000, '').then((res) => {
-    console.log(res);
-    let data =  res.data.data;
-    let tmp = [];
-    for(let item of data){
-      tmp.push({'employee_id':item['id'], 'employee_name':item['username']});
+const option2 = {
+  title: {
+    text: '签到签退时间图'
+  },
+  tooltip: {
+    trigger: 'axis',
+    valueFormatter: (value:any) => {
+     let h = String(Math.floor(value/60));
+        let m = String(value % 60);
+        return h+":"+m
+   }
+  },
+  legend: {},
+  toolbox: {
+    show: true,
+    feature: {
+      dataZoom: {
+        yAxisIndex: 'none'
+      },
+      dataView: { readOnly: false },
+      magicType: { type: ['line', 'bar'] },
+      restore: {},
+      saveAsImage: {}
+    },
+
+  },
+  xAxis: {
+    type: 'category',
+    boundaryGap: false,
+    data: []
+  },
+  yAxis: {
+    type: 'value',
+    axisLabel: {
+        formatter: (value:any)=>value2time(value)
     }
-    employeeOptions.value = tmp;
-  });
+  },
+  series: [
+    {
+      name: '签到时间',
+      type: 'line',
+      data: [],
+      markPoint: {
+        data: [
+          { type: 'max', name: 'Max' },
+          { type: 'min', name: 'Min' }
+        ],
+        label:{
+          formatter: (params:any) => value2time(params.value)
+        }
+      },
+      markLine: {
+        data: [{name: '上班平均时间' , yAxis:450}],
+        label:{
+            formatter:  (params:any) => value2time(params.value)
+        }
+      }
+    },
+    {
+      name: '签退时间',
+      type: 'line',
+      data: [],
+      markPoint: {
+        data: [{ type: 'max', name: 'Max' },{ type: 'min', name: 'Min' }]
+      },
+      markLine: {
+        data: [{name: '下班平均时间' , yAxis:900}],
+        label:{
+            formatter:  (params:any) => value2time(params.value)
+        }
+      }
+    }
+  ]
+};
+const paramUp = ref({chidao: 5,
+                daka: 1,
+                weidaka: 39,
+                zaotui: 1,
+                jiaban: 0,
+                qingjia:0,
+                xinzi:0})
+
+const piechartDom = ref()
+const linechartDom = ref()
+const pieChart = ref()
+const lineChart = ref()
+
+onMounted(() =>{
+    piechartDom.value = document.getElementById('pie')!;
+    pieChart.value = echarts.init(piechartDom.value);
+    linechartDom.value = document.getElementById('line')!;
+    lineChart.value = echarts.init(linechartDom.value);
+    pieChart.value.setOption(option1)
+    lineChart.value.setOption(option2)
+    if(uid === null){
+      ElMessage.error('未检测到用户登入，请登入！')
+      localStorage.clear();
+      router.push('/login');
+    }else{
+      getDepartmentByUid(uid).then((res) => {
+        console.log(res)
+        if (res.status != 200) {
+          ElMessage.error("出错了");
+          return;
+        }
+        let data = res.data;
+        console.log(data);
+        if (data.code == 1) {
+            departmentsOptions.value = data.data.map((_item: any) => {return {departmentid:_item.departmentid,departmentName:_item.departmentName}});
+            departments.value = departmentsOptions.value.map((item: any) => item.departmentid)
+            usersInDepartments(departments.value).then((res) => {
+              let data =  res.data.data;
+              employeeOptions.value = data.map((_item: any) => {return {id: _item.id, username: _item.username}});
+            updatePage()
+        });
+            updatePage()
+        } else {
+          ElMessage.error(data.msg);
+        }
+      }).catch(_e => {ElMessage.error('网络超时了');});
+    }
+})
+
+const disabledDate = (time:any) =>{
+      return time.getTime() > Date.now(); // 禁止选择未来的日期
 }
 
-const employeeId = (val:any) => {
-  employeeID.value = val;
-  // alert(employeeID.value);
+const departments = ref()
+const departmentsOptions = ref()
+const employee = ref()
+const employeeOptions = ref()
+
+const date = ref((new Date().getFullYear()).toString() + '-' +( new Date().getMonth()+1).toString())
+const uid = localStorage.getItem('ms_userId');
+const router = useRouter()
+
+const selectCompany = (v:any) =>{
+    if(!v){
+      usersInDepartments(departments.value).then((res) => {
+            let data =  res.data.data;
+            employeeOptions.value = data.map((_item: any) => {return {id: _item.id, username: _item.username}});
+            updatePage()
+        });
+    }
+}
+const selectUser = () =>{
+  updatePage();
 }
 
-const backDate = (val:any) => {
-  backTime.value = val;
-  alert(backTime.value);
+
+const onDateChange = (_value:any)=> {
+    updatePage();
+}
+const updatePage = ()=>{
+    allDepartmentsClockData(departments.value, employee.value , date.value).then(res => {
+        if(res.status != 200){
+            ElMessage.error('网络错误')
+        }
+        let opt1;
+        let opt2;
+        if(employee.value){
+          let data = res.data.data;
+          console.log(data)
+          paramUp.value = data.bing;
+          opt1 = {
+              title: {
+                  text: '考勤比率图',
+                  left: 'center'
+              },
+              tooltip: {
+                  trigger: 'item'
+              },
+              legend: {
+                  orient: 'vertical',
+                  left: 'left'
+              },
+              series: [
+                  {
+                  name: 'Access From',
+                  type: 'pie',
+                  radius: '50%',
+                  data: [ {value:data.bing.zaotui, name:'早退次数'},{value: data.bing.daka, name:'打卡次数'},
+                      {value:data.bing.chidao, name:'迟到次数'},{value:data.bing.weidaka, name:'缺卡次数'}, 
+                      {value:data.bing.qingjia, name:'请假次数'}, {value:data.bing.jiaban, name:'加班次数'}],
+                  emphasis: {
+                      itemStyle: {
+                      shadowBlur: 10,
+                      shadowOffsetX: 0,
+                      shadowColor: 'rgba(0, 0, 0, 0.5)'
+                      }
+                  }
+                  }
+              ]
+          }
+         
+          opt2 = {
+              title: {
+                  text: '签到签退时间图'
+              },
+              tooltip: {
+                  trigger: 'axis',
+                  valueFormatter: (value:any) => value2time(value)
+              },
+              legend: {},
+              toolbox: {
+                  show: true,
+                  feature: {
+                  dataZoom: {
+                      yAxisIndex: 'none'
+                  },
+                  dataView: { readOnly: false },
+                  magicType: { type: ['line', 'bar'] },
+                  restore: {},
+                  saveAsImage: {}
+                  },
+
+              },
+              xAxis: {
+                  type: 'category',
+                  boundaryGap: false,
+                  data: data.zhexiantu.clockin[0]
+              },
+              yAxis: {
+                  type: 'value',
+                  axisLabel: {
+                      formatter: (value:any)=>value2time(value)
+                  }
+              },
+              series: [
+                  {
+                  name: '签到时间',
+                  type: 'line',
+                  data:  data.zhexiantu.clockin[1].map((item: any) => time2value(item)),
+                  markPoint: {
+                      data: [
+                      { type: 'max', name: 'Max' },
+                      { type: 'min', name: 'Min' }
+                      ],
+                      label:{
+                      formatter: (params:any) => value2time(params.value)
+                      }
+                  },
+                  markLine: {
+                      data: [{name: '上班平均时间' , yAxis:time2value(data.zhexiantu.front)}],
+                      label:{
+                          formatter:  (params:any) => value2time(params.value)
+                      }
+                  }
+                  },
+                  {
+                  name: '签退时间',
+                  type: 'line',
+                  data: data.zhexiantu.clockout[1].map((item: any) => time2value(item)),
+                  markPoint: {
+                      data: [{ type: 'max', name: 'Max' },{ type: 'min', name: 'Min' }]
+                  },
+                  markLine: {
+                      data: [{name: '下班平均时间' , yAxis:time2value(data.zhexiantu.end)}],
+                      label:{
+                          formatter:  (params:any) => value2time(params.value)
+                      }
+                  }
+                  }
+              ]
+          };
+          
+        }else{
+          let data = res.data.data;
+          console.log(data)
+          paramUp.value = data.bing;
+          opt1 = {
+              title: {
+                  text: '考勤比率图',
+                  left: 'center'
+              },
+              tooltip: {
+                  trigger: 'item'
+              },
+              legend: {
+                  orient: 'vertical',
+                  left: 'left'
+              },
+              series: [
+                  {
+                  name: 'Access From',
+                  type: 'pie',
+                  radius: '50%',
+                  data: [ {value:data.bing.zaotui, name:'早退次数'},{value: data.bing.daka, name:'打卡次数'},
+                      {value:data.bing.chidao, name:'迟到次数'},{value:data.bing.weidaka, name:'缺卡次数'}, 
+                      {value:data.bing.qingjia, name:'请假次数'}, {value:data.bing.jiaban, name:'加班次数'}],
+                  emphasis: {
+                      itemStyle: {
+                      shadowBlur: 10,
+                      shadowOffsetX: 0,
+                      shadowColor: 'rgba(0, 0, 0, 0.5)'
+                      }
+                  }
+                  }
+              ]
+          }
+         
+          opt2 = {
+              title: {
+                  text: '各部门考勤数据'
+              },
+              tooltip: {
+                  trigger: 'axis',
+                  valueFormatter: (value:any) => value2time(value)
+              },
+              legend: {},
+              toolbox: {
+                  show: true,
+                  feature: {
+                  dataZoom: {
+                      yAxisIndex: 'none'
+                  },
+                  dataView: { readOnly: false },
+                  magicType: { type: ['line', 'bar'] },
+                  restore: {},
+                  saveAsImage: {}
+                  },
+
+              },
+              xAxis: {
+                  type: 'category',
+                  boundaryGap: false,
+                  data: data.zhexiantu.clockin[0]
+              },
+              yAxis: {
+                  type: 'value',
+                  axisLabel: {
+                      formatter: (value:any)=>value2time(value)
+                  }
+              },
+              series: [
+                  {
+                  name: '签到时间',
+                  type: 'line',
+                  data:  data.zhexiantu.clockin[1].map((item: any) => time2value(item)),
+                  markPoint: {
+                      data: [
+                      { type: 'max', name: 'Max' },
+                      { type: 'min', name: 'Min' }
+                      ],
+                      label:{
+                      formatter: (params:any) => value2time(params.value)
+                      }
+                  },
+                  markLine: {
+                      data: [{name: '上班平均时间' , yAxis:time2value(data.zhexiantu.front)}],
+                      label:{
+                          formatter:  (params:any) => value2time(params.value)
+                      }
+                  }
+                  },
+                  {
+                  name: '签退时间',
+                  type: 'line',
+                  data: data.zhexiantu.clockout[1].map((item: any) => time2value(item)),
+                  markPoint: {
+                      data: [{ type: 'max', name: 'Max' },{ type: 'min', name: 'Min' }]
+                  },
+                  markLine: {
+                      data: [{name: '下班平均时间' , yAxis:time2value(data.zhexiantu.end)}],
+                      label:{
+                          formatter:  (params:any) => value2time(params.value)
+                      }
+                  }
+                  }
+              ]
+          };
+        }
+        pieChart.value.setOption(opt1)
+        lineChart.value.setOption(opt2)
+    });
+   
 }
 
-//日期相关模块
-// const changeDay = (val:any) => {
-//   dayTime.value = val;
-//   // alert(dayTime.value);
-// }
-//
-// // function setDate(choosedMonthLastDay) {
-// //   let setdate =
-// //       choosedMonthLastDay.getFullYear() +
-// //       '-' +
-// //       (choosedMonthLastDay.getMonth() + 1) +
-// //       '-' +
-// //       choosedMonthLastDay.getDate() +
-// //       ' ' +
-// //       choosedMonthLastDay.getHours() +
-// //       ':' +
-// //       choosedMonthLastDay.getMinutes() +
-// //       ':' +
-// //       choosedMonthLastDay.getSeconds();
-// //   let resdate = moment(setdate, 'YYYY/MM/DD HH:mm:ss');//转换自己想要的日期格式
-// //   return resdate;
-// // };
-// const changeMonth = (val:any) => {
-//   monthTime.value = val;
-//   // let y = monthTime.value.split(' ')[0].split('-')[0];
-//   let m = monthTime.value.split(' ')[0].split('-')[1];
-//   // let startTime = new Date( parseInt(y),  parseInt(m), 0);
-//   alert(m);
-// }
 
 </script>
 
 <style scoped>
-.location1{
-  margin-top: 20px;
-  padding: 30px 0;
-  text-align: center;
-  border-right: solid 1px var(--el-border-color);
-  flex: 1;
+
+.chart {
+    height: 100vh;
+  }
+.el-row {
+	margin-bottom: 20px;
+}
+.card{
+    border-radius:10%;
+}
+.grid-content {
+	display: flex;
+	align-items: center;
+	height: 180px;
 }
 
-.demonstration{
-  margin-left: 20px;
-  margin-right: 20px;
+.grid-cont-right {
+	flex: 1;
+	text-align: center;
 }
 
-.box-select .el-input__inner{
-  width: 150px;
-  height:40px;
-  margin-right: 20px;
-  /*color: red;*/
+.grid-num {
+	font-size: 30px;
+	font-weight: bold;
+}
+.lighter{
+    color:#999
 }
 
-.el-button{
-  height:40px;
-  width: 100px;
-  margin-left: 20px;
-  margin-right: 20px;
+.up{
+    font-size: large;
+    font-weight: bold;
+    margin-bottom: 4%;
+}
+.down{
+    font-family: Arial, sans-serif;
+    font-size: 2.2rem;
+    font-weight:500;
 }
 
+.green{
+    color: rgb(100, 213, 114);
+}
+.red{
+    color: rgb(242, 94, 67);
+}
 
+.blue{
+    color: rgb(45, 140, 240);
+}
+
+.grid-con-1 .grid-con-icon {
+	background: rgb(45, 140, 240);
+}
+
+.grid-con-1 .grid-num {
+	color: rgb(45, 140, 240);
+}
+
+.grid-con-2 .grid-con-icon {
+	background: rgb(100, 213, 114);
+}
+
+.grid-con-2 .grid-num {
+	color: rgb(100, 213, 114);
+}
+
+.grid-con-3 .grid-con-icon {
+	background: rgb(242, 94, 67);
+}
+
+.grid-con-3 .grid-num {
+	color: rgb(242, 94, 67);
+}
+
+.schart {
+	width: 100%;
+	height: 300px;
+}
 </style>

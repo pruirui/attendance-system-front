@@ -170,7 +170,7 @@ const items = [
     {
         icon: 'Notification',
         index: '/mycompany',
-        title: '我的公司',
+        title: '我的团队',
         permiss: '1',
     },
     {
@@ -186,16 +186,10 @@ const items = [
         permiss: '2',
     },
     {
-        icon: 'CircleCheck',
-        index: '/leave',
-        title: '我的请假',
-        permiss: '2',
-    },
-    {
         icon: 'Histogram',
         index: '/attendancemanagement',
         title: '考勤信息管理',
-        permiss: '3',
+        permiss: '4',
     }
 ];
 
