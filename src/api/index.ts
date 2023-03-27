@@ -141,3 +141,11 @@ export const userOverTime = (uid :String, departmentid: string, starttime :Strin
 	return request.post(path.baseUrl+path.userovertime, {uid, departmentid, starttime, endtime, description});
 }
 
+
+export const usersInDepartments = (departmentids : []) => {
+	return request.post(path.baseUrl+path.usersInDepartments, {departmentids});
+}
+
+export const allDepartmentsClockData = (departmentids : [], userid: string, months:string) => {
+	return request.post(path.baseUrl+path.allDepartmentsClockData, {departmentids,userid,months});
+}

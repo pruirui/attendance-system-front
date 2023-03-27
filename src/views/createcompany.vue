@@ -2,10 +2,10 @@
     <div class="container">
         <div class="form-box">
             <el-form ref="formRef" :rules="rules" :model="form" label-width="130px">
-                <el-form-item label="公司名" prop="departmentName">
+                <el-form-item label="团队名" prop="departmentName">
                     <el-input v-model="form.departmentName"></el-input>
                 </el-form-item>
-                <el-form-item label="公司电话" prop="phone">
+                <el-form-item label="团队电话" prop="phone">
                     <el-input v-model="form.phone"></el-input>
                 </el-form-item>
                 <el-form-item label="注册资本(万元)" prop="rmb">
@@ -70,7 +70,7 @@
                     <el-input v-model="form.workOverLimit"></el-input>
                 </el-form-item>
 
-                <el-form-item label="公司简介" prop="description">
+                <el-form-item label="团队简介" prop="description">
                     <el-input type="textarea" rows="5" v-model="form.description"></el-input>
                 </el-form-item>
                 <el-form-item>
@@ -88,63 +88,13 @@ import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { createDepartment } from '../api';
+import {regions} from '../utils/util'
 
-const regions = [
-    {
-        value: '广东省',
-        label: '广东省',
-        children: [
-            {
-                value: '广州市',
-                label: '广州市',
-                children: [
-                    {
-                        value: '天河区',
-                        label: '天河区',
-                    },
-                    {
-                        value: '海珠区',
-                        label: '海珠区',
-                    },
-                ],
-            },
-            {
-                value: '东莞市',
-                label: '东莞市',
-                children: [
-                    {
-                        value: '长安镇',
-                        label: '长安镇',
-                    },
-                    {
-                        value: '虎门镇',
-                        label: '虎门镇',
-                    },
-                ],
-            },
-        ],
-    },
-    {
-        value: '湖南省',
-        label: '湖南省',
-        children: [
-            {
-                value: '长沙市',
-                label: '长沙市',
-                children: [
-                    {
-                        value: '岳麓区',
-                        label: '岳麓区',
-                    },
-                ],
-            },
-        ],
-    },
-];
+
 const rules: FormRules = {
-    departmentName: [{ required: true, message: '请输入公司名称', trigger: 'blur' },
+    departmentName: [{ required: true, message: '请输入团队名称', trigger: 'blur' },
         {
-            min: 4, max: 15, message: '公司名称不能短于4个字，长于15字', trigger: 'blur'
+            min: 4, max: 15, message: '团队名称不能短于4个字，长于15字', trigger: 'blur'
         }],
     phone: [{ required: true, message: '请输入电话', trigger: 'blur' },
             { 
@@ -161,7 +111,7 @@ const rules: FormRules = {
                 message: '请输入正确的注册资本', 
                 trigger: 'blur'
             }],
-    description: [{ required: true, message: '请输入公司简介', trigger: 'blur' }],
+    description: [{ required: true, message: '请输入团队简介', trigger: 'blur' }],
     startTime: [{ required: true, message: '请输入上班时间', trigger: 'blur' }],
     endTime: [{ required: true, message: '请输入下班时间', trigger: 'blur' }],
     workdays: [{ required: true, message: '请选择工作日', trigger: 'blur' }],
