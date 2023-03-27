@@ -484,7 +484,7 @@ const updatePage = ()=>{
                       yAxisIndex: 'none'
                   },
                   dataView: { readOnly: false },
-                  magicType: { type: ['line', 'bar'] },
+                  magicType: { type: ['bar', 'line'] },
                   restore: {},
                   saveAsImage: {}
                   },

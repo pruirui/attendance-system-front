@@ -184,12 +184,7 @@ const handle = (id:string, state:string) =>{
 				}
 				let tmp = response.data["data"];
 				if(tmp.role != localStorage.getItem("ms_role")){
-					localStorage.setItem("ms_role",tmp.role )
-					const keys = permiss.defaultList[tmp.role];
-					permiss.handleSet(keys);
-					localStorage.setItem('ms_keys', JSON.stringify(keys));
 					router.push('/');
-
 				}
 				
 			});
