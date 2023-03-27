@@ -143,8 +143,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
 				else{
 					//console.log(res.data);
 					ElMessage.error(res.data["msg"]);
-					param.phone='';
-					param.password='';
 					//router.push("/login");
 					return false;
 				}

@@ -267,13 +267,11 @@ onMounted(() =>{
       router.push('/login');
     }else{
       getDepartmentByUid(uid).then((res) => {
-        console.log(res)
         if (res.status != 200) {
           ElMessage.error("出错了");
           return;
         }
         let data = res.data;
-        console.log(data);
         if (data.code == 1) {
             departmentsOptions.value = data.data.map((_item: any) => {return {departmentid:_item.departmentid,departmentName:_item.departmentName}});
             departments.value = departmentsOptions.value.map((item: any) => item.departmentid)
@@ -327,9 +325,8 @@ const updatePage = ()=>{
         }
         let opt1;
         let opt2;
-        if(employee.value){
+        if(typeof(employee.value) != "undefined" && employee.value != null && employee.value != ''){
           let data = res.data.data;
-          console.log(data)
           paramUp.value = data.bing;
           opt1 = {
               title: {
@@ -406,7 +403,7 @@ const updatePage = ()=>{
                       { type: 'min', name: 'Min' }
                       ],
                       label:{
-                      formatter: (params:any) => value2time(params.value)
+                        formatter: (params:any) => value2time(params.value)
                       }
                   },
                   markLine: {
@@ -421,7 +418,10 @@ const updatePage = ()=>{
                   type: 'line',
                   data: data.zhexiantu.clockout[1].map((item: any) => time2value(item)),
                   markPoint: {
-                      data: [{ type: 'max', name: 'Max' },{ type: 'min', name: 'Min' }]
+                      data: [{ type: 'max', name: 'Max' },{ type: 'min', name: 'Min' }],
+                      label:{
+                        formatter: (params:any) => value2time(params.value)
+                      }
                   },
                   markLine: {
                       data: [{name: '下班平均时间' , yAxis:time2value(data.zhexiantu.end)}],
@@ -434,47 +434,63 @@ const updatePage = ()=>{
           };
           
         }else{
-          let data = res.data.data;
-          console.log(data)
-          paramUp.value = data.bing;
-          opt1 = {
-              title: {
-                  text: '考勤比率图',
-                  left: 'center'
-              },
-              tooltip: {
-                  trigger: 'item'
-              },
-              legend: {
-                  orient: 'vertical',
-                  left: 'left'
-              },
-              series: [
-                  {
-                  name: 'Access From',
-                  type: 'pie',
-                  radius: '50%',
-                  data: [ {value:data.bing.zaotui, name:'早退次数'},{value: data.bing.daka, name:'打卡次数'},
-                      {value:data.bing.chidao, name:'迟到次数'},{value:data.bing.weidaka, name:'缺卡次数'}, 
-                      {value:data.bing.qingjia, name:'请假次数'}, {value:data.bing.jiaban, name:'加班次数'}],
-                  emphasis: {
-                      itemStyle: {
-                      shadowBlur: 10,
-                      shadowOffsetX: 0,
-                      shadowColor: 'rgba(0, 0, 0, 0.5)'
-                      }
-                  }
-                  }
-              ]
-          }
-         
+            let data = res.data.data;
+            paramUp.value = data.kapian;
+            opt1 = {
+                title: {
+                    text: '考勤比率图',
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left'
+                },
+                series: [
+                    {
+                    name: 'Access From',
+                    type: 'pie',
+                    radius: '50%',
+                    data: [ {value:data.bing.zaotui, name:'早退次数'},{value: data.bing.daka, name:'打卡次数'},
+                        {value:data.bing.chidao, name:'迟到次数'},{value:data.bing.weidaka, name:'缺卡次数'}, 
+                        {value:data.bing.qingjia, name:'请假次数'}, {value:data.bing.jiaban, name:'加班次数'}],
+                    emphasis: {
+                        itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                    }
+                ]
+            }
+            let zhexiantu = data.zhexiantu
+            const departments = []
+            const chidaoRates = []
+            const dakaRates = []
+            const zaotuiRates = []
+            const weidakaRates = []
+            for(let k in zhexiantu){
+                for(let item of departmentsOptions.value){
+                    if(item.departmentid == k){
+                        departments.push(item.departmentName)
+                        break;
+                    }
+                }
+                chidaoRates.push(zhexiantu[k].chidaoRate)
+                dakaRates.push(zhexiantu[k].dakaRate)
+                zaotuiRates.push(zhexiantu[k].zaotuiRate)
+                weidakaRates.push(zhexiantu[k].weidakaRate)
+            }
+            
           opt2 = {
               title: {
                   text: '各部门考勤数据'
               },
               tooltip: {
-                  trigger: 'axis',
-                  valueFormatter: (value:any) => value2time(value)
+                  trigger: 'axis'
               },
               legend: {},
               toolbox: {
@@ -493,52 +509,66 @@ const updatePage = ()=>{
               xAxis: {
                   type: 'category',
                   boundaryGap: false,
-                  data: data.zhexiantu.clockin[0]
+                  data: departments
               },
               yAxis: {
-                  type: 'value',
-                  axisLabel: {
-                      formatter: (value:any)=>value2time(value)
-                  }
+                  type: 'value'
               },
               series: [
-                  {
-                  name: '签到时间',
-                  type: 'line',
-                  data:  data.zhexiantu.clockin[1].map((item: any) => time2value(item)),
-                  markPoint: {
-                      data: [
-                      { type: 'max', name: 'Max' },
-                      { type: 'min', name: 'Min' }
-                      ],
-                      label:{
-                      formatter: (params:any) => value2time(params.value)
-                      }
-                  },
-                  markLine: {
-                      data: [{name: '上班平均时间' , yAxis:time2value(data.zhexiantu.front)}],
-                      label:{
-                          formatter:  (params:any) => value2time(params.value)
-                      }
-                  }
-                  },
-                  {
-                  name: '签退时间',
-                  type: 'line',
-                  data: data.zhexiantu.clockout[1].map((item: any) => time2value(item)),
-                  markPoint: {
-                      data: [{ type: 'max', name: 'Max' },{ type: 'min', name: 'Min' }]
-                  },
-                  markLine: {
-                      data: [{name: '下班平均时间' , yAxis:time2value(data.zhexiantu.end)}],
-                      label:{
-                          formatter:  (params:any) => value2time(params.value)
-                      }
-                  }
-                  }
-              ]
+                {
+                    name: '早退率',
+                    type: 'bar',
+                    data: zaotuiRates,
+                    markPoint: {
+                        data: [{ type: 'max', name: 'Max' },{ type: 'min', name: 'Min' }]
+                    },
+                    markLine: {
+                        data: [{name: '平均早退率' , type: 'average'}],
+                    }
+                },
+                {
+                    name: '正常打卡率',
+                    type: 'bar',
+                    data:  dakaRates,
+                    markPoint: {
+                        data: [
+                        { type: 'max', name: 'Max' },
+                        { type: 'min', name: 'Min' }
+                        ]
+                    },
+                    markLine: {
+                        data: [{name: '平均打卡率' , type: 'average'}],
+                    }
+                },
+                {
+                    name: '迟到率',
+                    type: 'bar',
+                    data: chidaoRates,
+                    markPoint: {
+                        data: [{ type: 'max', name: 'Max' },{ type: 'min', name: 'Min' }]
+                    },
+                    markLine: {
+                        data: [{name: '平均迟到率' , type: 'average'}],
+                    }
+                },
+                 {
+                    name: '未打卡率',
+                    type: 'bar',
+                    data: weidakaRates,
+                    markPoint: {
+                        data: [{ type: 'max', name: 'Max' },
+                            { type: 'min', name: 'Min' }]
+                    },
+                    markLine: {
+                        data: [{name: '平均未打卡率' , type: 'average'}],
+                        
+                    }
+                },
+            ]
           };
         }
+        pieChart.value.clear()
+        lineChart.value.clear()
         pieChart.value.setOption(opt1)
         lineChart.value.setOption(opt2)
     });

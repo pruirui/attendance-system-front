@@ -79,7 +79,7 @@
         </div>
 
         <el-button type="primary" @click="deleteCompany()" v-permiss="5">删除团队</el-button>
-        <el-button type="primary" @click="modifyCompany()" v-permiss="5">修改团队信息</el-button>
+        <el-button type="primary" @click="modifyCompany()" v-permiss="6">修改团队信息</el-button>
         <el-button type="primary" @click="invite()" v-permiss="6">邀请员工加入团队</el-button>
 
         <el-dialog :title="'为员工 '+user_current?.username+' 录入人脸'" v-model="visible" width="1000px" destroy-on-close>
@@ -248,6 +248,7 @@ const getDepartment = ()=>{
         } else {
             ElMessage.error(data.msg);
         }
+        
     }).catch((e)=>{ElMessage.error("网路超时！");})
 }
 

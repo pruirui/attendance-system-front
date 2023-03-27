@@ -11,28 +11,21 @@
 						</div>
 					</div>
 					<div class="user-info-list">
-						上次登录时间：
-						<span>2022-10-01</span>
+						<span style="margin-left: 0px;">手机号：{{user.user.phone}}</span>
 					</div>
 					<div class="user-info-list">
-						上次登录地点：
-						<span>东莞</span>
+						<span style="margin-left: 0px;">个性签名：{{ user.user.motto }}</span>
 					</div>
 				</el-card>
 				<el-card shadow="hover" style="height: 252px">
 					<template #header>
 						<div class="clearfix">
-							<span>技能详情</span>
+							<span>天气详情</span>
 						</div>
 					</template>
-					Python
-					<el-progress :percentage="79.4" color="#42b983"></el-progress>
-					Java
-					<el-progress :percentage="14" color="#f1e05a"></el-progress>
-					CSS
-					<el-progress :percentage="5.6"></el-progress>
-					HTML
-					<el-progress :percentage="1" color="#f56c6c"></el-progress>
+					<div>
+						<weather class="weather"/>
+					</div>
 				</el-card>
 			</el-col>
 			<el-col :span="16">
@@ -42,8 +35,8 @@
 							<div class="grid-content grid-con-1">
 								<el-icon class="grid-con-icon"><User /></el-icon>
 								<div class="grid-cont-right">
-									<div class="grid-num">1234</div>
-									<div>打卡次数</div>
+									<div class="grid-num">{{fistPage_val.indate}}</div>
+									<div>入职时长</div>
 								</div>
 							</div>
 						</el-card>
@@ -51,10 +44,10 @@
 					<el-col :span="8">
 						<el-card shadow="hover" :body-style="{ padding: '0px' }">
 							<div class="grid-content grid-con-2">
-								<el-icon class="grid-con-icon"><ChatDotRound /></el-icon>
+								<el-icon class="grid-con-icon"><SuccessFilled /></el-icon>
 								<div class="grid-cont-right">
-									<div class="grid-num">321</div>
-									<div>缺卡次数</div>
+									<div class="grid-num">{{fistPage_val.clock}}</div>
+									<div>打卡次数</div>
 								</div>
 							</div>
 						</el-card>
@@ -62,10 +55,10 @@
 					<el-col :span="8">
 						<el-card shadow="hover" :body-style="{ padding: '0px' }">
 							<div class="grid-content grid-con-3">
-								<el-icon class="grid-con-icon"><Goods /></el-icon>
+								<el-icon class="grid-con-icon"><WarningFilled /></el-icon>
 								<div class="grid-cont-right">
-									<div class="grid-num">5000</div>
-									<div>累计薪资</div>
+									<div class="grid-num">{{fistPage_val.noclock}}</div>
+									<div>缺卡次数</div>
 								</div>
 							</div>
 						</el-card>
@@ -117,58 +110,35 @@
 </template>
 
 <script setup lang="ts" name="dashboard">
-import Schart from 'vue-schart';
-import { reactive } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { useUserMessage } from '../store/user';
 import path from '../api/path'
-const user = useUserMessage();
+import weather from './weather.vue'
+import { firstPage } from '../api';
 
-const name = localStorage.getItem('ms_username');
-const role: string = name === 'admin' ? '超级管理员' : '普通用户';
+const fistPage_val = ref({indate:'100', clock:'100', noclock:'100'});
+const user = useUserMessage()
+user.fresh()
+const _role = localStorage.getItem('ms_role');
+const role: string = _role === 'boss' ? 'boss' :  _role === 'HR'? 'HR':  _role === 'admin'? '管理员':'普通用户';
 
-const options = {
-	type: 'bar',
-	title: {
-		text: '最近一周各品类销售图'
-	},
-	xRorate: 25,
-	labels: ['周一', '周二', '周三', '周四', '周五'],
-	datasets: [
-		{
-			label: '家电',
-			data: [234, 278, 270, 190, 230]
-		},
-		{
-			label: '百货',
-			data: [164, 178, 190, 135, 160]
-		},
-		{
-			label: '食品',
-			data: [144, 198, 150, 235, 120]
-		}
-	]
-};
-const options2 = {
-	type: 'line',
-	title: {
-		text: '最近几个月各品类销售趋势图'
-	},
-	labels: ['6月', '7月', '8月', '9月', '10月'],
-	datasets: [
-		{
-			label: '家电',
-			data: [234, 278, 270, 190, 230]
-		},
-		{
-			label: '百货',
-			data: [164, 178, 150, 135, 160]
-		},
-		{
-			label: '食品',
-			data: [74, 118, 200, 235, 90]
-		}
-	]
-};
+
+
+const getFistPage = () =>{
+	console.log("=======getFirstPage=====")
+	const id = localStorage.getItem('ms_userId')
+	if(id === null){
+		return;
+	}
+	firstPage(id).then(res =>{
+		console.log('======request=======')
+		console.log(res.data)
+		fistPage_val.value =  res.data.data
+	})
+}
+
+getFistPage()
+
 const todoList = reactive([
 	{
 		title: '今天要修复100个bug',
@@ -196,6 +166,7 @@ const todoList = reactive([
 	}
 ]);
 </script>
+
 
 <style scoped>
 .el-row {
@@ -274,6 +245,7 @@ const todoList = reactive([
 }
 
 .user-info-list {
+	display: flex;
 	font-size: 14px;
 	color: #999;
 	line-height: 25px;
@@ -296,8 +268,12 @@ const todoList = reactive([
 	color: #999;
 }
 
-.schart {
-	width: 100%;
-	height: 300px;
+.weather{
+	width: 80px;
+	height: 40px;
+}
+.weather_div{
+	width: 80px;
+	height: 40px;
 }
 </style>

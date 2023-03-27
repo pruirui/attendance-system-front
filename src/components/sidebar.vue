@@ -150,7 +150,7 @@ const items = [
         permiss: '13',
     },
     {
-        icon: 'Odometer',
+        icon: 'HomeFilled',
         index: '/dashboard',
         title: '系统首页',
         permiss: '1',

@@ -149,3 +149,7 @@ export const usersInDepartments = (departmentids : []) => {
 export const allDepartmentsClockData = (departmentids : [], userid: string, months:string) => {
 	return request.post(path.baseUrl+path.allDepartmentsClockData, {departmentids,userid,months});
 }
+
+export const firstPage = (uid:string) =>{
+    return request.post(path.baseUrl + path.firstPage, {uid})
+}
