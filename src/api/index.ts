@@ -137,8 +137,8 @@ export const userLeave = (uid :String, departmentid: string, starttime :String, 
 	return request.post(path.baseUrl+path.userLeave, {uid, departmentid, starttime, endtime, description});
 }
 
-export const userOverTime = (uid :String, departmentid: string, starttime :String, endtime :String, description :String) => {
-	return request.post(path.baseUrl+path.userovertime, {uid, departmentid, starttime, endtime, description});
+export const workOvertime = (uid :String, departmentid: string, starttime :String, endtime :String, description :String) => {
+	return request.post(path.baseUrl+path.workOvertime, {uid, departmentid, starttime, endtime, description});
 }
 
 
@@ -148,4 +148,21 @@ export const usersInDepartments = (departmentids : []) => {
 
 export const allDepartmentsClockData = (departmentids : [], userid: string, months:string) => {
 	return request.post(path.baseUrl+path.allDepartmentsClockData, {departmentids,userid,months});
+}
+
+
+export const clockOut = (data :any, config :any) => {
+	return request.post(path.baseUrl+path.clockOut,{"file": data}, config);
+}
+
+export const userClockDayData = (uid :String) => {
+	return request.post(path.baseUrl+path.userClockDayData,{uid});
+}
+
+export const handClockOut = (uid:String) =>{
+	return request.post(path.baseUrl+path.handClockOut,{uid});
+}
+
+export const handClockIn = (uid:String) =>{
+	return request.post(path.baseUrl+path.handClockIn,{uid});
 }

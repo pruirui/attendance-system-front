@@ -1,58 +1,66 @@
 <template>
-	<div class="camera-box" style="width: 1000px; ">
-	    <el-row :gutter="20">
-			<el-col :span="12">
-				<div style="text-align: center;font-size: 14px;font-weight: bold;margin-bottom: 10px; width: 400px;">摄像头{{"  "+camerainfo.Tips}}</div>
-				<!-- 这里就是摄像头显示的画面 -->
-				<video id="videoCamera" width="400" height="320"></video>
-				<div class="iCenter" >
-					<!-- <el-row type="flex" class="row-bg" justify="space-between">
-						<el-col :span="6">
+	<el-dialog v-model="dialogVisible" title="快速打卡" width="1000px" @opened="getCompetence">
+		<div class="login-cav">
+			<div class="camera-box" style="width: 1000px; height: 340px;">
+				<el-row :gutter="20">
+					<el-col :span="12">
+						<div style="text-align: center;font-size: 14px;font-weight: bold;margin-bottom: 10px; width: 400px;">摄像头{{"  "+ camerainfo.Tips}}</div>
+						
+						<video id="videoCamera" width="400" height="320"></video>
+						<div class="iCenter" >
 							<el-button type='primary' size='small' @click="getCompetence" style="margin-top: 10px;">打开摄像头</el-button>
-						</el-col >
-						<el-col :span="6">
-							<el-button type='primary' size='small' :icon="Camera" @click="setImage" style="margin-top: 10px;">拍 照</el-button>
-						</el-col>
-						<el-col :span="8">
+							<el-button type='primary' size='small' :icon="Camera" @click="setImage" style="margin-top: 10px;">人脸拍照</el-button>
 							<el-button type='primary' size='small' @click="stopNavigator" style="margin-top: 10px;">关闭摄像头</el-button>
-						</el-col>
-					</el-row> -->
-					<el-button type='primary' size='small' @click="getCompetence" style="margin-top: 10px;">打开摄像头</el-button>
-					<el-button type='primary' size='small' :icon="Camera" @click="setImage" style="margin-top: 10px;">人脸拍照</el-button>
-					<el-button type='primary' size='small' @click="stopNavigator" style="margin-top: 10px;">关闭摄像头</el-button>
-				</div>
-			</el-col>
-			
-			<!-- <el-col :span="4">
-				<div style="text-align: center;font-size: 14px;font-weight: bold;margin-bottom: 10px;">{{ camerainfo.Tips }}</div>
-			</el-col> -->
-			
-			<el-col :span="12">
-				<div style="text-align: center;font-size: 14px;font-weight: bold;margin-bottom: 10px; width: 400px;">拍摄效果</div>
-				<!-- 这里是点击拍照显示的图片画面 -->
-				<canvas id='canvasCamera' width='400' height='320' style="display: block;"></canvas>
-				<!-- <el-row class="row-bg" >
-					<el-col :span="6"> -->
+						</div>
+					</el-col>
+					<el-col :span="12">
+						<div style="text-align: center;font-size: 14px;font-weight: bold;margin-bottom: 10px; width: 400px;">拍摄效果</div>
+						<canvas id='canvasCamera' width='400' height='320' style="display: block;"></canvas>
 						<el-button :icon="Check" type='primary' size='small' @click="onUpload" style="margin-top: 10px;">打卡登录</el-button>
-				<!-- 	</el-col >
-				</el-row> -->
-			</el-col>
-	    </el-row>
-	</div>	
+					</el-col>
+				</el-row>
+			</div>	
+		</div>
+	    
+	    
+	    <template #footer>
+	      <span class="dialog-footer">
+	        <el-button @click="dialogVisible = false; handleClose()">取消</el-button>
+	        <el-button type="primary" @click="dialogVisible = false; handleClose()">确定 </el-button>
+	      </span>
+	    </template>
+	  </el-dialog>
 </template>
 
-<script setup lang="ts">
-import { ref, reactive, onBeforeUnmount , onMounted, camelize} from 'vue';
+<script lang="ts" setup>
+import { ref, reactive, onBeforeUnmount , onMounted, onBeforeUpdate} from 'vue';
 import { usePermissStore } from '../store/permiss';
 import { ElMessageBox,ElMessage } from 'element-plus'
-import { Login, uploadImg } from '../api/index'
-import { Camera ,CaretBottom,Check } from '@element-plus/icons-vue'
+import { uploadImg,clockOut } from '../api/index'
 import type {Action} from 'element-plus'
 import "../assets/js/tracking-min.js"
 import "../assets/js/face-min.js"
 import "../assets/js/eye-min.js"
 import "../assets/js/mouth-min.js"
-import { setActivePinia } from 'pinia';
+
+const emits = defineEmits(["changeclose","getLoginUserData","changevisiable"]);
+const dialogVisible = ref(true);
+
+
+const props = defineProps({
+	flag:{
+		type: Boolean,
+		default:false
+	},
+	clock_flag:{
+		type: Boolean,
+		default:false
+	}
+});
+
+const handleClose = () =>{
+	emits("changeclose");
+}
 
 interface cameraInfo{
 	countNum: any,//计数器
@@ -90,105 +98,8 @@ const camerainfo = reactive<cameraInfo>({
 	videoHeight: 320,
 });
 
-const props = defineProps({
-	quickLogin:{
-		type: Boolean,
-		default:false
-	}
-});
-
-const emits = defineEmits(["changequickLogin"]);
-
-onMounted(() => {
-	getCompetence();
-})
-
-onBeforeUnmount(() => {
-	stopNavigator();
-	camerainfo.countNum=0;
-	camerainfo.open=false;
-	camerainfo.loading=false;
-	camerainfo.imgSrc="";
-	camerainfo.Tips="未检测到人脸";
-	camerainfo.TipsFlag=false;
-	camerainfo.faceFlag=false;
-	//camerainfo.streamIns=null;
-	camerainfo.tracker=null;
-	camerainfo.trackertask=null;
-	camerainfo.thisCancas=null;
-	camerainfo.thisVideo=null;
-	camerainfo.thisContext=null;
-});
-
 function sleep (time) {
   return new Promise((resolve) => setTimeout(resolve, time));
-}
-
-
-
-const initTrack = () => {
-	//camerainfo.thisCancas = document.getElementById("canvasCamera");
-	//camerainfo.thisContext = camerainfo.thisCancas.getContext("2d");
-	camerainfo.tracker = new window.tracking.ObjectTracker('face');
-	camerainfo.tracker.setInitialScale(4);
-    camerainfo.tracker.setStepSize(2); // 设置步长
-    camerainfo.tracker.setEdgesDensity(0.1); 
-	
-	
-	camerainfo.trackertask = window.tracking.track("#videoCamera", camerainfo.tracker, { camera: true });//开始使用追踪器对象tracker来追踪视频流中的人脸。
-	
-	
-	camerainfo.tracker.on('track',(event) => {
-		if(!camerainfo.TipsFlag){
-			camerainfo.thisContext.clearRect(0,0, camerainfo.thisCancas.width, camerainfo.thisCancas.height);
-			
-			if(event.data.length === 0){
-				camerainfo.Tips = "人脸识别中...";
-			}
-			else if(event.data.length === 1){
-				if(!camerainfo.TipsFlag){
-					event.data.forEach((rect) => {
-						camerainfo.thisContext.strokeRect(rect.x, rect.y, rect.width, rect);
-						camerainfo.thisContext.strokeStyle = '#ff7146'
-						camerainfo.thisContext.fillStyle = '#ff7146'
-					});
-					
-					if(!camerainfo.faceFlag){
-						(async function() {
-							await sleep(500);
-							camerainfo.Tips = "检测成功，请保持两秒不动";
-						})();
-						
-						camerainfo.faceFlag=true;
-						//camerainfo.Tips = "检测成功，请保持两秒不动";
-						(async function() {
-							await sleep(900);
-							camerainfo.Tips = "拍照中...";
-							
-						})();
-						
-						setTimeout(() => {
-							camerainfo.TipsFlag = true;
-							
-							setImage();
-							
-							camerainfo.Tips = "拍照成功";
-						}, 1000);
-					}
-				}
-			}
-			else{
-				if(!camerainfo.TipsFlag){
-					ElMessage.error('只能对一个人脸检测.');
-				}
-			}
-		}
-	});
-};
-
-
-const handleError = () =>{
-	camerainfo.Tips="访问用户媒体失败";
 }
 
 //打开摄像头
@@ -240,11 +151,89 @@ const getCompetence = () => {
 			initTrack()
 		},10);
 	}).catch(err => {
-		handleError();
+		camerainfo.Tips="访问用户媒体失败";
 		console.log(err);
 	});
 	camerainfo.open = true;
 };
+
+
+onBeforeUnmount(() => {
+	stopNavigator();
+	camerainfo.countNum=0;
+	camerainfo.open=false;
+	camerainfo.loading=false;
+	camerainfo.imgSrc="";
+	camerainfo.Tips="未检测到人脸";
+	camerainfo.TipsFlag=false;
+	camerainfo.faceFlag=false;
+	//camerainfo.streamIns=null;
+	camerainfo.tracker=null;
+	camerainfo.trackertask=null;
+	camerainfo.thisCancas=null;
+	camerainfo.thisVideo=null;
+	camerainfo.thisContext=null;
+});
+
+
+
+const initTrack = () => {
+
+	camerainfo.tracker = new window.tracking.ObjectTracker('face');
+	camerainfo.tracker.setInitialScale(4);
+    camerainfo.tracker.setStepSize(2); // 设置步长
+    camerainfo.tracker.setEdgesDensity(0.1); 
+	camerainfo.trackertask = window.tracking.track("#videoCamera", camerainfo.tracker, { camera: true });//开始使用追踪器对象tracker来追踪视频流中的人脸。
+	
+	camerainfo.tracker.on('track',(event) => {
+		if(!camerainfo.TipsFlag){
+			camerainfo.thisContext.clearRect(0,0, camerainfo.thisCancas.width, camerainfo.thisCancas.height);
+			
+			if(event.data.length === 0){
+				camerainfo.Tips = "人脸识别中...";
+			}
+			else if(event.data.length === 1){
+				if(!camerainfo.TipsFlag){
+					event.data.forEach((rect) => {
+						camerainfo.thisContext.strokeRect(rect.x, rect.y, rect.width, rect);
+						camerainfo.thisContext.strokeStyle = '#ff7146'
+						camerainfo.thisContext.fillStyle = '#ff7146'
+					});
+					
+					if(!camerainfo.faceFlag){
+						(async function() {
+							await sleep(500);
+							camerainfo.Tips = "检测成功，请保持两秒不动";
+						})();
+						
+						camerainfo.faceFlag=true;
+						//camerainfo.Tips = "检测成功，请保持两秒不动";
+						(async function() {
+							await sleep(900);
+							camerainfo.Tips = "拍照中...";
+							
+						})();
+						
+						setTimeout(() => {
+							camerainfo.TipsFlag = true;
+							
+							setImage();
+							
+							camerainfo.Tips = "拍照成功";
+						}, 1000);
+					}
+				}
+			}
+			else{
+				if(!camerainfo.TipsFlag){
+					ElMessage.error('只能对一个人脸检测.');
+				}
+			}
+		}
+	});
+};
+
+
 //关闭摄像头
 const stopNavigator = () => {
 	if(camerainfo.open){
@@ -276,41 +265,102 @@ const setImage = () => {
 			let config = {
 			          headers:{'Content-Type':'multipart/form-data'}
 			        }; 
-			uploadImg(dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config).then(res => {
-				console.log(res);
-				console.log(res.data["data"]);
-				if(res.data["data"]){	//打卡成功
-					ElMessage.success(res.data["msg"]);
-					camerainfo.loading=true;
-					emits("changequickLogin",res);
-				}
-				else{
-					if(camerainfo.countNum<2){
-						ElMessageBox.alert(res.data["msg"], 'Error',{
-							center: true,
-							type: 'error'
-						});
-						(async function() {
-						  await sleep(2000);
-						  camerainfo.TipsFlag=false;
-						  camerainfo.faceFlag=false;
-						})();
+			if(props.clock_flag){
+				uploadImg(dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config).then(res => {
+					console.log(res);
+					if(res.data["data"]){	//打卡成功
+						if(res.data.code===1){
+							ElMessage.success(res.data["msg"]);
+						}
+						else if(res.data.code === 0){
+							ElMessage.warning(res.data["msg"]);
+						}
+						camerainfo.loading=true;
+						if(props.flag){
+							emits("getLoginUserData",res);
+						}
+						else{
+							emits("changevisiable");
+							//console.log(props.flag);
+						}
 					}
 					else{
-						ElMessageBox.alert(
-						    '你的自动人脸打卡检测已失败2次！<br/>'+"请你手动打卡登录!",
-						    'Error',
-						    {
-						      dangerouslyUseHTMLString: true,
-							  type: 'error',
-							  center: true
-						    }
-						)
-						//ElMessageBox.alert(res.data["msg"]+"请你手动打卡登录!", 'Error');
-						camerainfo.Tips = "请你手动拍照";
+						if(camerainfo.countNum<2){
+							ElMessageBox.alert(res.data["msg"], 'Error',{
+								center: true,
+								type: 'error'
+							});
+							(async function() {
+							  await sleep(2000);
+							  camerainfo.TipsFlag=false;
+							  camerainfo.faceFlag=false;
+							})();
+						}
+						else{
+							ElMessageBox.alert(
+							    '你的自动人脸打卡检测已失败2次！<br/>'+"请你手动拍照打卡登录!",
+							    'Error',
+							    {
+							      dangerouslyUseHTMLString: true,
+								  type: 'error',
+								  center: true
+							    }
+							)
+							//ElMessageBox.alert(res.data["msg"]+"请你手动打卡登录!", 'Error');
+							camerainfo.Tips = "请你手动拍照";
+							camerainfo.thisContext.clearRect(0, 0, camerainfo.videoWidth, camerainfo.videoHeight);
+						}
 					}
-				}
-			});
+				});
+			}
+			else{
+				clockOut(dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config).then(res => {
+					console.log(res);
+					if(res.data["data"]){	//打卡成功
+						if(res.data.code===1){
+							ElMessage.success(res.data["msg"]);
+						}
+						else if(res.data.code === 0){
+							ElMessage.warning(res.data["msg"]);
+						}
+						camerainfo.loading=true;
+						if(props.flag){
+							//emits("getLoginUserData",res);
+						}
+						else{
+							emits("changevisiable");
+							//console.log(props.flag);
+						}
+					}
+					else{
+						if(camerainfo.countNum<2){
+							ElMessageBox.alert(res.data["msg"], 'Error',{
+								center: true,
+								type: 'error'
+							});
+							(async function() {
+							  await sleep(2000);
+							  camerainfo.TipsFlag=false;
+							  camerainfo.faceFlag=false;
+							})();
+						}
+						else{
+							ElMessageBox.alert(
+							    '你的自动人脸打卡检测已失败2次！<br/>'+"请你手动拍照打卡登录!",
+							    'Error',
+							    {
+							      dangerouslyUseHTMLString: true,
+								  type: 'error',
+								  center: true
+							    }
+							)
+							//ElMessageBox.alert(res.data["msg"]+"请你手动打卡登录!", 'Error');
+							camerainfo.Tips = "请你手动拍照";
+							camerainfo.thisContext.clearRect(0, 0, camerainfo.videoWidth, camerainfo.videoHeight);
+						}
+					}
+				});
+			}
 		}
 	}
 	else{
@@ -331,18 +381,6 @@ const dataURLtoFile = (dataurl, filename)  => {
     }
 	
     return new File([u8arr], filename, { type: mime });
-};
-
-//清空画布
-const clearCanvas = (id) => {
-	let c = document.getElementById(id);
-	let cxt = c.getContext("2d");
-	cxt.clearRect(0, 0, c.width, c.height);
-};
-//重置画布
-const resetCanvas = () => {
-	camerainfo.imgSrc = "";
-	camerainfo.clearCanvas('canvasCamera');
 };
 
 //上传图片
@@ -366,61 +404,64 @@ const onUpload = () => {
 		let config = {
 		          headers:{'Content-Type':'multipart/form-data'}
 		        }; 
-		uploadImg(dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config).then(res => {
-			console.log(res);
-			if(res.data["data"]){	//打卡成功
-				ElMessage.success(res.data["msg"]);
-				camerainfo.loading=true;
-				emits("changequickLogin",res);
-				
-			}
-			else{
-				ElMessageBox.alert(res.data["msg"], 'Error',{
-					center: true,
-					type: 'error'
-				});
-				camerainfo.Tips = "请你手动拍照";
-			}
-		})
+		if(props.clock_flag){
+			uploadImg(dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config).then(res => {
+				console.log(res);
+				if(res.data["data"]){	//打卡成功
+					ElMessage.success(res.data["msg"]);
+					camerainfo.loading=true;
+					emits("getLoginUserData",res, props.flag);
+				}
+				else{
+					ElMessageBox.alert(res.data["msg"], 'Error',{
+						center: true,
+						type: 'error'
+					});
+					camerainfo.Tips = "请你手动拍照";
+				}
+			})
+		}
+		else{
+			
+		}
+		
 	}
 }
 
-const permiss = usePermissStore();//权限管理
-const UserData = (res) => {
-	if(res){
-		if(res.data["code"]===-1){
-			ElMessage.success('登录成功');
-			//console.log(typeof(res.data["data"]));
-			// let tmp = res.data["data"];
-			// delete tmp.password;
-			// localStorage.setItem('ms_userId', res.data["data"]['id'])
-			// localStorage.setItem('ms_username', res.data["data"]["username"]);
-			// localStorage.setItem("ms_userInfo", JSON.stringify(tmp));
-			// const keys = permiss.defaultList[res.data["data"]["role"]];
-			// permiss.handleSet(keys);
-			// localStorage.setItem('ms_keys', JSON.stringify(keys));
-			emits("changequickLogin",res);
-		}
-	}
-}
 
 </script>
 
 <style>
-.el-row {
-	margin-bottom: 20px;
-	&:last-child {
-	  margin-bottom: 0;
+	.el-row {
+		margin-bottom: 20px;
+		&:last-child {
+		  margin-bottom: 0;
+		}
 	}
-}
-.el-col {
-	border-radius: 4px;
-}
-.row-bg {
-	padding: 10px 0;
-}
+	.el-col {
+		border-radius: 4px;
+	}
+	.row-bg {
+		padding: 10px 0;
+	}
+		
+	.camera-box #canvas{
+		border: 1px solid #DCDFE6;
+	}
 	
-.camera-box #canvas{
-	border: 1px solid #DCDFE6;
-}
+	.quciklogin-tips {
+		font-size: 12px;
+		line-height: 30px;
+		color: #fff;
+	}
+	.dialog-footer button:first-child {
+	
+		margin-right: 10px;
+	}
+	
+	.login-cav{
+		
+		height: 340px;
+		width: 1000px;
+	}
 </style>

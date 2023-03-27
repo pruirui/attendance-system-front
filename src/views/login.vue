@@ -1,11 +1,6 @@
 <template>
 	
 	<div class="login-wrap">
-		<!-- <div class="ms-quickLogin">
-			<div class="quickLogin-btn">
-				<el-button type="primary" size="large" round=true @click="quickLogin">快速登录</el-button>
-			</div>
-		</div> -->
 		<div class="ms-login">
 			<div class="ms-title">智慧考勤系统</div>
 			<el-form :model="param" :rules="rules" ref="login" label-width="0px" class="ms-content">
@@ -37,10 +32,13 @@
 					<el-button type="primary" @click="registerUser">注册</el-button>
 				</div>
 				<p class="login-tips">Tips : 请输入你的账号和密码。</p>
-				
-				<el-button type= "primary" text @click="quickLogin = true">快速登录</el-button>
-				<el-dialog v-model="quickLogin" title="快速打卡登录" width="1000px" align-center destroy-on-close>
-					<div class="login-cav">
+				<div>
+					<el-button type= "primary" text @click="dialogVisible=true">快速登录</el-button>
+						<camera v-if="dialogVisible"  @changeclose="dialogVisible=false"  @getLoginUserData="getLoginUserData" :flag="true" :clock_flag="true"></camera>
+				</div>
+					
+				<!-- <el-dialog v-model="quickLogin" title="快速打卡登录" width="1000px" align-center destroy-on-close>
+					<div class="login-cav">@changequickLogin="getLoginUserData" @closequickLogin="quickLogin=false"
 						<camera v-if="quickLogin" :quickLogin="quickLogin" @changequickLogin="getLoginUserData"></camera>
 					</div>
 						
@@ -52,9 +50,7 @@
 						        </el-button>
 						    </span>
 						</template>
-					
-					
-				</el-dialog>
+				</el-dialog> -->
 			</el-form>
 		</div>
 	</div>
@@ -70,6 +66,14 @@ import type { FormInstance, FormRules } from 'element-plus';
 import { Lock, User } from '@element-plus/icons-vue';
 import { Login } from '../api/index'
 import camera from './camera.vue'
+
+const dialogVisible = ref(false);
+
+const handleClick = () => {
+	dialogVisible.value = true;
+	console.log(dialogVisible.value);
+}
+
 interface LoginInfo {
 	phone: string;
 	password: string;
@@ -162,20 +166,21 @@ const registerUser = () => {
 	router.push('/register');
 };
 
-const quickLogin = ref(false);
+
 
 const getLoginUserData = (res :any) => {
-	quickLogin.value = false;
-	let tmp = res.data["data"];
-	delete tmp.password;
-	localStorage.setItem('ms_userId', res.data["data"]['id'])
-	localStorage.setItem('ms_username', res.data["data"]["username"]);
-	localStorage.setItem("ms_userInfo", JSON.stringify(tmp));
-	localStorage.setItem('ms_role', res.data["data"]["role"]);
-	const keys = permiss.defaultList[res.data["data"]["role"]];
-	permiss.handleSet(keys);
-	localStorage.setItem('ms_keys', JSON.stringify(keys));
-	router.push('/');
+	
+		let tmp = res.data["data"];
+		delete tmp.password;
+		localStorage.setItem('ms_userId', res.data["data"]['id'])
+		localStorage.setItem('ms_username', res.data["data"]["username"]);
+		localStorage.setItem("ms_userInfo", JSON.stringify(tmp));
+		localStorage.setItem('ms_role', res.data["data"]["role"]);
+		const keys = permiss.defaultList[res.data["data"]["role"]];
+		permiss.handleSet(keys);
+		localStorage.setItem('ms_keys', JSON.stringify(keys));
+		router.push('/');
+	
 };
 
 const tags = useTagsStore();
