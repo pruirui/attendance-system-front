@@ -1,8 +1,9 @@
 import axios, {AxiosInstance, AxiosError, AxiosResponse, AxiosRequestConfig} from 'axios';
 // let token = localStorage.getItem("token")
 const service:AxiosInstance = axios.create({
-    timeout: 5000,
+    timeout: 5000
 });
+
 
 service.interceptors.request.use(
     (config: AxiosRequestConfig) => {

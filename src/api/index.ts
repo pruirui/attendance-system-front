@@ -1,4 +1,5 @@
 import { useId } from 'element-plus';
+import { TIMEOUT } from 'dns';
 import { pa } from 'element-plus/es/locale';
 import request from '../utils/request';
 import path from './path'
@@ -155,8 +156,8 @@ export const firstPage = (uid:string) =>{
     return request.post(path.baseUrl + path.firstPage, {uid})
 }
 
-export const clockOut = (data :any, config :any) => {
-	return request.post(path.baseUrl+path.clockOut,{"file": data}, config);
+export const clockOut = (uid:String,data :any, config :any) => {
+	return request.post(path.baseUrl+path.clockOut,{"uid":uid,"file": data}, config);
 }
 
 export const userClockDayData = (uid :String) => {

@@ -11,22 +11,21 @@
 							<el-button type='primary' size='small' @click="getCompetence" style="margin-top: 10px;">打开摄像头</el-button>
 							<el-button type='primary' size='small' :icon="Camera" @click="setImage" style="margin-top: 10px;">人脸拍照</el-button>
 							<el-button type='primary' size='small' @click="stopNavigator" style="margin-top: 10px;">关闭摄像头</el-button>
+							<el-button type='primary' size='small' @click="onUpload" style="margin-top: 10px;">打卡登录</el-button>
 						</div>
 					</el-col>
 					<el-col :span="12">
 						<div style="text-align: center;font-size: 14px;font-weight: bold;margin-bottom: 10px; width: 400px;">拍摄效果</div>
 						<canvas id='canvasCamera' width='400' height='320' style="display: block;"></canvas>
-						<el-button :icon="Check" type='primary' size='small' @click="onUpload" style="margin-top: 10px;">打卡登录</el-button>
 					</el-col>
 				</el-row>
 			</div>	
 		</div>
 	    
-	    
-	    <template #footer>
+	    <template #footer style="padding-top: 5px;">
 	      <span class="dialog-footer">
-	        <el-button @click="dialogVisible = false; handleClose()">取消</el-button>
-	        <el-button type="primary" @click="dialogVisible = false; handleClose()">确定 </el-button>
+	        <el-button  @click="dialogVisible = false; handleClose()">取消</el-button>
+	        <el-button  type="primary" @click="dialogVisible = false; handleClose()">确定 </el-button>
 	      </span>
 	    </template>
 	  </el-dialog>
@@ -55,12 +54,17 @@ const props = defineProps({
 	clock_flag:{
 		type: Boolean,
 		default:false
+	},
+	uid:{
+		type:String,
+		default:'-1',
 	}
 });
 
 const handleClose = () =>{
 	emits("changeclose");
 }
+const uid = ref(props.uid)
 
 interface cameraInfo{
 	countNum: any,//计数器
@@ -242,6 +246,7 @@ const stopNavigator = () => {
 	}
 };
 
+
 //拍照
 const setImage = () => {
 	
@@ -266,100 +271,238 @@ const setImage = () => {
 			          headers:{'Content-Type':'multipart/form-data'}
 			        }; 
 			if(props.clock_flag){
-				uploadImg(dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config).then(res => {
-					console.log(res);
-					if(res.data["data"]){	//打卡成功
-						if(res.data.code===1){
-							ElMessage.success(res.data["msg"]);
-						}
-						else if(res.data.code === 0){
-							ElMessage.warning(res.data["msg"]);
-						}
-						camerainfo.loading=true;
-						if(props.flag){
-							emits("getLoginUserData",res);
-						}
-						else{
-							emits("changevisiable");
-							//console.log(props.flag);
-						}
+				(async function() {
+					try{
+						const timeout = 1000;
+						
+						// const res = await Promise.race([
+						//       uploadImg(dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config),
+						//       new Promise((_, reject) =>
+						//         setTimeout(() => reject(new Error('Timeout')), timeout)
+						//       ),
+						// ]);
+						const res = await uploadImg(dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config);
+						// let late = new Date()
+						// let now = new Date()
+						// console.log("--------------"+(now.getTime()-late.getTime()))
+						// console.log(res.data);
+							if(res.data["data"]){	//打卡成功
+								if(res.data.code===1){
+									ElMessage.success(res.data["msg"]);
+								}
+								else if(res.data.code === 0){
+									ElMessage.warning(res.data["msg"]);
+								}
+								camerainfo.loading=true;
+								if(props.flag){
+									emits("getLoginUserData",res);
+								}
+								else{
+									emits("changevisiable");
+									//console.log(props.flag);
+								}
+							}
+							else{
+								if(camerainfo.countNum<2){
+									ElMessageBox.alert(res.data["msg"], 'Error',{
+										center: true,
+										type: 'error',
+										callback: () => {
+											camerainfo.TipsFlag=false;
+											camerainfo.faceFlag=false;
+										}
+									});
+									// (async function() {
+									//   await sleep(2000);
+									//   camerainfo.TipsFlag=false;
+									//   camerainfo.faceFlag=false;
+									// })();
+								}
+								else{
+									ElMessageBox.alert(
+									    '你的自动人脸打卡检测已失败2次！<br/>'+"请你手动拍照打卡登录!",
+									    'Error',
+									    {
+									      dangerouslyUseHTMLString: true,
+										  type: 'error',
+										  center: true
+									    }
+									)
+									//ElMessageBox.alert(res.data["msg"]+"请你手动打卡登录!", 'Error');
+									camerainfo.Tips = "请你手动拍照";
+									camerainfo.thisContext.clearRect(0, 0, camerainfo.videoWidth, camerainfo.videoHeight);
+								}
+							}
 					}
-					else{
-						if(camerainfo.countNum<2){
-							ElMessageBox.alert(res.data["msg"], 'Error',{
-								center: true,
-								type: 'error'
-							});
-							(async function() {
-							  await sleep(2000);
-							  camerainfo.TipsFlag=false;
-							  camerainfo.faceFlag=false;
-							})();
-						}
-						else{
-							ElMessageBox.alert(
-							    '你的自动人脸打卡检测已失败2次！<br/>'+"请你手动拍照打卡登录!",
-							    'Error',
-							    {
-							      dangerouslyUseHTMLString: true,
-								  type: 'error',
-								  center: true
-							    }
-							)
-							//ElMessageBox.alert(res.data["msg"]+"请你手动打卡登录!", 'Error');
-							camerainfo.Tips = "请你手动拍照";
-							camerainfo.thisContext.clearRect(0, 0, camerainfo.videoWidth, camerainfo.videoHeight);
-						}
+					catch(error){
+						ElMessage.error(error.message)
+						console.error(error.message);
 					}
-				});
+					
+				})();
+				// uploadImg(dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config).then(res => {
+				// 	console.log(res);
+				// 	if(res.data["data"]){	//打卡成功
+				// 		if(res.data.code===1){
+				// 			ElMessage.success(res.data["msg"]);
+				// 		}
+				// 		else if(res.data.code === 0){
+				// 			ElMessage.warning(res.data["msg"]);
+				// 		}
+				// 		camerainfo.loading=true;
+				// 		if(props.flag){
+				// 			emits("getLoginUserData",res);
+				// 		}
+				// 		else{
+				// 			emits("changevisiable");
+				// 			//console.log(props.flag);
+				// 		}
+				// 	}
+				// 	else{
+				// 		if(camerainfo.countNum<2){
+				// 			ElMessageBox.alert(res.data["msg"], 'Error',{
+				// 				center: true,
+				// 				type: 'error'
+				// 			});
+				// 			(async function() {
+				// 			  await sleep(2000);
+				// 			  camerainfo.TipsFlag=false;
+				// 			  camerainfo.faceFlag=false;
+				// 			})();
+				// 		}
+				// 		else{
+				// 			ElMessageBox.alert(
+				// 			    '你的自动人脸打卡检测已失败2次！<br/>'+"请你手动拍照打卡登录!",
+				// 			    'Error',
+				// 			    {
+				// 			      dangerouslyUseHTMLString: true,
+				// 				  type: 'error',
+				// 				  center: true
+				// 			    }
+				// 			)
+				// 			//ElMessageBox.alert(res.data["msg"]+"请你手动打卡登录!", 'Error');
+				// 			camerainfo.Tips = "请你手动拍照";
+				// 			camerainfo.thisContext.clearRect(0, 0, camerainfo.videoWidth, camerainfo.videoHeight);
+				// 		}
+				// 	}
+				// });
 			}
 			else{
-				clockOut(dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config).then(res => {
-					console.log(res);
-					if(res.data["data"]){	//打卡成功
-						if(res.data.code===1){
-							ElMessage.success(res.data["msg"]);
-						}
-						else if(res.data.code === 0){
-							ElMessage.warning(res.data["msg"]);
-						}
-						camerainfo.loading=true;
-						if(props.flag){
-							//emits("getLoginUserData",res);
-						}
-						else{
-							emits("changevisiable");
-							//console.log(props.flag);
-						}
+				(async function() {
+					try{
+						const timeout = 1000;
+						
+						// const res = await Promise.race([
+						//       clockOut(dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config),
+						//       new Promise((_, reject) =>
+						//         setTimeout(() => reject(new Error('Timeout')), timeout)
+						//       ),
+						// ]);
+						const res = await clockOut(uid,dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config);
+						// let late = new Date()
+						// let now = new Date()
+						// console.log("--------------"+(now.getTime()-late.getTime()))
+						// console.log(res.data);
+								if(res.data["data"]){	//打卡成功
+									if(res.data.code===1){
+										ElMessage.success(res.data["msg"]);
+									}
+									else if(res.data.code === 0){
+										ElMessage.warning(res.data["msg"]);
+									}
+									camerainfo.loading=true;
+									if(props.flag){
+										//emits("getLoginUserData",res);
+									}
+									else{
+										emits("changevisiable");
+										//console.log(props.flag);
+									}
+								}
+								else{
+									if(camerainfo.countNum<2){
+										ElMessageBox.alert(res.data["msg"], 'Error',{
+											center: true,
+											type: 'error',
+											callback: () => {
+												camerainfo.TipsFlag=false;
+												camerainfo.faceFlag=false;
+											}
+										});
+										// (async function() {
+										//   await sleep(2000);
+										//   camerainfo.TipsFlag=false;
+										//   camerainfo.faceFlag=false;
+										// })();
+									}
+									else{
+										ElMessageBox.alert(
+										    '你的自动人脸打卡检测已失败2次！<br/>'+"请你手动拍照打卡登录!",
+										    'Error',
+										    {
+										      dangerouslyUseHTMLString: true,
+											  type: 'error',
+											  center: true
+										    }
+										)
+										//ElMessageBox.alert(res.data["msg"]+"请你手动打卡登录!", 'Error');
+										camerainfo.Tips = "请你手动拍照";
+										camerainfo.thisContext.clearRect(0, 0, camerainfo.videoWidth, camerainfo.videoHeight);
+									}
+								}
 					}
-					else{
-						if(camerainfo.countNum<2){
-							ElMessageBox.alert(res.data["msg"], 'Error',{
-								center: true,
-								type: 'error'
-							});
-							(async function() {
-							  await sleep(2000);
-							  camerainfo.TipsFlag=false;
-							  camerainfo.faceFlag=false;
-							})();
-						}
-						else{
-							ElMessageBox.alert(
-							    '你的自动人脸打卡检测已失败2次！<br/>'+"请你手动拍照打卡登录!",
-							    'Error',
-							    {
-							      dangerouslyUseHTMLString: true,
-								  type: 'error',
-								  center: true
-							    }
-							)
-							//ElMessageBox.alert(res.data["msg"]+"请你手动打卡登录!", 'Error');
-							camerainfo.Tips = "请你手动拍照";
-							camerainfo.thisContext.clearRect(0, 0, camerainfo.videoWidth, camerainfo.videoHeight);
-						}
+					catch(error){
+						ElMessage.error(error.message)
+						console.error(error.message);
 					}
-				});
+					
+				})();
+				// clockOut(dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config).then(res => {
+				// 	console.log(res);
+				// 	if(res.data["data"]){	//打卡成功
+				// 		if(res.data.code===1){
+				// 			ElMessage.success(res.data["msg"]);
+				// 		}
+				// 		else if(res.data.code === 0){
+				// 			ElMessage.warning(res.data["msg"]);
+				// 		}
+				// 		camerainfo.loading=true;
+				// 		if(props.flag){
+				// 			//emits("getLoginUserData",res);
+				// 		}
+				// 		else{
+				// 			emits("changevisiable");
+				// 			//console.log(props.flag);
+				// 		}
+				// 	}
+				// 	else{
+				// 		if(camerainfo.countNum<2){
+				// 			ElMessageBox.alert(res.data["msg"], 'Error',{
+				// 				center: true,
+				// 				type: 'error'
+				// 			});
+				// 			(async function() {
+				// 			  await sleep(2000);
+				// 			  camerainfo.TipsFlag=false;
+				// 			  camerainfo.faceFlag=false;
+				// 			})();
+				// 		}
+				// 		else{
+				// 			ElMessageBox.alert(
+				// 			    '你的自动人脸打卡检测已失败2次！<br/>'+"请你手动拍照打卡登录!",
+				// 			    'Error',
+				// 			    {
+				// 			      dangerouslyUseHTMLString: true,
+				// 				  type: 'error',
+				// 				  center: true
+				// 			    }
+				// 			)
+				// 			//ElMessageBox.alert(res.data["msg"]+"请你手动打卡登录!", 'Error');
+				// 			camerainfo.Tips = "请你手动拍照";
+				// 			camerainfo.thisContext.clearRect(0, 0, camerainfo.videoWidth, camerainfo.videoHeight);
+				// 		}
+				// 	}
+				// });
 			}
 		}
 	}
@@ -461,7 +604,7 @@ const onUpload = () => {
 	
 	.login-cav{
 		
-		height: 340px;
+		height: 400px;
 		width: 1000px;
 	}
 </style>

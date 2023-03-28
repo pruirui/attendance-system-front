@@ -1,6 +1,6 @@
 <template>
 	<div class="container">
-		<el-tabs v-model="message">
+		<el-tabs v-model="message" @tab-click="getData">
 			<el-tab-pane :label="`待我处理(${datas.unread.length})`" name="first">
 				<el-table :data="datas.unread" :show-header="false" style="width: 100%">
 					<el-table-column width="500">
@@ -15,7 +15,7 @@
 					</el-table-column>
 					<el-table-column>
 						<template #default="scope" width="300">
-							<span class="description">详细信息：{{scope.row.content?'补'+scope.row.content+"，":""}}{{scope.row.description?scope.row.description:'无描述'}}</span>
+							<span class="description">详细信息：{{scope.row.content?scope.row.content+".  ":""}}{{scope.row.description?'描述: '+scope.row.description:'无描述'}}</span>
 						</template>
 					</el-table-column>
 					<el-table-column prop="create_time" width="180"></el-table-column>
@@ -45,7 +45,7 @@
 						</el-table-column>
 						<el-table-column>
 							<template #default="scope" width="300">
-								<span class="description">详细信息：{{scope.row.content?'补'+scope.row.content+"，":""}}{{scope.row.description}}</span>
+								<span class="description">详细信息：{{scope.row.content?scope.row.content+". ":""}}{{"描述: "+scope.row.description}}</span>
 							</template>
 						</el-table-column>
 						<el-table-column prop="create_time" width="200"></el-table-column>
@@ -67,7 +67,7 @@
 									    <el-descriptions-item label="处理人" label-align="right" align="center">{{scope.row.processname}}</el-descriptions-item>
 									    <el-descriptions-item label="部门名称" label-align="right" align="center">{{scope.row.departmentname}}</el-descriptions-item >
 									    <el-descriptions-item label="状态" label-align="right" align="center">{{scope.row.state}}</el-descriptions-item>
-									    <el-descriptions-item label="详细信息" label-align="right" align="center">{{scope.row.content?'补'+scope.row.content+" ":""}}{{scope.row.description}}</el-descriptions-item>
+									    <el-descriptions-item label="详细信息" label-align="right" align="center">{{scope.row.content?scope.row.content+". ":""}}{{"描述: "+scope.row.description}}</el-descriptions-item>
 										<el-descriptions-item label="处理时间" label-align="right" align="center">{{scope.row.apply_time}}</el-descriptions-item>
 									  </el-descriptions>
 								  </el-popover>
@@ -81,7 +81,7 @@
 						</el-table-column>
 						<el-table-column>
 							<template #default="scope" width="400">
-								<span class="description">详细信息：{{scope.row.content?'补'+scope.row.content+" ":""}}{{scope.row.description}}</span>
+								<span class="description">详细信息：{{scope.row.content?scope.row.content+". ":""}}{{"描述: "+scope.row.description}}</span>
 							</template>
 						</el-table-column>
 						<el-table-column prop="apply_time" width="250"></el-table-column>
@@ -156,9 +156,112 @@ const getData = ()=>{
 		if(res.status  != 200){
 			ElMessage.error("出错了");
 		}
+		console.log(res);
 		datas.read = res.data.data.read;
 		datas.unread = res.data.data.unread;
 		datas.down = res.data.data.down;
+		
+		let len = datas.unread.length
+		for(let i =0;i<len;i++){
+			
+			if(datas.unread[i].event === "员工申请请假"){
+				let len1 =datas.unread[i].content.length 
+				let temp = "请假开始时间:"
+				for (let j = 0; j < len1; j++) {
+					temp = temp.concat(datas.unread[i].content[j])
+					if(j===9){
+						temp=temp.concat(" 请假结束时间:")
+					}
+				}
+				datas.unread[i].content=temp;
+			}
+			else if(datas.unread[i].event === "员工申请补打卡"){
+				let temp ="补";
+				temp=temp.concat(datas.unread[i].content);
+				datas.unread[i].content=temp;
+			}
+			else if(datas.unread[i].event === "员工申请加班"){
+				let temp = "加班开始时间:"
+				let timea = datas.unread[i].content.split(" ")
+				temp = temp.concat(timea[0])
+				temp = temp.concat(" 加班结束时间:")
+				if(timea[1]==="00:00"){
+					temp = temp.concat("24:00")
+				}
+				else{
+					temp = temp.concat(timea[1])
+				}
+				datas.unread[i].content = temp
+			}
+		}
+		
+		let len1 = datas.down.length
+		for(let i =0;i<len1;i++){
+			
+			if(datas.down[i].event === "员工申请请假"){
+				let len11 =datas.down[i].content.length 
+				let temp = "请假开始时间:"
+				for (let j = 0; j < len11; j++) {
+					temp = temp.concat(datas.down[i].content[j])
+					if(j===9){
+						temp=temp.concat(" 请假结束时间:")
+					}
+				}
+				datas.down[i].content=temp;
+			}
+			else if(datas.down[i].event === "员工申请补打卡"){
+				let temp ="补";
+				temp=temp.concat(datas.down[i].content);
+				datas.down[i].content=temp;
+			}
+			else if(datas.down[i].event === "员工申请加班"){
+				let temp = "加班开始时间:"
+				let timea = datas.down[i].content.split(" ")
+				temp = temp.concat(timea[0])
+				temp = temp.concat(" 加班结束时间:")
+				if(timea[1]==="00:00"){
+					temp = temp.concat("24:00")
+				}
+				else{
+					temp = temp.concat(timea[1])
+				}
+				datas.down[i].content = temp
+			}
+		}
+		//console.log(datas.down)
+		let len2 = datas.read.length
+		for(let i =0;i<len2;i++){
+			
+			if(datas.read[i].event === "员工申请请假"){
+				let len11 =datas.read[i].content.length 
+				let temp = "请假开始时间:"
+				for (let j = 0; j < len11; j++) {
+					temp = temp.concat(datas.read[i].content[j])
+					if(j===9){
+						temp=temp.concat(" 请假结束时间:")
+					}
+				}
+				datas.read[i].content=temp;
+			}
+			else if(datas.read[i].event === "员工申请补打卡"){
+				let temp ="补";
+				temp=temp.concat(datas.read[i].content);
+				datas.read[i].content=temp;
+			}
+			else if(datas.read[i].event === "员工申请加班"){
+				let temp = "加班开始时间:"
+				let timea = datas.read[i].content.split(" ")
+				temp = temp.concat(timea[0])
+				temp = temp.concat(" 加班结束时间:")
+				if(timea[1]==="00:00"){
+					temp = temp.concat("24:00")
+				}
+				else{
+					temp = temp.concat(timea[1])
+				}
+				datas.read[i].content = temp
+			}
+		}
 	})
 }
 
