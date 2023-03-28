@@ -4,14 +4,14 @@
 		    <el-form-item label="加班时间段" :label-width="formLabelWidth">
 		        <div class="demo-time-range">
 		          <el-time-select v-model="startTime" :max-time="endTime" class="mr-4" placeholder="开始时间" size="small"
-		            start="08:30"
+		            :start="workendTime_start"
 		            step="00:30"
-		            end="18:30"
+		            :end="workendTime_end"
 		          />
 		          <el-time-select v-model="endTime" :min-time="startTime"  placeholder="结束时间" size="small"
-		            start="08:30"
+		            :start="workendTime_start"
 		            step="00:30"
-		            end="18:30"
+		            :end="workendTime_end"
 		          />
 		        </div>
 		    </el-form-item>
@@ -37,8 +37,9 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { getDepartmentByUid , userOverTime} from "../api/index";
+import { getDepartmentByUid , workOvertime} from "../api/index";
 import { ElMessage } from "element-plus";
+import { time } from 'echarts/core';
 
 const dialogVisible = ref(true);
 const formLabelWidth = '140px'
@@ -49,6 +50,9 @@ const emits = defineEmits(['changedialogVisible1']);
 const departmentids = ref([]);
 const uid = localStorage.getItem("ms_userId");
 const description = ref('')
+const workendTime_start = ref('')
+const workendTime_end = ref('')
+const workoverlimit = ref(Number);
 
 getDepartmentByUid(uid).then((res) => {
 	if (res.status != 200) {
@@ -56,6 +60,28 @@ getDepartmentByUid(uid).then((res) => {
 		return;
 	}
 	let data = res.data;
+	console.log(data)
+	workoverlimit.value=data.data[0].workOverLimit;
+
+	let timearry = data.data[0].endTime.split(':');
+	let hour = parseInt(timearry[0])+parseInt(data.data[0].workOverLimit);
+	let minute = parseInt(timearry[1]);
+	
+	workendTime_start.value=timearry[0]+':'+timearry[1];
+	
+	// if(hour===24){
+	// 	workendTime_end.value='23:59'
+	// }
+	// else{
+	// 	//workendTime_end.value=hour.toString().padStart(2, '0') + ':' + minute.toString().padStart(2, '0');
+	// }
+	workendTime_end.value=hour.toString().padStart(2, '0') + ':' + minute.toString().padStart(2, '0');
+
+	
+	console.log(workendTime_start.value)
+	console.log(hour)
+	console.log(workendTime_end.value)
+	console.log(workoverlimit.value)
 	if (data.code == 1) {
 		let len = data.data.length;
 		for(let i=0;i<len;i++){
@@ -79,10 +105,19 @@ const handleovertime = () => {
 		ElMessage.info("加班申请表单不能为空！");
 	}
 	else{
-		// userOverTime(uid, departmentvalue.value, startTime.value, endTime.value, description).then(res => {
-		// 	console.log(res);
-		// })
+		console.log(endTime.value);
+		workOvertime(uid, departmentvalue.value, startTime.value, endTime.value, description.value).then(res => {
+			console.log(res);
+			if(res.data.code === -1){
+				ElMessage.warning(res.data.msg);
+			}
+			else if(res.data.code === 1){
+				ElMessage.success(res.data.msg);
+			}
+			else{
+				ElMessage.error("输入有误");
+			}
+		})
 	}
-	
 }
 </script>

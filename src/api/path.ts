@@ -29,10 +29,13 @@ const path = {
 	makeUpClock:"/user/makeUpClock",
 	userClockInfo: "/user/userClockInfo",
 	userLeave: "/user/userLeave",
-	userovertime :"/user/userOverTime",
+	workOvertime :"/user/workOverTime",
 	usersInDepartments:"/HR/usersInDepartments",
 	allDepartmentsClockData:"/HR/allDepartmentsClockData",
-	firstPage:"/user/firstPage"
-
+	firstPage:"/user/firstPage",
+	clockOut :"/user/clockOut",
+	userClockDayData:"/user/userClockDayData",
+	handClockOut: "/user/handClockOut",
+	handClockIn: "/user/handClockIn",
 }
 export default path;

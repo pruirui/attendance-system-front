@@ -14,12 +14,29 @@
 			<el-main style="padding-top: 5px; height: 580px; padding-bottom: 5px;  padding-left: 10px; padding-right: 5px; background-color: white;" >
 				<el-container>
 					<el-aside style="width: 50%; height:570px; padding-top: 5px; padding-right: 5px; padding-left: 5px; padding-bottom: 5px;">
-						<div style="margin-top: 50px; margin-left:100px; margin-right: 140px;">
-							<el-card :body-style="{ padding: '0px' }" style="height: 450px; width: 400px; text-align: center;">
+						<div style="margin-top: 10px; margin-left:100px; margin-right: 110px;">
+							<el-card :body-style="{ padding: '0px' }" style="height: 450px; width: 380px; text-align: center;">
 								<clock></clock>
-								<showtime style="height:120px; width: 300px;padding-left: 50px;"></showtime>
+								<showtime style="height:120px; width: 300px;padding-left: 45px;"></showtime>
 							</el-card>
-							
+						</div>
+						<div style="margin-top: 20px; margin-left:100px; margin-right: 110px;">
+							<el-row :gutter="12">
+							    <el-col :span="6" >
+									<el-button type="primary" :disabled="handclockin|button1" @click="handclockin=true"> 签到</el-button>
+									<camera v-if="handclockin" :flag="false" @changevisiable="handclockin=false"></camera>
+								</el-col>
+								<el-col :span="6" >
+									<el-button type="primary" v-if="handclockin" @click="handlehandClockin"> 手动签到</el-button>
+								</el-col>
+							    <el-col :span="6" >
+									<el-button type="primary" :disabled="handclockout|button2" @click="handclockout=true">签退</el-button>
+									<camera v-if="handclockout" :flag="false" @changevisiable="handclockout=false"></camera>
+								</el-col>
+								<el-col :span="6" >
+									<el-button type="primary" v-if="handclockout" @click="handlehandClockout">手动签退</el-button>
+								</el-col>
+							</el-row>
 						</div>
 					</el-aside>
 					
@@ -195,8 +212,8 @@
 						</el-card>
 						<div style="width: 460px; height: 30px; padding-right: 20px; padding-left: 0px;padding-bottom: 0;padding-top: 5;">
 							<el-descriptions class="margin-top" title="打卡日历描述" :column="2"   border>
-							    <template #extra>
-									<el-row :gutter="40">
+							    <template #extra >
+									<el-row :gutter="40" >
 									    <el-col :span="12">
 											<el-button type="primary" size="small" @click="dialogVisible = true">请假申请</el-button>
 											<userleave v-if="dialogVisible" @changedialogVisible="dialogVisible = false"></userleave>
@@ -205,10 +222,8 @@
 											<el-button type="primary" size="small" @click="dialogVisible1 = true">加班申请</el-button>
 											<overtime v-if="dialogVisible1" @changedialogVisible1="dialogVisible1 = false"></overtime>
 										</el-col>
-
-									  </el-row>
-									
-									</template>
+									</el-row>
+								</template>
 							    <el-descriptions-item>
 									<template #label> <div class="cell-item" style="text-align: center;">✓</div></template>
 									✓代表已经打卡
@@ -233,13 +248,17 @@
 <script setup lang="ts">
 import { ref} from 'vue'
 //import {Check,Close, Notification} from '@element-plus/icons-vue'
-import { getUserClockinfo } from '../api/index'
+import { getUserClockinfo,userClockDayData,handClockOut,handClockIn } from '../api/index'
 import clock from './clock.vue'
 import showtime from './showtime.vue'
 import { ElMessage, imageProps } from "element-plus";
 import { getDepartmentByUid , usermakeUpClock} from "../api/index";
 import userleave from './userleave.vue'
 import overtime from './overtime.vue'
+import camera from './camera.vue'
+const handclockin = ref(false);
+const handclockout = ref(false);
+
 
 const calendar = ref();
 const now_date = ref(new Date().getMonth()+1);
@@ -251,6 +270,40 @@ const userinfo = ref();
 const calendarData = ref([]);
 const dialogVisible = ref(false);
 const dialogVisible1 = ref(false);
+
+const button1 = ref(false);
+const button2 = ref(false);
+
+const handlehandClockin = () => {
+	handClockIn(uid).then(res =>{
+		if(res.data.code === 1){
+			ElMessage.success(res.data.msg);
+		}
+		else if(res.data.code === 0){
+			ElMessage.warning(res.data.msg);
+		}
+		else{
+			ElMessage.error(res.data.msg);
+		}
+		console.log(res);
+	})
+}
+
+const handlehandClockout = () => {
+	handClockOut(uid).then(res=>{
+		if(res.data.code === 1){
+			ElMessage.success(res.data.msg);
+		}
+		else if(res.data.code === 0){
+			ElMessage.warning(res.data.msg);
+		}
+		else{
+			ElMessage.error(res.data.msg);
+		}
+		console.log(res);
+	})
+}
+
 getDepartmentByUid(uid).then((res) => {
 	if (res.status != 200) {
 		ElMessage.error("出错了");
@@ -273,8 +326,7 @@ getDepartmentByUid(uid).then((res) => {
 }).catch(e => {ElMessage.error('网络超时了');});
 
 const handleClick = (date, code) => {
-	// console.log(input.value);
-	// console.log(departmentids.value);
+
 	if(value.value === ''|| input.value === ''){
 		ElMessage.info("请填写完整表单");
 	}
@@ -293,9 +345,25 @@ const handleClick = (date, code) => {
 	value.value='';
 }
 
-const handleLeave = () => {
-	
+const getUserTodayClockin = ()=>{
+	userClockDayData(uid).then(res =>{
+		console.log(res.data.data);
+		if(res.data.data['clockIn'] === 0){
+			button1.value = false;
+		}
+		else{
+			button1.value=true;
+		}
+		if(res.data.data['clockOut'] === 0){
+			button2.value=false;
+		}
+		else{
+			button2.value=true;
+		}
+	})
 }
+getUserTodayClockin();
+
 const getUserClockin = (now_month :Number, uid :String) => {
 	getUserClockinfo(now_month, uid).then(res => {
 		//console.log(res);
