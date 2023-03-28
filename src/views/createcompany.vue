@@ -27,6 +27,7 @@
                                 style="width: 100%"
                                 format="YYYY-MM-DD"
                                 value-format="YYYY-MM-DD"
+                                :disabled-date="disabledDate"
                             ></el-date-picker>
                         </el-form-item>
                     </el-col>
@@ -155,6 +156,11 @@ if(uId === null){
 	ElMessage.error('未检测到用户登入，请登入！');
 	localStorage.clear();
 	router.push('/login')
+}
+
+
+const disabledDate = (time:any) =>{
+      return time.getTime() > Date.now(); // 禁止选择未来的日期
 }
 
 // 提交

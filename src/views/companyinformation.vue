@@ -47,17 +47,17 @@
                 <el-table-column label="操作" width="220" align="left">
                     <template #default="scope">
                         <div>
-                            <el-button text :icon="CirclePlusFilled" @click="handle(scope.$index, scope.row, 1)" v-permiss="5">
+                            <el-button text :icon="CirclePlusFilled"  v-if="showButton" @click="handle(scope.$index, scope.row, 1)" v-permiss="5">
                                 授予HR权限
                             </el-button>
                         </div>
                         <div>
-                            <el-button text :icon="DeleteFilled" @click="handle(scope.$index, scope.row, 2)" v-permiss="6">
+                            <el-button text :icon="DeleteFilled"  v-if="showButton" @click="handle(scope.$index, scope.row, 2)" v-permiss="6">
                                 删除员工
                             </el-button>
                         </div>
                         <div>
-                            <el-button text :icon="HelpFilled" @click="importface(scope.row)" v-permiss="6">
+                            <el-button text :icon="HelpFilled"  v-if="showButton" @click="importface(scope.row)" v-permiss="6">
                                 人脸导入
                             </el-button>
                         </div>
@@ -78,9 +78,9 @@
             ></el-pagination>
         </div>
 
-        <el-button type="primary" @click="deleteCompany()" v-permiss="5">删除团队</el-button>
-        <el-button type="primary" @click="modifyCompany()" v-permiss="6">修改团队信息</el-button>
-        <el-button type="primary" @click="invite()" v-permiss="6">邀请员工加入团队</el-button>
+        <el-button type="primary" @click="deleteCompany()" v-if="showButton" v-permiss="5">删除团队</el-button>
+        <el-button type="primary" @click="modifyCompany()"  v-if="showButton" v-permiss="6">修改团队信息</el-button>
+        <el-button type="primary" @click="invite()" v-if="showButton"  v-permiss="6">邀请员工加入团队</el-button>
 
         <el-dialog :title="'为员工 '+user_current?.username+' 录入人脸'" v-model="visible" width="1000px" destroy-on-close>
 			<div class="faceimp">
@@ -147,7 +147,7 @@ import { useRoute, useRouter } from 'vue-router';
 import {extractColorByName} from '../utils/util'
 import { Search, CirclePlusFilled,HelpFilled, DeleteFilled} from '@element-plus/icons-vue';
 import { useTagsStore } from '../store/tags';
-import {getDepartmentByDepartmentId, getAllUserByDepartmentId, deleteDepartmentById, grantUserHR, queryAllUsers, inviteUserJoinDepart, dismissUserInDepart} from '../api/index'
+import {getDepartmentByDepartmentId, getAllUserByDepartmentId, deleteDepartmentById, grantUserHR, queryAllUsers, inviteUserJoinDepart, dismissUserInDepart, isUidInDepartment} from '../api/index'
 import faceimport from './faceimport.vue'
 import Modifycompany from './modifycompany.vue';
 import path from '../api/path'
@@ -198,7 +198,7 @@ const tags = useTagsStore();
 const visible = ref(false);
 const visible2 = ref(false)
 const user_current = ref<TableItem>()
-
+const showButton = ref(true)
 // 关闭单个标签
 const closeThisTag = () => {
     let index = tags.list.length - 1;
@@ -244,11 +244,19 @@ const getDepartment = ()=>{
             singleDepartment.phone = data.data.phone;
             singleDepartment.address = data.data.address;
             singleDepartment.description = data.data.description;
-            console.log(singleDepartment);
+            if(uId == null){return;}
+            isUidInDepartment(singleDepartment.departmentid, uId).then(res =>{
+                if(res.data.data.flag){
+                    showButton.value = true;;
+                }else{
+                    showButton.value = false;
+                }
+            })
+
         } else {
             ElMessage.error(data.msg);
         }
-        
+
     }).catch((e)=>{ElMessage.error("网路超时！");})
 }
 

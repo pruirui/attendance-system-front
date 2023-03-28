@@ -41,5 +41,6 @@ const path = {
 	updateTodoLists:"/user/updateTodoLists",
 	addTodoLists : "/user/addTodoLists",
 	exportExcel:"/HR/exportExcel",
+	isUidInDepartment:"/user/isUidInDepartment"
 }
 export default path;

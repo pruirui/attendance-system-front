@@ -4,7 +4,7 @@
             v-model="departments"
             multiple
             collapse-tags
-            placeholder="选择部门"
+            placeholder="选择团队"
             style="width: 240px;margin:1%"
             @visible-change="selectCompany"
         >
@@ -108,14 +108,14 @@
                
 				<el-card shadow="hover">
 					<div class="echarts-box">
-                        <div id="pie" style="height:500px; width:100%"></div>
+                        <div id="pie" style="height:600px; width:100%"></div>
                     </div>
 				</el-card>
 			</el-col>
 			<el-col :span="15">
 				<el-card shadow="hover">
                     <div class="echarts-box">
-                        <div id="line" style="height:500px; width:100%"></div>
+                        <div id="line" style="height:600px; width:100%"></div>
                     </div>
 				</el-card>
 			</el-col>
@@ -134,116 +134,6 @@ import { PieChart } from '@element-plus/icons-vue';
 import { time2value, value2time} from '../utils/util';
 import { useRouter } from 'vue-router';
 import * as XLSX from 'xlsx';
-
-
-const option1 = {
-  title: {
-    text: '考勤比率图',
-    left: 'center'
-  },
-  tooltip: {
-    trigger: 'item'
-  },
-  legend: {
-    orient: 'vertical',
-    left: 'left'
-  },
-  series: [
-    {
-      name: 'Access From',
-      type: 'pie',
-      radius: '50%',
-      data: [{value: 100, name:'打卡次数'}, {value:100, name:'缺卡次数'}, 
-            {value:100, name:'加班次数'},{value:100, name:'请假次数'},
-            {value:100, name:'迟到次数'},{value:100, name:'早退次数'}],
-      emphasis: {
-        itemStyle: {
-          shadowBlur: 10,
-          shadowOffsetX: 0,
-          shadowColor: 'rgba(0, 0, 0, 0.5)'
-        }
-      }
-    }
-  ]
-};
-
-
-const option2 = {
-  title: {
-    text: '签到签退时间图'
-  },
-  tooltip: {
-    trigger: 'axis',
-    valueFormatter: (value:any) => {
-     let h = String(Math.floor(value/60));
-        let m = String(value % 60);
-        return h+":"+m
-   }
-  },
-  legend: {},
-  toolbox: {
-    show: true,
-    feature: {
-      dataZoom: {
-        yAxisIndex: 'none'
-      },
-      dataView: { readOnly: false },
-      magicType: { type: ['line', 'bar'] },
-      restore: {},
-      saveAsImage: {}
-    },
-
-  },
-  xAxis: {
-    type: 'category',
-    boundaryGap: false,
-    data: []
-  },
-  yAxis: {
-    type: 'value',
-    axisLabel: {
-        formatter: (value:any)=>value2time(value)
-    }
-  },
-  series: [
-    {
-      name: '签到时间',
-      type: 'line',
-      data: [],
-      markPoint: {
-        data: [
-          { type: 'max', name: 'Max' },
-          { type: 'min', name: 'Min' }
-        ],
-        label:{
-          formatter: (params:any) => value2time(params.value)
-        }
-      },
-      markLine: {
-        data: [{name: '上班平均时间' , yAxis:450}],
-        label:{
-            formatter:  (params:any) => value2time(params.value)
-        }
-      }
-    },
-    {
-      name: '签退时间',
-      type: 'line',
-      data: [],
-      markPoint: {
-        data: [{ type: 'max', name: 'Max' },{ type: 'min', name: 'Min' }]
-      },
-      markLine: {
-        data: [{name: '下班平均时间' , yAxis:900}],
-        label:{
-            formatter:  (params:any) => value2time(params.value)
-        }
-      }
-    }
-  ]
-};
-
-
 
 
 
@@ -265,8 +155,6 @@ onMounted(() =>{
     pieChart.value = echarts.init(piechartDom.value);
     linechartDom.value = document.getElementById('line')!;
     lineChart.value = echarts.init(linechartDom.value);
-    pieChart.value.setOption(option1)
-    lineChart.value.setOption(option2)
     if(uid === null){
       ElMessage.error('未检测到用户登入，请登入！')
       localStorage.clear();
@@ -406,16 +294,13 @@ const updatePage = ()=>{
                   dataZoom: {
                       yAxisIndex: 'none'
                   },
-                  dataView: { readOnly: false },
-                  magicType: { type: ['line', 'bar'] },
-                  restore: {},
+                  dataView: { readOnly: true },
                   saveAsImage: {}
                   },
 
               },
               xAxis: {
                   type: 'category',
-                  boundaryGap: false,
                   data: data.zhexiantu.clockin[0]
               },
               yAxis: {
@@ -519,28 +404,27 @@ const updatePage = ()=>{
             
           opt2 = {
               title: {
-                  text: '各部门考勤数据'
+                  text: '各团队考勤数据'
               },
               tooltip: {
-                  trigger: 'axis'
+                    trigger: 'axis',
+                        axisPointer: {
+                        type: 'shadow'
+                    }
               },
               legend: {},
               toolbox: {
                   show: true,
                   feature: {
-                  dataZoom: {
-                      yAxisIndex: 'none'
+                    dataZoom: {
+                        yAxisIndex: 'none'
+                    },
+                    dataView: { readOnly: true },
+                    saveAsImage: {}
                   },
-                  dataView: { readOnly: false },
-                  magicType: { type: ['bar', 'line'] },
-                  restore: {},
-                  saveAsImage: {}
-                  },
-
               },
               xAxis: {
                   type: 'category',
-                  boundaryGap: false,
                   data: departments
               },
               yAxis: {
@@ -552,7 +436,7 @@ const updatePage = ()=>{
                     type: 'bar',
                     data: zaotuiRates,
                     markPoint: {
-                        data: [{ type: 'max', name: 'Max' },{ type: 'min', name: 'Min' }]
+                        data: [{ type: 'max', name: '最大' },{ type: 'min', name: '最小' }]
                     },
                     markLine: {
                         data: [{name: '平均早退率' , type: 'average'}],
@@ -564,8 +448,8 @@ const updatePage = ()=>{
                     data:  dakaRates,
                     markPoint: {
                         data: [
-                        { type: 'max', name: 'Max' },
-                        { type: 'min', name: 'Min' }
+                        { type: 'max', name: '最大' },
+                        { type: 'min', name: '最小' }
                         ]
                     },
                     markLine: {
@@ -577,7 +461,7 @@ const updatePage = ()=>{
                     type: 'bar',
                     data: chidaoRates,
                     markPoint: {
-                        data: [{ type: 'max', name: 'Max' },{ type: 'min', name: 'Min' }]
+                        data: [{ type: 'max', name: '最大' },{ type: 'min', name: '最小' }]
                     },
                     markLine: {
                         data: [{name: '平均迟到率' , type: 'average'}],
@@ -588,8 +472,8 @@ const updatePage = ()=>{
                     type: 'bar',
                     data: weidakaRates,
                     markPoint: {
-                        data: [{ type: 'max', name: 'Max' },
-                            { type: 'min', name: 'Min' }]
+                        data: [{ type: 'max', name: '最大' },
+                            { type: 'min', name: '最小' }]
                     },
                     markLine: {
                         data: [{name: '平均未打卡率' , type: 'average'}],
@@ -598,9 +482,88 @@ const updatePage = ()=>{
                 },
             ]
           };
+
+        //   opt2 ={
+        //         title: {
+        //             text: '各团队考勤数据'
+        //         },
+        //         tooltip: {
+        //             trigger: 'axis'
+        //         },
+        //         legend: {
+        //             data: ['早退率', '正常打卡率', '迟到率', '未打卡率']
+        //         },
+        //         toolbox: {
+        //             show: true,
+        //             feature: {
+        //                 dataView: { show: true, readOnly: false },
+        //                 magicType: { show: true, type: ['line', 'bar'] },
+        //                 restore: { show: true },
+        //                 saveAsImage: { show: true }
+        //             }
+        //         },
+        //         calculable: true,
+        //         xAxis: [
+        //             {
+        //             type: 'category',
+        //             // prettier-ignore
+        //             data: departments
+        //             }
+        //         ],
+        //         yAxis: [
+        //             {
+        //             type: 'value'
+        //             }
+        //         ],
+        //         series: [
+        //             {
+        //             name: '早退率',
+        //             type: 'bar',
+        //             data: zaotuiRates,
+        //             markPoint: {
+        //                 data: [
+        //                 { type: 'max', name: 'Max' },
+        //                 { type: 'min', name: 'Min' }
+        //                 ]
+        //             },
+        //             markLine: {
+        //                 data: [{ type: 'average', name: 'Avg' }]
+        //             }
+        //             },
+        //             {
+        //             name: '正常打卡率',
+        //             type: 'bar',
+        //             data: dakaRates,
+                    
+        //             markLine: {
+        //                 data: [{ type: 'average', name: 'Avg' }]
+        //             }
+        //             },
+        //             {
+        //             name: '迟到率',
+        //             type: 'bar',
+        //             data: chidaoRates,
+                    
+        //             markLine: {
+        //                 data: [{ type: 'average', name: 'Avg' }]
+        //             }
+        //             }
+        //             ,
+        //             {
+        //             name: '未打卡率',
+        //             type: 'bar',
+        //             data: weidakaRates,
+        //             markLine: {
+        //                 data: [{ type: 'average', name: 'Avg' }]
+        //             }
+        //             }
+        //         ]
+        //     };
+
         }
         pieChart.value.clear()
         lineChart.value.clear()
+       
         pieChart.value.setOption(opt1)
         lineChart.value.setOption(opt2)
     });

@@ -171,7 +171,13 @@ const items = [
         icon: 'Notification',
         index: '/mycompany',
         title: '我的团队',
-        permiss: '1',
+        permiss: '7',
+    },
+    {
+        icon: 'Notification',
+        index: '/admincompany',
+        title: '所有团队',
+        permiss: '8',
     },
     {
         icon: 'Clock',

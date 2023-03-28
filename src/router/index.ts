@@ -136,9 +136,18 @@ const routes: RouteRecordRaw[] = [
                 name: 'mycompany',
                 meta: {
                     title: '我的团队',
-                    permiss: '1',
+                    permiss: '7',
                 },
                 component: () => import(/* webpackChunkName: "tabs" */ '../views/mycompany.vue'),
+            },
+            {
+                path: '/admincompany',
+                name: 'admincompany',
+                meta: {
+                    title: '所有团队',
+                    permiss: '8',
+                },
+                component: () => import(/* webpackChunkName: "tabs" */ '../views/adminCompany.vue'),
             },
             {
                 path: '/user',
@@ -199,7 +208,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'companyinformation',
                 meta: {
                     title: '公司信息',
-                    permiss: '3'
+                    permiss: '1'
                 },
                 component: () => import(/* webpackChunkName: "user" */ '../views/companyinformation.vue'),
             },

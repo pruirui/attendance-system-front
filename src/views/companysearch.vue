@@ -2,7 +2,7 @@
 	<div>
 		<div class="container">
 			<div class="handle-box">
-				<el-select v-model="query.address" placeholder="地址" class="handle-select mr10">
+				<el-select v-model="query.address" placeholder="地址" class="handle-select mr10" clearable>
 					<el-option v-for="p in provinces" :label="p" :value="p" ></el-option>
 				</el-select>
 				<el-input v-model="query.departmentName" placeholder="公司名或者用户名" class="handle-input mr10"></el-input>
@@ -21,7 +21,7 @@
 				<el-table-column label="操作" width="220" align="left">
 					<template #default="scope">
                         <div>
-                            <el-button text :icon="CirclePlusFilled" @click="handleJoin(scope.row)" v-permiss="0">
+                            <el-button text :icon="CirclePlusFilled" @click="handleJoin(scope.row)" v-permiss="9">
                                 申请加入
                             </el-button>
                         </div>

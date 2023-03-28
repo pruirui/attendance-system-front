@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import {userBaseData } from '../api';
+import { usePermissStore } from "./permiss";
 
 export const useUserMessage = defineStore('userinfo', {
 	state: () => {
@@ -16,11 +17,15 @@ export const useUserMessage = defineStore('userinfo', {
             if(uid === null){
                 return;
             }
+			const permiss = usePermissStore()
             userBaseData(uid).then((res)=>{
                 this.user = res.data.data
+				permiss.handleSet(permiss.defaultList[this.user.role])
             })
 		}
 	}
 });
+
+
 
 

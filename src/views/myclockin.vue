@@ -32,7 +32,7 @@
 					      <el-button-group>
 					        <el-button size="small" @click="selectDate('prev-month')">上个月</el-button>
 					        <el-button size="small" @click="selectDate('today')">今天</el-button>
-					        <el-button size="small" @click="selectDate('next-month')">下个月</el-button>
+					        <el-button size="small" :disabled="nextMonth == 0" @click="selectDate('next-month')">下个月</el-button>
 					      </el-button-group>
 					</template>
 				    <template #date-cell="{ data }">
@@ -258,6 +258,7 @@ const userinfo = ref();
 const calendarData = ref([]);
 const dialogVisible = ref(false);
 const dialogVisible1 = ref(false);
+const nextMonth = ref(0)
 
 const button1 = ref(false);
 const button2 = ref(false);
@@ -389,16 +390,19 @@ const selectDate = (val: string) => {
 	if(val === "prev-month"){
 		now_date.value -= 1;
 		calendarData.value = [];
+		nextMonth.value += 1;
 		getUserClockin(now_date.value, uid);
 	}
 	else if(val==="today"){
 		calendarData.value = [];
 		now_date.value = new Date().getMonth()+1;
+		nextMonth.value = 0;
 		getUserClockin(now_date.value, uid);
 	}
 	else if(val === "next-month"){
 		calendarData.value = [];
 		now_date.value += 1;
+		nextMonth.value -= 1
 		getUserClockin(now_date.value, uid);
 	}
 	calendar.value.selectDate(val)

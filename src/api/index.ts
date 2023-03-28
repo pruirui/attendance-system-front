@@ -20,7 +20,6 @@ export const getDepartmentByUid = (uid: String) => {
     return request.post(path.baseUrl+path.getDepartment, {uid});
 };
 
-
 export const uploadImg = (data :any, config :any) => {
 	return request.post(path.baseUrl+path.uploadImg, {"file": data}, config);
 }
@@ -186,4 +185,9 @@ export const updateTodoLists = (id:string, content:string, status:boolean) => {
 
 export const exportExcel = (departmentid:string, months:string)=>{
     return request.post(path.baseUrl + path.exportExcel, {departmentid, months})
+}
+
+
+export const isUidInDepartment = (departmentid:string, uid:string) => {
+    return request.post(path.baseUrl + path.isUidInDepartment, {departmentid, uid})
 }
