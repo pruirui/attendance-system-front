@@ -15,7 +15,7 @@
 						</el-col>
 					    <el-col :span="6" >
 							<el-button type="primary" :disabled="handclockout|button2" @click="handclockout=true">签退</el-button>
-							<camera v-if="handclockout" :flag="false" @changevisiable="handclockout=false"></camera>
+							<camera v-if="handclockout" :flag="false" @changevisiable="handclockout=false" :uid="uid"></camera>
 						</el-col>
 						<el-col :span="6" >
 							<el-button type="primary" v-if="handclockout" @click="handlehandClockout">手动签退</el-button>
@@ -23,7 +23,6 @@
 					</el-row>
 				</div>
 			</el-card>
-			
 		</el-col>
 	    <el-col :span="12">
 			<el-card :body-style="{ padding: '0px' }" style="width: 500px;">

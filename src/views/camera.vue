@@ -11,22 +11,21 @@
 							<el-button type='primary' size='small' @click="getCompetence" style="margin-top: 10px;">打开摄像头</el-button>
 							<el-button type='primary' size='small' :icon="Camera" @click="setImage" style="margin-top: 10px;">人脸拍照</el-button>
 							<el-button type='primary' size='small' @click="stopNavigator" style="margin-top: 10px;">关闭摄像头</el-button>
+							<el-button type='primary' size='small' @click="onUpload" style="margin-top: 10px;">打卡登录</el-button>
 						</div>
 					</el-col>
 					<el-col :span="12">
 						<div style="text-align: center;font-size: 14px;font-weight: bold;margin-bottom: 10px; width: 400px;">拍摄效果</div>
 						<canvas id='canvasCamera' width='400' height='320' style="display: block;"></canvas>
-						<el-button :icon="Check" type='primary' size='small' @click="onUpload" style="margin-top: 10px;">打卡登录</el-button>
 					</el-col>
 				</el-row>
 			</div>	
 		</div>
 	    
-	    
-	    <template #footer>
+	    <template #footer style="padding-top: 5px;">
 	      <span class="dialog-footer">
-	        <el-button @click="dialogVisible = false; handleClose()">取消</el-button>
-	        <el-button type="primary" @click="dialogVisible = false; handleClose()">确定 </el-button>
+	        <el-button  @click="dialogVisible = false; handleClose()">取消</el-button>
+	        <el-button  type="primary" @click="dialogVisible = false; handleClose()">确定 </el-button>
 	      </span>
 	    </template>
 	  </el-dialog>
@@ -55,12 +54,17 @@ const props = defineProps({
 	clock_flag:{
 		type: Boolean,
 		default:false
+	},
+	uid:{
+		type:String,
+		default:'-1',
 	}
 });
 
 const handleClose = () =>{
 	emits("changeclose");
 }
+const uid = ref(props.uid)
 
 interface cameraInfo{
 	countNum: any,//计数器
@@ -394,7 +398,7 @@ const setImage = () => {
 						//         setTimeout(() => reject(new Error('Timeout')), timeout)
 						//       ),
 						// ]);
-						const res = await clockOut(dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config);
+						const res = await clockOut(uid,dataURLtoFile(camerainfo.imgSrc, "file.jpg"),config);
 						// let late = new Date()
 						// let now = new Date()
 						// console.log("--------------"+(now.getTime()-late.getTime()))
@@ -600,7 +604,7 @@ const onUpload = () => {
 	
 	.login-cav{
 		
-		height: 340px;
+		height: 400px;
 		width: 1000px;
 	}
 </style>

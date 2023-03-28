@@ -27,6 +27,16 @@
                     </div>
                 </div>
         </div>
+		<div class="pagination">
+		    <el-pagination
+		        background
+		        layout="total, prev, pager, next"
+		        :current-page="query.pageIndex"
+		        :page-size="query.pageSize"
+		        :total="totals"
+		        :pager-count="6"
+		        @current-change="handlePageChange"></el-pagination>
+		</div>
         <el-button type="primary" @click="router.push('/createcompany')" v-permiss="0">创建公司</el-button>
         <el-button type="primary" @click="router.push('/companysearch')" v-permiss="1">搜索公司</el-button>
     </template>
@@ -36,8 +46,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { getDepartmentByUid } from "../api/index";
+import { ref , reactive} from "vue";
+import { getDepartmentByUid,getAllDepartmentData } from "../api/index";
 import { ElMessage } from "element-plus";
 import { useRouter } from 'vue-router';
 import { extractColorByName } from "../utils/util";
@@ -48,26 +58,64 @@ let uId = localStorage.getItem("ms_userId");
 const items = ref<any[]>([]);
 
 const router = useRouter()
-if(uId === null){
-  ElMessage.error('未检测到用户登入，请登入！')
-  localStorage.clear();
-  router.push('/login');
-}else{
-  getDepartmentByUid(uId).then((res) => {
-    console.log(res)
-    if (res.status != 200) {
-      ElMessage.error("出错了");
-      return;
-    }
-    let data = res.data;
-    console.log(data);
-    if (data.code == 1) {
-      items.value = data.data;
-    } else {
-      ElMessage.error(data.msg);
-    }
-  }).catch(e => {ElMessage.error('网络超时了');});
+
+const query = reactive({
+	querystring: '',
+	pageIndex: 1,
+	pageSize: 5
+});
+const totals = ref(0);
+
+
+const handlePageChange = (val: number) => {
+	query.pageIndex = val;
+	getData();
+};
+
+const getData = ()=>{
+	if(uId === null){
+	  ElMessage.error('未检测到用户登入，请登入！')
+	  localStorage.clear();
+	  router.push('/login');
+	}else{
+	  getAllDepartmentData('', '',query.pageIndex,query.pageSize).then((res) => {
+	    console.log(res)
+	    if (res.status != 200) {
+	      ElMessage.error("出错了");
+	      return;
+	    }
+	    let data = res.data;
+	    console.log(data);
+	    if (data.code == 1) {
+	      items.value = data.data;
+		  totals.value = data.totals
+	    } else {
+	      ElMessage.error(data.msg);
+	    }
+	  }).catch(e => {ElMessage.error('网络超时了');});
+	}
 }
+getData()
+// if(uId === null){
+//   ElMessage.error('未检测到用户登入，请登入！')
+//   localStorage.clear();
+//   router.push('/login');
+// }else{
+//   getDepartmentByUid(uId).then((res) => {
+//     console.log(res)
+//     if (res.status != 200) {
+//       ElMessage.error("出错了");
+//       return;
+//     }
+//     let data = res.data;
+//     console.log(data);
+//     if (data.code == 1) {
+//       items.value = data.data;
+//     } else {
+//       ElMessage.error(data.msg);
+//     }
+//   }).catch(e => {ElMessage.error('网络超时了');});
+// }
 
 
 const showCompany = (companyId:string)=>{

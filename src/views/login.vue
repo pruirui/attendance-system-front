@@ -34,7 +34,7 @@
 				<p class="login-tips">Tips : 请输入你的账号和密码。</p>
 				<div>
 					<el-button type= "primary" text @click="dialogVisible=true">快速登录</el-button>
-						<camera v-if="dialogVisible"  @changeclose="dialogVisible=false"  @getLoginUserData="getLoginUserData" :flag="true" :clock_flag="true"></camera>
+						<camera v-if="dialogVisible"  @changeclose="dialogVisible=false"  @getLoginUserData="getLoginUserData" :flag="true" :clock_flag="true" :uid="uid"></camera>
 				</div>
 					
 				<!-- <el-dialog v-model="quickLogin" title="快速打卡登录" width="1000px" align-center destroy-on-close>
@@ -68,7 +68,7 @@ import { Login } from '../api/index'
 import camera from './camera.vue'
 
 const dialogVisible = ref(false);
-
+const uid = ref(-1);
 const handleClick = () => {
 	dialogVisible.value = true;
 	console.log(dialogVisible.value);
@@ -123,7 +123,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 				console.log(res)
 				if(res.data["code"] === 1){
 					ElMessage.success('登录成功');
-					//console.log(typeof(res.data["data"]));
+					console.log(res.data["data"]);
 					let tmp = res.data["data"];
 					delete tmp.password;
 					localStorage.setItem('ms_userId', res.data["data"]['id'])
