@@ -37,5 +37,9 @@ const path = {
 	userClockDayData:"/user/userClockDayData",
 	handClockOut: "/user/handClockOut",
 	handClockIn: "/user/handClockIn",
+	userTodoLists:"/user/userTodoLists",
+	updateTodoLists:"/user/updateTodoLists",
+	addTodoLists : "/user/addTodoLists",
+	exportExcel:"/HR/exportExcel",
 }
 export default path;

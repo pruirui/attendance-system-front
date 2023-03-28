@@ -34,6 +34,7 @@
             :disabled-date="disabledDate"
             @change="onDateChange"
         />
+        <el-button type="primary" @click="exportXlsx">导出Excel</el-button>
 		<el-row gutter="20" >
             <el-col :span="6">
                 <el-card shadow="always" class="card">
@@ -125,14 +126,14 @@
 <script setup lang="ts" name="dashboard">
 import Schart from 'vue-schart';
 import { onMounted, provide, reactive, ref } from 'vue';
-import {usersInDepartments, getDepartmentByUid, allDepartmentsClockData,userClockInfo} from '../api/index'
+import {usersInDepartments, getDepartmentByUid, allDepartmentsClockData,userClockInfo, exportExcel} from '../api/index'
 import imgurl from '../assets/img/img.jpg';
 import * as echarts from "echarts";
-import { ElMessage } from 'element-plus';
+import { ElMessage, imageEmits } from 'element-plus';
 import { PieChart } from '@element-plus/icons-vue';
-import { time2value, value2time } from '../utils/util';
+import { time2value, value2time} from '../utils/util';
 import { useRouter } from 'vue-router';
-
+import * as XLSX from 'xlsx';
 
 
 const option1 = {
@@ -241,6 +242,11 @@ const option2 = {
     }
   ]
 };
+
+
+
+
+
 const paramUp = ref({chidao: 5,
                 daka: 1,
                 weidaka: 39,
@@ -292,7 +298,7 @@ const disabledDate = (time:any) =>{
       return time.getTime() > Date.now(); // 禁止选择未来的日期
 }
 
-const departments = ref()
+const departments = ref([])
 const departmentsOptions = ref()
 const employee = ref()
 const employeeOptions = ref()
@@ -300,6 +306,32 @@ const employeeOptions = ref()
 const date = ref((new Date().getFullYear()).toString() + '-' +( new Date().getMonth()+1).toString())
 const uid = localStorage.getItem('ms_userId');
 const router = useRouter()
+
+
+const exportXlsx = () => {
+    if(departments.value.length != 1){
+        ElMessage.warning('请选择一个团队！');
+        return;
+    }
+    let list = [['姓名', '手机号', '打卡次数', '缺卡次数', '加班次数', '请假次数', '迟到次数', '早退次数', '考勤薪资']];
+    exportExcel(departments.value[0], date.value).then(res =>{
+        if(res.status != 200){
+            ElMessage.error('网络异常！')
+            return;
+        }
+        let data = res.data.data
+        data.map((item:any, i:number)=>{
+            let arr: any[] = []
+            arr.push(...[item.username, item.phone, item.bing.daka, item.bing.weidaka, item.bing.jiaban, item.bing.qingjia, item.bing.chidao, item.bing.zaotui, item.bing.xinzi]);
+            list.push(arr);
+        });
+        let WorkSheet = XLSX.utils.aoa_to_sheet(list);
+        let new_workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(new_workbook, WorkSheet, '第一页');
+        XLSX.writeFile(new_workbook, `表格.xlsx`);
+    })
+    
+};
 
 const selectCompany = (v:any) =>{
     if(!v){

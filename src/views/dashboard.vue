@@ -68,44 +68,28 @@
 					<template #header>
 						<div class="clearfix">
 							<span>待办事项</span>
-							<el-button style="float: right; padding: 3px 0" text>添加</el-button>
+							<el-button style="float: right; padding: 3px 0" text @click="addItem">添加</el-button>
 						</div>
 					</template>
 
-					<el-table :show-header="false" :data="todoList" style="width: 100%">
+					<el-table :show-header="false" :data="todoList" style="width: 100%; height:320px">
 						<el-table-column width="40">
 							<template #default="scope">
-								<el-checkbox v-model="scope.row.status"></el-checkbox>
+								<el-checkbox v-model="scope.row.status" @change="checkFinish(scope.row)"></el-checkbox>
 							</template>
 						</el-table-column>
 						<el-table-column>
 							<template #default="scope">
-								<div
-									class="todo-item"
+								<input  v-model="scope.row.content" class="todo-item"
 									:class="{
 										'todo-item-del': scope.row.status
-									}"
-								>
-									{{ scope.row.title }}
-								</div>
+									}" @blur="checkFinish(scope.row)" @keyup.enter="e=>enterEvent(e)"/> 
 							</template>
 						</el-table-column>
 					</el-table>
 				</el-card>
 			</el-col>
 		</el-row>
-		<!-- <el-row :gutter="20">
-			<el-col :span="12">
-				<el-card shadow="hover">
-					<schart ref="bar" class="schart" canvasId="bar" :options="options"></schart>
-				</el-card>
-			</el-col>
-			<el-col :span="12">
-				<el-card shadow="hover">
-					<schart ref="line" class="schart" canvasId="line" :options="options2"></schart>
-				</el-card>
-			</el-col>
-		</el-row> -->
 	</div>
 </template>
 
@@ -114,7 +98,8 @@ import { onMounted, reactive, ref } from 'vue';
 import { useUserMessage } from '../store/user';
 import path from '../api/path'
 import weather from './weather.vue'
-import { firstPage } from '../api';
+import { firstPage,userTodoLists ,updateTodoLists, addTodoLists} from '../api';
+import { ElMessage } from 'element-plus';
 
 const fistPage_val = ref({indate:'100', clock:'100', noclock:'100'});
 const user = useUserMessage()
@@ -122,56 +107,117 @@ user.fresh()
 const _role = localStorage.getItem('ms_role');
 const role: string = _role === 'boss' ? 'boss' :  _role === 'HR'? 'HR':  _role === 'admin'? '管理员':'普通用户';
 
+const checkFinish = (row: any)=>{
+	if(row.content == '' || row.content == null){
+		row.status = false;
+		ElMessage.warning('请输入代表事项');
+		return;
+	}
+	console.log('=========')
+	console.log(row)
+	if(row.id == ''){
+		let id = user.user.id
+		if( id == null){
+			return;
+		}
+		addTodoLists(id, row.content, row.status).then(res => {
+			if(id == null){
+				return;
+			}
+			userTodoLists(id).then((res) =>{
+				if(res.status != 200){
+					return
+				}
+				todoList.value = res.data.data;
+				if(todoList.value == null){
+					todoList.value = []
+				}
+			})
+		})
+	}else{
+		updateTodoLists(row.id, row.content, row.status).then(res => {
+			if(user.user.id == null){
+				return;
+			}
+			userTodoLists(user.user.id).then((res) =>{
+				if(res.status != 200){
+					return
+				}
+				todoList.value = res.data.data;
+				if(todoList.value == null){
+					todoList.value = []
+				}
+			})
+		})
+	}
+}
 
-
+const enterEvent = (event:any) =>{
+	event.target.blur()
+}
+	
+	
 const getFistPage = () =>{
-	console.log("=======getFirstPage=====")
 	const id = localStorage.getItem('ms_userId')
 	if(id === null){
 		return;
 	}
 	firstPage(id).then(res =>{
-		console.log('======request=======')
-		console.log(res.data)
 		fistPage_val.value =  res.data.data
+	})
+	userTodoLists(id).then((res) =>{
+		console.log('--------')
+		console.log(res);
+		if(res.status != 200){
+			return
+		}
+		todoList.value = res.data.data;
+		if(todoList.value == null){
+			todoList.value = []
+		}
 	})
 }
 
 getFistPage()
 
-const todoList = reactive([
+const todoList = ref([
 	{
-		title: '今天要修复100个bug',
+		id:'',
+		content: '今天要修复100个bug',
+		status: false
+	},
+	{	
+		id:'',
+		content: '今天要修复100个bug',
 		status: false
 	},
 	{
-		title: '今天要修复100个bug',
+		id:'',
+		content: '今天要写100行代码加几个bug吧',
 		status: false
 	},
 	{
-		title: '今天要写100行代码加几个bug吧',
+		id:'',
+		content: '今天要修复100个bug',
 		status: false
 	},
-	{
-		title: '今天要修复100个bug',
-		status: false
-	},
-	{
-		title: '今天要修复100个bug',
-		status: true
-	},
-	{
-		title: '今天要写100行代码加几个bug吧',
+	{	
+		id:'',
+		content: '今天要修复100个bug',
 		status: true
 	}
 ]);
+
+const addItem = () =>{
+	todoList.value.unshift({content:'', status: false, id: ''})
+}
+
+
 </script>
 
 
 <style scoped>
-.el-row {
-	margin-bottom: 20px;
-}
+
 
 .grid-content {
 	display: flex;
@@ -261,12 +307,26 @@ const todoList = reactive([
 
 .todo-item {
 	font-size: 14px;
+	border: none;
+	background-color: transparent;
+	width: 100%;
+}
+
+.todo-item:hover, .todo-item:focus, .todo-item:active{
+	box-shadow: 0 0 0 0px;
+	background-color: transparent;
+	border: none;
+	outline: none;
 }
 
 .todo-item-del {
 	text-decoration: line-through;
 	color: #999;
+	pointer-events: none;
 }
+
+
+
 
 .weather{
 	width: 80px;

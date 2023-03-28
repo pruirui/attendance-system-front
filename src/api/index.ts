@@ -1,3 +1,4 @@
+import { useId } from 'element-plus';
 import { pa } from 'element-plus/es/locale';
 import request from '../utils/request';
 import path from './path'
@@ -142,11 +143,11 @@ export const workOvertime = (uid :String, departmentid: string, starttime :Strin
 }
 
 
-export const usersInDepartments = (departmentids : []) => {
+export const usersInDepartments = (departmentids : any[]) => {
 	return request.post(path.baseUrl+path.usersInDepartments, {departmentids});
 }
 
-export const allDepartmentsClockData = (departmentids : [], userid: string, months:string) => {
+export const allDepartmentsClockData = (departmentids : any[], userid: string, months:string) => {
 	return request.post(path.baseUrl+path.allDepartmentsClockData, {departmentids,userid,months});
 }
 
@@ -168,4 +169,20 @@ export const handClockOut = (uid:String) =>{
 
 export const handClockIn = (uid:String) =>{
 	return request.post(path.baseUrl+path.handClockIn,{uid});
+}
+
+export const userTodoLists = (uid:string)=>{
+    return request.post(path.baseUrl + path.userTodoLists, {uid});
+}
+
+export const addTodoLists = (uid:string, content:string, status:boolean) => {
+    return request.post(path.baseUrl + path.addTodoLists, {uid, content, status});
+}
+export const updateTodoLists = (id:string, content:string, status:boolean) => {
+    return request.post(path.baseUrl + path.updateTodoLists, {id, content, status});
+}
+
+
+export const exportExcel = (departmentid:string, months:string)=>{
+    return request.post(path.baseUrl + path.exportExcel, {departmentid, months})
 }
