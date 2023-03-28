@@ -15,6 +15,8 @@ export default {
       centerX: 150,
       centerY: 150,
       clockRadius: 135,
+	  width:300,
+	  height:300,
     };
   },
   mounted() {

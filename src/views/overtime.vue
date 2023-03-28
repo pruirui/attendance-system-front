@@ -68,13 +68,6 @@ getDepartmentByUid(uid).then((res) => {
 	let minute = parseInt(timearry[1]);
 	
 	workendTime_start.value=timearry[0]+':'+timearry[1];
-	
-	// if(hour===24){
-	// 	workendTime_end.value='23:59'
-	// }
-	// else{
-	// 	//workendTime_end.value=hour.toString().padStart(2, '0') + ':' + minute.toString().padStart(2, '0');
-	// }
 	workendTime_end.value=hour.toString().padStart(2, '0') + ':' + minute.toString().padStart(2, '0');
 
 	
