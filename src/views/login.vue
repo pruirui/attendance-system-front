@@ -33,7 +33,7 @@
 				</div>
 				<p class="login-tips">Tips : 请输入你的账号和密码。</p>
 				<div>
-					<el-button type= "primary" text @click="dialogVisible=true">快速登录</el-button>
+					<el-button type="primary" text @click="dialogVisible=true">快速登录</el-button>
 						<camera v-if="dialogVisible"  @changeclose="dialogVisible=false"  @getLoginUserData="getLoginUserData" :flag="true" :clock_flag="true" :uid="uid"></camera>
 				</div>
 					
@@ -89,7 +89,7 @@ const rules: FormRules = {
 	phone: [
 		{
 			required: true,
-			message: '请输入用户名',
+			message: '请输入手机号',
 			trigger: 'blur'
 		}
 	],

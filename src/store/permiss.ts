@@ -15,7 +15,7 @@ export const usePermissStore = defineStore('permiss', {
 				user: [ '1', '2', '3', '7'],
 				hr : [ '1', '2', '3', '4','6', '7'],
 				boss: ['0', '1', '3', '4', '5', '6', '7'],
-				admin: ['1', '3','4', '8']
+				admin: ['1', '3', '8']
 			}
 		};
 	},

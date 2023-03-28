@@ -41,11 +41,14 @@
 						</div>
 					</template>
 					<el-form :model="passwordForm" :rules="rules" ref="passwordPolish" label-width="100px">
-						<el-form-item label="用户名："> {{ name }} </el-form-item>
+						<el-form-item label="用户名："  prop="name"> 
+              <el-input v-model="name">
+              </el-input> 
+            </el-form-item>
 						<el-form-item label="旧密码：">
 							<el-input type="password" v-model="passwordForm.oldpswd" show-password></el-input>
 						</el-form-item>
-						<el-form-item label="新密码：">
+						<el-form-item label="新密码：" prop="password">
 							<el-input type="password" v-model="passwordForm.newpswd" placeholder="请输入新密码" show-password></el-input>
 						</el-form-item>
             <el-form-item prop="password2" label="二次密码：">
@@ -55,7 +58,7 @@
 						<el-form-item>
 							<el-button type="primary" @click="onSubmit(passwordPolish)">保存</el-button>
 						</el-form-item>
-
+            
             <el-form label-width="100px">
               <el-form-item label="性别：">
                 <el-input v-model="genderr"></el-input>
@@ -138,6 +141,20 @@ const passwordForm = reactive<passwordInfo>({
   newsecpswd:'',
 });
 const rules: FormRules = {
+  name: [
+		{
+			required: true,
+			message: '请输入用户名',
+			trigger: 'blur'
+		}
+	],
+  password: [
+		{ 
+			required: true, 
+			message: '请输入密码',
+			trigger: 'blur' ,
+		},
+	],
   password2: [
     {
       required: true,

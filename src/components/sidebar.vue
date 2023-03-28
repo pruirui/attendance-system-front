@@ -67,26 +67,26 @@ const items = [
         icon: 'Calendar',
         index: '1',
         title: '表格相关',
-        permiss: '8',
+        permiss: '10',
         subs: [
             {
                 index: '/table',
                 title: '常用表格',
-                permiss: '8',
+                permiss: '10',
             },
             {
                 index: '/import',
                 title: '导入Excel',
-                permiss: '88',
+                permiss: '10',
             },
             {
                 index: '/export',
                 title: '导出Excel',
-                permiss: '8',
+                permiss: '10',
             },{
                 index: "/test",
                 title: "eeee",
-                permiss: '8'
+                permiss: '10'
             }
         ],
     },
@@ -94,38 +94,38 @@ const items = [
         icon: 'DocumentCopy',
         index: '/tabs',
         title: 'tab选项卡',
-        permiss: '8',
+        permiss: '10',
     },
     {
         icon: 'Edit',
-        index: '8',
+        index: '10',
         title: '表单相关',
-        permiss: '8',
+        permiss: '10',
         subs: [
             {
                 index: '/form',
                 title: '基本表单',
-                permiss: '8',
+                permiss: '10',
             },
             {
                 index: '/upload',
                 title: '文件上传',
-                permiss: '8',
+                permiss: '10',
             },
             {
                 index: '4',
                 title: '三级菜单',
-                permiss: '8',
+                permiss: '10',
                 subs: [
                     {
                         index: '/editor',
                         title: '富文本编辑器',
-                        permiss: '8',
+                        permiss: '10',
                     },
                     {
                         index: '/markdown',
                         title: 'markdown编辑器',
-                        permiss: '8',
+                        permiss: '10',
                     },
                 ],
             },

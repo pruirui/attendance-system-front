@@ -18,7 +18,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'basetable',
                 meta: {
                     title: '表格',
-                    permiss: '8',
+                    permiss: '10',
                 },
                 component: () => import(/* webpackChunkName: "table" */ '../views/table.vue'),
             },
@@ -27,7 +27,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'basecharts',
                 meta: {
                     title: '图表',
-                    permiss: '8',
+                    permiss: '10',
                 },
                 component: () => import(/* webpackChunkName: "charts" */ '../views/charts.vue'),
             },
@@ -36,7 +36,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'baseform',
                 meta: {
                     title: '表单',
-                    permiss: '8',
+                    permiss: '10',
                 },
                 component: () => import(/* webpackChunkName: "form" */ '../views/form.vue'),
             },
@@ -45,7 +45,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'permission1',
                 meta: {
                     title: '权限管理1',
-                    permiss: '8',
+                    permiss: '10',
                 },
                 component: () => import(/* webpackChunkName: "permission" */ '../views/permission1.vue'),
             },
@@ -54,7 +54,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'upload',
                 meta: {
                     title: '上传插件',
-                    permiss: '8',
+                    permiss: '10',
                 },
                 component: () => import(/* webpackChunkName: "upload" */ '../views/upload.vue'),
             },
@@ -63,7 +63,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'icon',
                 meta: {
                     title: '自定义图标',
-                    permiss: '8',
+                    permiss: '10',
                 },
                 component: () => import(/* webpackChunkName: "icon" */ '../views/icon.vue'),
             },
@@ -73,7 +73,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'editor',
                 meta: {
                     title: '富文本编辑器',
-                    permiss: '8',
+                    permiss: '10',
                 },
                 component: () => import(/* webpackChunkName: "editor" */ '../views/editor.vue'),
             },
@@ -82,7 +82,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'markdown',
                 meta: {
                     title: 'markdown编辑器',
-                    permiss: '8',
+                    permiss: '10',
                 },
                 component: () => import(/* webpackChunkName: "markdown" */ '../views/markdown.vue'),
             },
@@ -91,7 +91,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'export',
                 meta: {
                     title: '导出Excel',
-                    permiss: '8',
+                    permiss: '10',
                 },
                 component: () => import(/* webpackChunkName: "export" */ '../views/export.vue'),
             },
@@ -100,7 +100,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'import',
                 meta: {
                     title: '导入Excel',
-                    permiss: '8',
+                    permiss: '10',
                 },
                 component: () => import(/* webpackChunkName: "import" */ '../views/import.vue'),
             },
@@ -109,7 +109,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'test',
                 meta: {
                     title: '导入Excel',
-                    permiss: '8',
+                    permiss: '10',
                 },
                 component: () => import(/* webpackChunkName: "import" */ '../views/test.vue'),
             },
