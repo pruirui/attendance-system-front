@@ -148,8 +148,8 @@ import {extractColorByName} from '../utils/util'
 import { Search, CirclePlusFilled,HelpFilled, DeleteFilled} from '@element-plus/icons-vue';
 import { useTagsStore } from '../store/tags';
 import {getDepartmentByDepartmentId, getAllUserByDepartmentId, deleteDepartmentById, grantUserHR, queryAllUsers, inviteUserJoinDepart, dismissUserInDepart, isUidInDepartment} from '../api/index'
-import faceimport from './faceimport.vue'
-import Modifycompany from './modifycompany.vue';
+import faceimport from './faceImport.vue'
+import Modifycompany from './companyModify.vue';
 import path from '../api/path'
 
 

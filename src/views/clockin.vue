@@ -241,7 +241,7 @@ import clock from './clock.vue'
 import showtime from './showtime.vue'
 import { ElMessage, imageProps } from "element-plus";
 import { getDepartmentByUid , usermakeUpClock} from "../api/index";
-import userleave from './userleave.vue'
+import userleave from './userLeave.vue'
 import overtime from './overtime.vue'
 import camera from './camera.vue'
 const handclockin = ref(false);
