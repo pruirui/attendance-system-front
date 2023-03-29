@@ -17,7 +17,8 @@
 				<el-table-column prop="createTime" label="注册日期"></el-table-column>
                 <el-table-column prop="phone" label="公司电话"></el-table-column>
                 <el-table-column prop="address" label="地址"></el-table-column>
-				
+
+
 				<el-table-column label="操作" width="220" align="left">
 					<template #default="scope">
                         <div>

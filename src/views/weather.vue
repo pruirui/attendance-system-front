@@ -1,5 +1,7 @@
 
 <template>
+
+
     <div class="weather">
       <div id="he-plugin-standard"></div>
     </div>

@@ -1,4 +1,7 @@
 <template>
+
+
+
 	<v-header />
 	<v-sidebar />
 	<div class="content-box" :class="{ 'content-collapse': sidebar.collapse }">

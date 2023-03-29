@@ -1,6 +1,7 @@
 <template>
     <div class="container">
         <div class="form-box">
+
             <el-form ref="formRef" :rules="rules" :model="form" label-width="130px">
                 <el-form-item label="公司名" prop="departmentName">
                     <el-input v-model="form.departmentName"></el-input>
