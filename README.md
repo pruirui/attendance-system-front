@@ -1,9 +1,8 @@
-# vue-manage-system 智慧考勤系统
-
-
+# 智慧考勤系统
+- 
+## 系统环境
 基于 Vue3 + pinia + Element Plus 。
 
-[English document](https://github.com/lin-xin/manage-system/blob/master/README_EN.md)
 
 
 ## 功能
