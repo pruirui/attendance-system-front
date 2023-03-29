@@ -293,7 +293,7 @@ const option2 = {
       },
       dataView: { readOnly: false },
       magicType: { type: ['line', 'bar'] },
-      restore: {},
+      //restore: {},
       saveAsImage: {}
     },
 

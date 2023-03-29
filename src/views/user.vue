@@ -41,50 +41,49 @@
 						</div>
 					</template>
 					<el-form :model="passwordForm" :rules="rules" ref="passwordPolish" label-width="100px">
-						<el-form-item label="用户名："  prop="name"> 
-              <el-input v-model="name">
-              </el-input> 
-            </el-form-item>
+						<el-form-item label="用户名："  prop="oldname"> 
+					        <el-input v-model="passwordForm.oldname"></el-input> 
+					    </el-form-item>
 						<el-form-item label="旧密码：">
 							<el-input type="password" v-model="passwordForm.oldpswd" show-password></el-input>
 						</el-form-item>
-						<el-form-item label="新密码：" prop="password">
+						<el-form-item label="新密码：" prop="newpswd">
 							<el-input type="password" v-model="passwordForm.newpswd" placeholder="请输入新密码" show-password></el-input>
 						</el-form-item>
-            <el-form-item prop="password2" label="二次密码：">
-              <el-input type="password" v-model="passwordForm.newsecpswd" placeholder="请再次输入新密码"
-                        @keyup.enter="onSubmit(passwordPolish)" show-password></el-input>
-            </el-form-item>
+						<el-form-item prop="newsecpswd" label="二次密码：">
+						  <el-input type="password" v-model="passwordForm.newsecpswd" placeholder="请再次输入新密码"
+									@keyup.enter="onSubmit(passwordPolish)" show-password></el-input>
+						</el-form-item>
 						<el-form-item>
 							<el-button type="primary" @click="onSubmit(passwordPolish)">保存</el-button>
 						</el-form-item>
-            
-            <el-form label-width="100px">
-              <el-form-item label="性别：">
-                <el-input v-model="genderr"></el-input>
-              </el-form-item>
-              <el-form-item label="籍贯：">
-                <el-input v-model="home"></el-input>
-              </el-form-item>
-              <el-form-item label="生日：">
-                <el-date-picker v-model="birth" type="date" value-format="YYYY-MM-DD" placeholder="选择日期">
-                </el-date-picker>
-              </el-form-item>
-              <el-form-item label="E-mail：">
-                <el-input v-model="e_maill"></el-input>
-              </el-form-item>
-              <el-form-item label="地址：">
-                <el-input v-model="addr"></el-input>
-              </el-form-item>
-              <el-form-item label="个性签名：">
-                <el-input v-model="mottoo"></el-input>
-              </el-form-item>
-              <el-form-item>
-                <el-button type="primary" @click="onSubmit2">保存</el-button>
-                <el-button type="primary" @click="clearInputs">重置</el-button>
-              </el-form-item>
-            </el-form>
-
+					            
+					            <el-form label-width="100px">
+					              <el-form-item label="性别：">
+					                <el-input v-model="genderr"></el-input>
+					              </el-form-item>
+					              <el-form-item label="籍贯：">
+					                <el-input v-model="home"></el-input>
+					              </el-form-item>
+					              <el-form-item label="生日：">
+					                <el-date-picker v-model="birth" type="date" value-format="YYYY-MM-DD" placeholder="选择日期">
+					                </el-date-picker>
+					              </el-form-item>
+					              <el-form-item label="E-mail：">
+					                <el-input v-model="e_maill"></el-input>
+					              </el-form-item>
+					              <el-form-item label="地址：">
+					                <el-input v-model="addr"></el-input>
+					              </el-form-item>
+					              <el-form-item label="个性签名：">
+					                <el-input v-model="mottoo"></el-input>
+					              </el-form-item>
+					              <el-form-item>
+					                <el-button type="primary" @click="onSubmit2">保存</el-button>
+					                <el-button type="primary" @click="clearInputs">重置</el-button>
+					              </el-form-item>
+					            </el-form>
+					
 					</el-form>
 				</el-card>
 			</el-col>
@@ -131,11 +130,13 @@ const name = localStorage.getItem('ms_username');
 const userId = localStorage.getItem('ms_userId');
 //密码表单
 interface passwordInfo {
+	oldname: String,
   oldpswd : string;
   newpswd :string
   newsecpswd : string
 }
 const passwordForm = reactive<passwordInfo>({
+	oldname: name?name:'',
   oldpswd: '',
   newpswd: '',
   newsecpswd:'',
@@ -148,14 +149,14 @@ const rules: FormRules = {
 			trigger: 'blur'
 		}
 	],
-  password: [
+  newpswd: [
 		{ 
 			required: true, 
 			message: '请输入密码',
 			trigger: 'blur' ,
 		},
 	],
-  password2: [
+  newsecpswd: [
     {
       required: true,
       validator: (rule, value, callback) => {

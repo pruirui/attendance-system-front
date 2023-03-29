@@ -36,21 +36,6 @@
 					<el-button type="primary" text @click="dialogVisible=true">快速登录</el-button>
 						<camera v-if="dialogVisible"  @changeclose="dialogVisible=false"  @getLoginUserData="getLoginUserData" :flag="true" :clock_flag="true" :uid="uid"></camera>
 				</div>
-					
-				<!-- <el-dialog v-model="quickLogin" title="快速打卡登录" width="1000px" align-center destroy-on-close>
-					<div class="login-cav">@changequickLogin="getLoginUserData" @closequickLogin="quickLogin=false"
-						<camera v-if="quickLogin" :quickLogin="quickLogin" @changequickLogin="getLoginUserData"></camera>
-					</div>
-						
-						<template #footer>
-						    <span class="dialog-footer">
-						        <el-button @click="quickLogin = false">Cancel</el-button>
-						        <el-button type="primary" @click="quickLogin = false">
-									Confirm
-						        </el-button>
-						    </span>
-						</template>
-				</el-dialog> -->
 			</el-form>
 		</div>
 	</div>
@@ -122,7 +107,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 				console.log('================')
 				console.log(res)
 				if(res.data["code"] === 1){
-					ElMessage.success('登录成功');
+					ElMessage.success(res.data.msg);
 					console.log(res.data["data"]);
 					let tmp = res.data["data"];
 					delete tmp.password;

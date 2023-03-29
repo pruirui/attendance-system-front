@@ -6,8 +6,8 @@
 		    <el-form-item label="请假起始日期" :label-width="formLabelWidth">
 		        <el-date-picker v-model="value" type="daterange"
 		        		range-separator="To"
-		        		start-placeholder="Start date"
-		        		end-placeholder="End date"
+		        		start-placeholder="开始时间"
+		        		end-placeholder="结束时间"
 		        		:disabled-date="disabledDate">
 		        </el-date-picker>
 		    </el-form-item>

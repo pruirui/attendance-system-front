@@ -4,7 +4,7 @@
       <div id="he-plugin-standard"></div>
     </div>
   </template>         
-  <script>
+  <script lang="ts">
   window.WIDGET = {
         "CONFIG": {
         "layout": "1",
