@@ -51,7 +51,7 @@
 					<el-button type="primary" @click="submitForm(register)">注册</el-button>
 				</div>
 				<li class="register-tips">
-					<router-link to="/login">返回首页</router-link>
+					<router-link to="/login" style="color: black;">返回首页</router-link>
 				</li>
 				<!-- <p class="register-tips">Tips : 请输入你的账号和密码。</p> -->
 			</el-form>
@@ -220,7 +220,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 .register-tips {
 	font-size: 12px;
 	line-height: 30px;
-	color: #151515;
+	color: #ffff00;
 }
 </style>
 

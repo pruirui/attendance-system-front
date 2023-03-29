@@ -24,8 +24,8 @@
 	    
 	    <template #footer style="padding-top: 5px;">
 	      <span class="dialog-footer">
-	        <el-button  @click="dialogVisible = false; handleClose()">取消</el-button>
-	        <el-button  type="primary" @click="dialogVisible = false; handleClose()">确定 </el-button>
+	        <el-button  @click="handleClose">取消</el-button>
+	        <el-button  type="primary" @click=" handleClose">确定 </el-button>
 	      </span>
 	    </template>
 	  </el-dialog>
@@ -62,7 +62,10 @@ const props = defineProps({
 });
 
 const handleClose = () =>{
+	stopNavigator();
+	dialogVisible.value = false; 
 	emits("changeclose");
+	
 }
 const uid = ref(props.uid)
 

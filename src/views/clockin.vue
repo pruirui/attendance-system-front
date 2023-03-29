@@ -1,24 +1,26 @@
 <template>
 	<el-row :gutter="20" align="middle">
 	    <el-col :span="10" :offset="2" >
-			<el-card :body-style="{ padding: '0px' }" style="height: 510px; width: 380px; text-align: center;">
+			<el-card :body-style="{ padding: '0px' }" style="height: 530px; width: 380px; text-align: center;">
 				<clock></clock>
 				<showtime style="height:120px; width: 300px;padding-left: 45px;"></showtime>
-				<div style="margin-top: 20px; margin-left:100px; margin-right: 110px;">
+				<div style="margin-top: 10px; margin-left:163px; margin-right: 60px;">
 					<el-row :gutter="12">
 					    <el-col :span="6" >
-							<el-button type="primary" :disabled="handclockin|button1" @click="handclockin=true"> 签到</el-button>
+							<el-button type="primary" :disabled="handclockin|button1" @click="handclockin=true" size="small"> 签到</el-button>
 							<camera v-if="handclockin" :flag="false" @changevisiable="handclockin=false"></camera>
 						</el-col>
-						<el-col :span="6" >
-							<el-button type="primary" v-if="handclockin" @click="handlehandClockin"> 手动签到</el-button>
+						<el-col :span="6" :offset="2">
+							<el-button type="primary" v-if="handclockin" @click="handlehandClockin" size="small"> 手动签到</el-button>
 						</el-col>
-					    <el-col :span="6" >
-							<el-button type="primary" :disabled="handclockout|button2" @click="handclockout=true">签退</el-button>
+					</el-row>
+					<el-row :gutter="12">
+						<el-col :span="6" >
+							<el-button type="primary" :disabled="handclockout|button2" @click="handclockout=true" size="small">签退</el-button>
 							<camera v-if="handclockout" :flag="false" @changevisiable="handclockout=false" :uid="uid"></camera>
 						</el-col>
-						<el-col :span="6" >
-							<el-button type="primary" v-if="handclockout" @click="handlehandClockout">手动签退</el-button>
+						<el-col :span="6" :offset="2">
+							<el-button type="primary" v-if="handclockout" @click="handlehandClockout" size="small">手动签退</el-button>
 						</el-col>
 					</el-row>
 				</div>
@@ -195,7 +197,7 @@
 				</el-calendar>
 			</el-card>
 			
-			<el-card  style="width: 500px; height: 170px;">
+			<el-card  style="width: 500px; height: 170px;margin-top: 10px;">
 				<div style="width: 460px; height: 30px; padding-right: 20px; padding-left: 0px;padding-bottom: 0;padding-top: 5;">
 						<el-descriptions class="margin-top" title="打卡日历描述" :column="2"   border>
 						    <template #extra >
