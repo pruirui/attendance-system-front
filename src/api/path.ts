@@ -1,6 +1,8 @@
+import config from '../../public/config.json'
 const path = {
 	//baseUrl : "http://124.222.138.89:5000",
-	baseUrl : "http://10.6.12.158:5000",
+	// baseUrl : "http://10.6.12.158:5000",
+	baseUrl: config.baseURL,
 	login : "/user/login",
 	register: "/user/register",
 	uploadImg: "/user/clockIn",
