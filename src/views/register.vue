@@ -106,7 +106,7 @@ const rules: FormRules = {
 			trigger: 'blur'
 		},
 		{ 
-			pattern:/^1[3|4|5|8|9]{1}[0-9]{9}$/,
+			pattern:/^1[3|4|5|8|9|7]{1}[0-9]{9}$/,
 			min: 2, max: 15, 
 			message: "手机格式错误", 
 			trigger: "blur" ,
