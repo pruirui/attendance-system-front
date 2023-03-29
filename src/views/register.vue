@@ -1,4 +1,5 @@
 <template>
+
 	<div class="register-wrap">
 		<div class="ms-register">
 			<div class="ms-title">智慧考勤系统</div>

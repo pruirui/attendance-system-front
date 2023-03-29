@@ -1,5 +1,7 @@
 <template>
 <div class="camera-box" style="width: 1000px; ">
+
+
 	    <el-row :gutter="20">
 			<el-col :span="12">
 				<div style="text-align: center;font-size: 14px;font-weight: bold;margin-bottom: 10px; width: 400px;">摄像头</div>

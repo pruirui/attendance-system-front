@@ -116,7 +116,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'modifycompany',
                 meta: {
                     title: '修改公司信息',
-                    permiss: '5'
+                    permiss: '6'
                 },
                 component: () => import(/* webpackChunkName: "user" */ '../views/companyModify.vue'),
             }

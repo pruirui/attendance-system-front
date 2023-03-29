@@ -1,6 +1,6 @@
 <template>
 <div>
-  
+
     <template v-if:="items.length === 0">
       <el-button type="primary" @click="router.push('/createcompany')" v-permiss="0">创建公司</el-button>
       <el-button type="primary" @click="router.push('/companysearch')" v-permiss="1">搜索公司</el-button>

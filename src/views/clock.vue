@@ -2,8 +2,9 @@
 	<!-- <el-card style="width: 300px; height: 300px;" :body-style="{ padding: '0px' }"> -->
 		<canvas ref="clockCanvas" width="300" height="300"></canvas>
 	<!-- </el-card> -->
-		
+
 </template>
+
 
 <script lang="ts">
 

@@ -15,6 +15,7 @@
             :disabled-date="disabledDate"
             @change="onDateChange"
         />
+
 		<el-row gutter="20" >
             <el-col :span="6">
                 <el-card shadow="always" class="card">
@@ -432,9 +433,7 @@ const updatePage = ()=>{
                 dataZoom: {
                     yAxisIndex: 'none'
                 },
-                dataView: { readOnly: false },
-                magicType: { type: ['line', 'bar'] },
-                restore: {},
+                dataView: { readOnly: true },
                 saveAsImage: {}
                 },
 

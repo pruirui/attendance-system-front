@@ -1,4 +1,5 @@
 <template>
+
   <div>
     <h3 style="align-items: center; justify-content: center; display: flex; height: 30px; width: 300px; margin-top: 5px; margin-bottom: 5px;">{{ time }}</h3>
 	<h3 style="align-items: center; justify-content: center; display: flex; height: 30px; width: 300px; margin-top: 5px; margin-bottom: 5px;">	{{info}} </h3>

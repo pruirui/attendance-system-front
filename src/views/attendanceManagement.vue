@@ -221,6 +221,8 @@ const exportXlsx = () => {
     
 };
 
+
+
 const selectCompany = (v:any) =>{
     if(!v){
       usersInDepartments(departments.value).then((res) => {
