@@ -433,9 +433,7 @@ const updatePage = ()=>{
                 dataZoom: {
                     yAxisIndex: 'none'
                 },
-                dataView: { readOnly: false },
-                magicType: { type: ['line', 'bar'] },
-                restore: {},
+                dataView: { readOnly: true },
                 saveAsImage: {}
                 },
 
