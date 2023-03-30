@@ -4,7 +4,7 @@
     <template v-if:="items.length === 0">
       <el-button type="primary" @click="router.push('/createcompany')" v-permiss="0">创建团队</el-button>
       <el-button type="primary" @click="router.push('/companysearch')" v-permiss="1">搜索团队</el-button>
-        <el-empty style="align-self:center" description="还未加入公司呢！" />
+        <el-empty style="align-self:center" description="还未加入团队呢！" />
       </template>
     <template v-else>
         <div class="container"  v-for="subItem in items" @click="showCompany(subItem.departmentid)">
@@ -21,9 +21,9 @@
                             <span >注册资本:</span>{{ subItem.rmb }}&nbsp;&nbsp;&nbsp;&nbsp;
                             <span >注册日期:</span>{{ subItem.createTime.split(" ")[0] }}
                         </div>
-                        <div class="text item"><span >公司电话:</span>{{ subItem.phone }} </div>
-                        <div class="text item"><span >地址:</span>{{ subItem.address }}</div>
-                        <div class="text item"><span>部门简介:</span>{{ subItem.description }}</div>
+                        <div class="text item"><span >团队电话:</span>{{ subItem.phone }} </div>
+                        <div class="text item"><span >地区:</span>{{ subItem.address }}</div>
+                        <div class="text item"><span>团队简介:</span>{{ subItem.description }}</div>
                     </div>
                 </div>
         </div>

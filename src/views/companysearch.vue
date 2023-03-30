@@ -5,18 +5,18 @@
 				<el-select v-model="query.address" placeholder="地址" class="handle-select mr10" clearable>
 					<el-option v-for="p in provinces" :label="p" :value="p" ></el-option>
 				</el-select>
-				<el-input v-model="query.departmentName" placeholder="公司名或者用户名" class="handle-input mr10"></el-input>
+				<el-input v-model="query.departmentName" placeholder="团队名或者用户名" class="handle-input mr10"></el-input>
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
 				<!-- <el-button type="primary" :icon="Plus">新增</el-button> -->
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-				<!-- <el-table-column prop="departmentid" label="公司编号" ></el-table-column> -->
-				<el-table-column prop="departmentName" label="公司名"></el-table-column>
+				<!-- <el-table-column prop="departmentid" label="团队编号" ></el-table-column> -->
+				<el-table-column prop="departmentName" label="团队名"></el-table-column>
                 <el-table-column prop="username" label="注册人"></el-table-column>
 				<el-table-column prop="rmb" label="注册资本"></el-table-column>
 				<el-table-column prop="createTime" label="注册日期"></el-table-column>
-                <el-table-column prop="phone" label="公司电话"></el-table-column>
-                <el-table-column prop="address" label="地址"></el-table-column>
+                <el-table-column prop="phone" label="团队电话"></el-table-column>
+                <el-table-column prop="address" label="地区"></el-table-column>
 
 
 				<el-table-column label="操作" width="220" align="left">
@@ -49,7 +49,7 @@
 		</div>
 
 		<!-- 弹出框 -->
-		<el-dialog title="申请加入公司" v-model="visible" width="60%">
+		<el-dialog title="申请加入团队" v-model="visible" width="60%">
 			<div class="card">
 				<div class="left">
 					<el-avatar class="avatar" :style="`background:${extractColorByName(singleDepartment.departmentName)}`" shape="square" :size="90">
@@ -63,7 +63,7 @@
 						<span >注册资本:</span>{{ singleDepartment.rmb }}&nbsp;&nbsp;&nbsp;&nbsp;
 						<span >注册日期:</span>{{ singleDepartment.createTime}}
 					</div>
-					<div class="text item"><span >公司电话:</span>{{ singleDepartment.phone }} </div>
+					<div class="text item"><span >团队电话:</span>{{ singleDepartment.phone }} </div>
 					<div class="text item"><span >地址:</span>{{ singleDepartment.address }}</div>
 					<div class="text item"><span>部门简介:</span>{{ singleDepartment.description }}</div>
 				</div>
@@ -140,7 +140,7 @@ const handlePageChange = (val: number) => {
 
 
 
-// 申请加入公司时弹窗和保存
+// 申请加入团队时弹窗和保存
 const visible = ref(false);
 let singleDepartment = reactive({
 	departmentid: '',

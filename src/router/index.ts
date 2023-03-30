@@ -88,7 +88,7 @@ const routes: RouteRecordRaw[] = [
                 path: '/companysearch',
                 name: 'companysearch',
                 meta: {
-                    title: '公司搜索',
+                    title: '团队搜索',
                     permiss: '1'
                 },
                 component: () => import(/* webpackChunkName: "user" */ '../views/companySearch.vue'),
@@ -106,7 +106,7 @@ const routes: RouteRecordRaw[] = [
                 path: '/companyinformation',
                 name: 'companyinformation',
                 meta: {
-                    title: '公司信息',
+                    title: '团队信息',
                     permiss: '1'
                 },
                 component: () => import(/* webpackChunkName: "user" */ '../views/companyInformation.vue'),
@@ -115,7 +115,7 @@ const routes: RouteRecordRaw[] = [
                 path: '/modifycompany',
                 name: 'modifycompany',
                 meta: {
-                    title: '修改公司信息',
+                    title: '修改团队信息',
                     permiss: '6'
                 },
                 component: () => import(/* webpackChunkName: "user" */ '../views/companyModify.vue'),

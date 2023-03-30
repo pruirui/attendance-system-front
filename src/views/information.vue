@@ -27,9 +27,9 @@
 						</template>
 					</el-table-column>
 				</el-table>
-				<div class="handle-row">
+				<!-- <div class="handle-row">
 					<el-button type="primary">全部通过申请</el-button>
-				</div>
+				</div> -->
 			</el-tab-pane>
 			<el-tab-pane :label="`我的申请(未处理)(${datas.read.length})`" name="second">
 				<template v-if="message === 'second'">
